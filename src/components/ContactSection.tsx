@@ -2,6 +2,16 @@ import React from 'react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { Mail, Phone, Github, Linkedin, MapPin, Radio, ArrowUpRight } from 'lucide-react';
 
+const sanitizeHeadingHtml = (html: string) => {
+  if (!html) return '';
+  // Strip dangerous scripts, event handlers, and javascript protocols while preserving safe styling tags (<br>, <span>, etc.)
+  return html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
+    .replace(/\son\w+\s*=\s*(?:'[^']*'|"[^"]*"|[^\s>]+)/gi, '')
+    .replace(/javascript\s*:/gi, '');
+};
+
 export const ContactSection: React.FC = () => {
   const { data } = usePortfolio();
   const { contact } = data;
@@ -20,9 +30,10 @@ export const ContactSection: React.FC = () => {
                 <Radio size={14} className="animate-pulse" />
                 <span>DIRECT CONTACT & INQUIRIES // 05</span>
               </div>
-              <h2 className="text-3xl sm:text-5xl font-f1 font-black italic tracking-tight text-white uppercase leading-[0.9]">
-                {contact.heading}
-              </h2>
+              <h2
+                className="text-3xl sm:text-5xl font-f1 font-black italic tracking-tight text-white uppercase leading-[0.9]"
+                dangerouslySetInnerHTML={{ __html: sanitizeHeadingHtml(contact.heading) }}
+              />
               <p className="text-xs sm:text-base text-f1-gray font-sans leading-relaxed pt-1 sm:pt-2">
                 {contact.description}
               </p>
