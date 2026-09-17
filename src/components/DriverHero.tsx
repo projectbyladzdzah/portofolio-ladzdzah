@@ -6,7 +6,8 @@ export const DriverHero: React.FC = () => {
   const { data, setActiveAwardModal } = usePortfolio();
   const { hero } = data;
 
-  const bannerImg = hero.banner || 'assets/driver-f1-banner.png';
+  const bannerImg = hero.banner || 'assets/driver-f1-banner.webp';
+  const isCustomUrl = Boolean(hero.banner && (hero.banner.startsWith('http') || hero.banner.startsWith('data:')));
 
   return (
     <section id="hero" className="bg-[#0b0b0e] text-white">
@@ -18,7 +19,9 @@ export const DriverHero: React.FC = () => {
         {/* Full-bleed Edge-to-Edge Container with exact 4K master aspect ratio (4058x1550) */}
         <div className="relative w-full aspect-[4058/1550] flex items-center justify-center overflow-hidden">
           <picture className="w-full h-full block">
-            <source srcSet="assets/driver-f1-banner.webp" type="image/webp" />
+            {!isCustomUrl && (
+              <source srcSet="assets/driver-f1-banner.webp" type="image/webp" />
+            )}
             <img
               src={bannerImg}
               alt={`${hero.firstName} ${hero.lastName}`}
