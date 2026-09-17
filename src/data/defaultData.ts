@@ -223,7 +223,7 @@ export const DEFAULT_PORTFOLIO_DATA: PortfolioData = {
     }
   ],
   contact: {
-    heading: "LET'S BUILD<br><span class=\"text-f1-red\">SOMETHING FAST.</span>",
+    heading: "LET'S BUILD\nSOMETHING FAST.",
     description: "Available for full-time roles, web engineering contracts, IT system projects, and creative technical collaborations.",
     email: "ladzdzahhanannaafimufidz@gmail.com",
     phone: "085848253569",

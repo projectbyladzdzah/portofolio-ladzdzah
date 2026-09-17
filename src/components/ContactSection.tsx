@@ -2,14 +2,62 @@ import React from 'react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { Mail, Phone, Github, Linkedin, MapPin, Radio, ArrowUpRight } from 'lucide-react';
 
-const sanitizeHeadingHtml = (html: string) => {
-  if (!html) return '';
-  // Strip dangerous scripts, event handlers, and javascript protocols while preserving safe styling tags (<br>, <span>, etc.)
-  return html
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
-    .replace(/\son\w+\s*=\s*(?:'[^']*'|"[^"]*"|[^\s>]+)/gi, '')
-    .replace(/javascript\s*:/gi, '');
+const renderContactHeading = (rawHeading?: string) => {
+  if (!rawHeading) {
+    return (
+      <>
+        <span>LET'S BUILD</span>
+        <br />
+        <span className="text-f1-red">SOMETHING FAST.</span>
+      </>
+    );
+  }
+
+  // 1. Decode any escaped HTML entities if present
+  let clean = rawHeading
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&amp;/gi, '&');
+
+  // 2. Normalize breaks and strip ALL HTML tags
+  clean = clean
+    .replace(/<br\s*\/?>/gi, '###BR###')
+    .replace(/\n+/g, '###BR###')
+    .replace(/<\/?[^>]+(>|$)/g, '') // Strips any <span ...>, </span>, etc. completely!
+    .trim();
+
+  // If there's an explicit break
+  if (clean.includes('###BR###')) {
+    const parts = clean.split('###BR###').map(p => p.trim()).filter(Boolean);
+    if (parts.length >= 2) {
+      return (
+        <>
+          <span>{parts[0]}</span>
+          <br />
+          <span className="text-f1-red">{parts.slice(1).join(' ')}</span>
+        </>
+      );
+    }
+    return <span>{parts[0] || clean}</span>;
+  }
+
+  // Fallback: If it contains LET'S BUILD and SOMETHING FAST without tags
+  const upper = clean.toUpperCase();
+  if (upper.includes("LET'S BUILD") && upper.includes('SOMETHING FAST')) {
+    const idx = upper.indexOf('SOMETHING FAST');
+    const firstPart = clean.substring(0, idx).trim();
+    const secondPart = clean.substring(idx).trim();
+    return (
+      <>
+        <span>{firstPart}</span>
+        <br />
+        <span className="text-f1-red">{secondPart}</span>
+      </>
+    );
+  }
+
+  return <span>{clean}</span>;
 };
 
 export const ContactSection: React.FC = () => {
@@ -30,10 +78,9 @@ export const ContactSection: React.FC = () => {
                 <Radio size={14} className="animate-pulse" />
                 <span>DIRECT CONTACT & INQUIRIES // 05</span>
               </div>
-              <h2
-                className="text-3xl sm:text-5xl font-f1 font-black italic tracking-tight text-white uppercase leading-[0.9]"
-                dangerouslySetInnerHTML={{ __html: sanitizeHeadingHtml(contact.heading) }}
-              />
+              <h2 className="text-3xl sm:text-5xl font-f1 font-black italic tracking-tight text-white uppercase leading-[0.9]">
+                {renderContactHeading(contact.heading)}
+              </h2>
               <p className="text-xs sm:text-base text-f1-gray font-sans leading-relaxed pt-1 sm:pt-2">
                 {contact.description}
               </p>
