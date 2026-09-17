@@ -280,8 +280,8 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       const candidateEmails = cleanInput.includes('@')
         ? [cleanInput]
         : [
+            'ladzdzahhanannaafimufidz@gmail.com',
             `${cleanInput.toLowerCase()}@portfolio.admin`,
-            `${cleanInput.toLowerCase()}@ladzdzah.admin`,
             `${cleanInput.toLowerCase()}@gmail.com`
           ];
 
