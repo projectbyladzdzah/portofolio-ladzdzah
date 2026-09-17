@@ -1,0 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,300;0,400;0,600;0,700;0,900;1,600;1,700;1,900&family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --f1-red: #e10600;
+  }
+
+  body {
+    @apply bg-f1-black text-white font-sans overflow-x-hidden antialiased;
+    background-color: #0b0b0e;
+  }
+
+  /* Custom carbon background pattern */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.14;
+    background-image: 
+      linear-gradient(90deg, transparent 49%, rgba(255, 255, 255, 0.03) 50%, transparent 51%),
+      linear-gradient(0deg, transparent 49%, rgba(255, 255, 255, 0.02) 50%, transparent 51%);
+    background-size: 50px 50px;
+    z-index: -3;
+  }
+}
+
+/* Custom F1 Racing Cuts and Borders */
+.f1-skew-l {
+  transform: skew(-14deg);
+}
+
+.f1-skew-r {
+  transform: skew(14deg);
+}
+
+.f1-card-cut {
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+}
+
+.f1-cut-corner-tr {
+  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0 100%);
+}
+
+.f1-cut-corner-br {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
+}
+
+.f1-red-border-cut {
+  border-top: 2px solid #e10600;
+  border-right: 2px solid #e10600;
+}
+
+/* Speed Track lines */
+.f1-track-bg {
+  background: repeating-linear-gradient(135deg, transparent 0 80px, rgba(255, 255, 255, 0.015) 81px 82px, transparent 83px 160px);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0b0b0e;
+}
+::-webkit-scrollbar-thumb {
+  background: #23232c;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #e10600;
+}

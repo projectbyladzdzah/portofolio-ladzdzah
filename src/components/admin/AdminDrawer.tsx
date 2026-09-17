@@ -1,0 +1,939 @@
+import React, { useState } from 'react';
+import { usePortfolio } from '../../context/PortfolioContext';
+import { ItemEditModal, EditModalType } from './ItemEditModal';
+import {
+  X,
+  Plus,
+  Trash2,
+  Edit2,
+  Download,
+  Upload,
+  LogOut,
+  Database,
+  Gauge
+} from 'lucide-react';
+
+export const AdminDrawer: React.FC = () => {
+  const {
+    data,
+    updateHero,
+    updateBiography,
+    updateTicker,
+    deleteProject,
+    deleteCareer,
+    deleteAward,
+    updateContact,
+    resetToDefaults,
+    exportJSON,
+    importJSON,
+    isAdminOpen,
+    setIsAdminOpen,
+    logoutAdmin,
+    cloudStatus,
+    showToast,
+    uploadImage
+  } = usePortfolio();
+
+  const [activeTab, setActiveTab] = useState<'hero' | 'bio' | 'projects' | 'career' | 'ticker' | 'awards' | 'contact' | 'backup'>('hero');
+
+  // Modal for editing project, career, or award
+  const [modalType, setModalType] = useState<EditModalType>(null);
+  const [editingItem, setEditingItem] = useState<any>(null);
+
+  // Form states
+  const [heroForm, setHeroForm] = useState(data.hero);
+  const [bioForm, setBioForm] = useState(data.biography);
+  const [bioSkillsInput, setBioSkillsInput] = useState((data.biography.skills || []).join(', '));
+  const [tickerInput, setTickerInput] = useState((data.ticker || []).join(', '));
+  const [contactForm, setContactForm] = useState(data.contact);
+
+  // Keep forms synced when data changes externally (e.g. on reset or import)
+  React.useEffect(() => {
+    setHeroForm(data.hero);
+    setBioForm(data.biography);
+    setBioSkillsInput((data.biography.skills || []).join(', '));
+    setTickerInput((data.ticker || []).join(', '));
+    setContactForm(data.contact);
+  }, [data]);
+
+  if (!isAdminOpen) return null;
+
+  const handleDriverPhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      showToast('Mengunggah portrait ke Supabase Storage...', 'warning');
+      const url = await uploadImage(file, 'portraits', 800, 0.88);
+      setHeroForm(prev => ({ ...prev, photo: url }));
+      showToast('Foto portrait tersimpan di Supabase Storage!', 'success');
+    } catch {
+      showToast('Gagal memproses gambar', 'error');
+    }
+  };
+
+  const handleDriverBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      showToast('Mengunggah banner ke Supabase Storage...', 'warning');
+      const url = await uploadImage(file, 'banners', 1920, 0.88);
+      setHeroForm(prev => ({ ...prev, banner: url }));
+      showToast('Foto banner tersimpan di Supabase Storage!', 'success');
+    } catch {
+      showToast('Gagal memproses gambar banner', 'error');
+    }
+  };
+
+  const handleHeroSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateHero(heroForm);
+  };
+
+  const handleBioSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const skills = bioSkillsInput.split(',').map(s => s.trim()).filter(Boolean);
+    updateBiography({ ...bioForm, skills });
+  };
+
+  const handleTickerSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const ticker = tickerInput.split(',').map(s => s.trim()).filter(Boolean);
+    updateTicker(ticker);
+  };
+
+  const handleContactSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateContact(contactForm);
+  };
+
+  const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const str = ev.target?.result as string;
+      importJSON(str);
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
+
+  const handleAddTelemetryBar = () => {
+    const current = heroForm.telemetryBars || [];
+    setHeroForm({
+      ...heroForm,
+      telemetryBars: [...current, { label: 'NEW COMPETENCY', percent: 85 }]
+    });
+  };
+
+  const handleRemoveTelemetryBar = (index: number) => {
+    const current = heroForm.telemetryBars || [];
+    setHeroForm({
+      ...heroForm,
+      telemetryBars: current.filter((_, i) => i !== index)
+    });
+  };
+
+  const handleTelemetryBarChange = (index: number, field: 'label' | 'percent', val: any) => {
+    const current = [...(heroForm.telemetryBars || [])];
+    current[index] = {
+      ...current[index],
+      [field]: field === 'percent' ? Math.max(0, Math.min(100, Number(val) || 0)) : val
+    };
+    setHeroForm({ ...heroForm, telemetryBars: current });
+  };
+
+  return (
+    <>
+      <div
+        className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm transition-opacity"
+        onClick={() => setIsAdminOpen(false)}
+      >
+        <aside
+          className="fixed top-0 right-0 bottom-0 w-full max-w-2xl bg-[#0e0e13] border-l border-white/20 z-50 flex flex-col shadow-2xl text-white font-sans"
+          onClick={e => e.stopPropagation()}
+        >
+          {/* Drawer Header */}
+          <div className="flex justify-between items-center px-6 py-4 border-b border-white/10 bg-f1-surface">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-[10px] font-f1 font-bold tracking-widest text-f1-red uppercase block">
+                  PORTFOLIO ADMIN CMS
+                </span>
+                <span className="text-[9px] font-f1 font-bold px-2 py-0.5 rounded-full border border-white/10 bg-black/40 flex items-center gap-1.5">
+                  <Database size={10} className={cloudStatus === 'connected' ? 'text-[#00ff66]' : 'text-f1-yellow'} />
+                  <span className={cloudStatus === 'connected' ? 'text-[#00ff66]' : 'text-f1-yellow'}>
+                    {cloudStatus === 'connected' ? 'SUPABASE CLOUD' : cloudStatus === 'offline' ? 'OFFLINE CACHE' : 'LOCAL STORAGE'}
+                  </span>
+                </span>
+              </div>
+              <h2 className="text-xl font-f1 font-black tracking-wider text-white">
+                CONTROL ROOM <span>v3.0</span>
+              </h2>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <button
+                onClick={logoutAdmin}
+                title="Keluar / Logout Admin"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-red-950/40 hover:bg-f1-red text-white text-xs font-f1 font-bold border border-red-500/20 transition"
+              >
+                <LogOut size={13} />
+                <span className="hidden sm:inline">LOGOUT</span>
+              </button>
+              <button
+                onClick={() => setIsAdminOpen(false)}
+                className="p-1.5 hover:bg-white/10 rounded text-f1-gray hover:text-white transition"
+                aria-label="Tutup Panel"
+              >
+                <X size={20} />
+              </button>
+            </div>
+          </div>
+
+          {/* Tab Navigation */}
+          <div className="flex overflow-x-auto bg-[#13131a] border-b border-white/10 text-xs font-f1 font-bold tracking-wider px-4">
+            <button
+              onClick={() => setActiveTab('hero')}
+              className={`px-4 py-3 border-b-2 whitespace-nowrap transition ${
+                activeTab === 'hero' ? 'border-f1-red text-white bg-white/5' : 'border-transparent text-f1-gray hover:text-white'
+              }`}
+            >
+              🏁 HERO PROFILE
+            </button>
+            <button
+              onClick={() => setActiveTab('bio')}
+              className={`px-4 py-3 border-b-2 whitespace-nowrap transition ${
+                activeTab === 'bio' ? 'border-f1-red text-white bg-white/5' : 'border-transparent text-f1-gray hover:text-white'
+              }`}
+            >
+              👤 BIOGRAPHY
+            </button>
+            <button
+              onClick={() => setActiveTab('projects')}
+              className={`px-4 py-3 border-b-2 whitespace-nowrap transition ${
+                activeTab === 'projects' ? 'border-f1-red text-white bg-white/5' : 'border-transparent text-f1-gray hover:text-white'
+              }`}
+            >
+              💻 PROJECTS ({data.projects.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('career')}
+              className={`px-4 py-3 border-b-2 whitespace-nowrap transition ${
+                activeTab === 'career' ? 'border-f1-red text-white bg-white/5' : 'border-transparent text-f1-gray hover:text-white'
+              }`}
+            >
+              ⏱️ EXPERIENCE ({data.career.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('ticker')}
+              className={`px-4 py-3 border-b-2 whitespace-nowrap transition ${
+                activeTab === 'ticker' ? 'border-f1-red text-white bg-white/5' : 'border-transparent text-f1-gray hover:text-white'
+              }`}
+            >
+              📊 TICKER
+            </button>
+            <button
+              onClick={() => setActiveTab('awards')}
+              className={`px-4 py-3 border-b-2 whitespace-nowrap transition ${
+                activeTab === 'awards' ? 'border-f1-red text-white bg-white/5' : 'border-transparent text-f1-gray hover:text-white'
+              }`}
+            >
+              🏆 AWARDS ({data.awards.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('contact')}
+              className={`px-4 py-3 border-b-2 whitespace-nowrap transition ${
+                activeTab === 'contact' ? 'border-f1-red text-white bg-white/5' : 'border-transparent text-f1-gray hover:text-white'
+              }`}
+            >
+              📡 CONTACT
+            </button>
+            <button
+              onClick={() => setActiveTab('backup')}
+              className={`px-4 py-3 border-b-2 whitespace-nowrap transition ${
+                activeTab === 'backup' ? 'border-f1-red text-white bg-white/5' : 'border-transparent text-f1-gray hover:text-white'
+              }`}
+            >
+              💾 BACKUP & SYSTEM
+            </button>
+          </div>
+
+          {/* Tab Body */}
+          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+            {/* TAB 1: HERO & DRIVER */}
+            {activeTab === 'hero' && (
+              <form onSubmit={handleHeroSubmit} className="space-y-4 text-xs">
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">BADGE / ID NUMBER</label>
+                    <input
+                      type="text"
+                      value={heroForm.number}
+                      onChange={e => setHeroForm({ ...heroForm, number: e.target.value })}
+                      className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">FLAG EMOJI</label>
+                    <input
+                      type="text"
+                      value={heroForm.flagEmoji}
+                      onChange={e => setHeroForm({ ...heroForm, flagEmoji: e.target.value })}
+                      className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">COUNTRY</label>
+                    <input
+                      type="text"
+                      value={heroForm.country}
+                      onChange={e => setHeroForm({ ...heroForm, country: e.target.value })}
+                      className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">FIRST NAME</label>
+                    <input
+                      type="text"
+                      value={heroForm.firstName}
+                      onChange={e => setHeroForm({ ...heroForm, firstName: e.target.value })}
+                      className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white uppercase font-f1 font-bold"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">LAST NAME / ROLE</label>
+                    <input
+                      type="text"
+                      value={heroForm.lastName}
+                      onChange={e => setHeroForm({ ...heroForm, lastName: e.target.value })}
+                      className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white uppercase font-f1 font-bold"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">TEAM NAME BADGE</label>
+                  <input
+                    type="text"
+                    value={heroForm.team}
+                    onChange={e => setHeroForm({ ...heroForm, team: e.target.value })}
+                    className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white uppercase font-f1 font-bold"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">ROLE / SUBTITLE</label>
+                  <input
+                    type="text"
+                    value={heroForm.role}
+                    onChange={e => setHeroForm({ ...heroForm, role: e.target.value })}
+                    className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white uppercase"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">PROFESSIONAL MOTTO / QUOTE</label>
+                  <textarea
+                    rows={2}
+                    value={heroForm.quote}
+                    onChange={e => setHeroForm({ ...heroForm, quote: e.target.value })}
+                    className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white"
+                  />
+                </div>
+
+                {/* Photo Upload */}
+                <div>
+                  <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">PROFILE PHOTO / AVATAR</label>
+                  <div className="flex items-center gap-4 p-3 bg-white/5 border border-white/10 rounded">
+                    <img
+                      src={heroForm.photo || 'assets/driver-portrait.png'}
+                      alt="Preview"
+                      className="w-12 h-16 object-cover rounded border border-white/20"
+                    />
+                    <div className="flex-1 space-y-1">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleDriverPhotoUpload}
+                        className="text-xs text-f1-gray file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-f1-red file:text-white file:text-xs"
+                      />
+                      <input
+                        type="text"
+                        value={heroForm.photo}
+                        onChange={e => setHeroForm({ ...heroForm, photo: e.target.value })}
+                        placeholder="Atau URL gambar portrait..."
+                        className="w-full bg-[#181822] border border-white/10 px-2.5 py-1 rounded text-white text-xs outline-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Widescreen Banner Upload */}
+                <div>
+                  <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">
+                    WIDESCREEN HERO BANNER (FOTO UTAMA)
+                  </label>
+                  <div className="space-y-2 p-3 bg-white/5 border border-white/10 rounded">
+                    {heroForm.banner && (
+                      <div className="aspect-[21/8] w-full rounded overflow-hidden border border-white/20">
+                        <img src={heroForm.banner} alt="Banner Preview" className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleDriverBannerUpload}
+                        className="text-xs text-f1-gray file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-f1-red file:text-white file:text-xs"
+                      />
+                    </div>
+                    <input
+                      type="text"
+                      value={heroForm.banner || ''}
+                      onChange={e => setHeroForm({ ...heroForm, banner: e.target.value })}
+                      placeholder="Atau URL banner widescreen (assets/driver-f1-banner.png)..."
+                      className="w-full bg-[#181822] border border-white/10 px-2.5 py-1 rounded text-white text-xs outline-none"
+                    />
+                  </div>
+                </div>
+
+                {/* 2x4 Stats Grid Editor */}
+                <div className="pt-4 border-t border-white/10 space-y-2">
+                  <span className="font-f1 font-black text-white tracking-wider block uppercase">
+                    PROFESSIONAL METRICS GRID (2x4)
+                  </span>
+                  <div className="grid grid-cols-2 gap-3">
+                    {heroForm.stats.map((stat, sIdx) => (
+                      <div key={sIdx} className="bg-white/5 p-2.5 rounded border border-white/10 space-y-1">
+                        <input
+                          type="text"
+                          value={stat.label}
+                          onChange={e => {
+                            const newStats = [...heroForm.stats];
+                            newStats[sIdx].label = e.target.value;
+                            setHeroForm({ ...heroForm, stats: newStats });
+                          }}
+                          className="w-full text-[10px] font-f1 font-bold text-f1-gray bg-transparent border-b border-white/10 outline-none uppercase"
+                        />
+                        <input
+                          type="text"
+                          value={stat.value}
+                          onChange={e => {
+                            const newStats = [...heroForm.stats];
+                            newStats[sIdx].value = e.target.value;
+                            setHeroForm({ ...heroForm, stats: newStats });
+                          }}
+                          className="w-full text-xs font-f1 font-bold text-white bg-transparent outline-none"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Core Technical Competencies Editor */}
+                <div className="pt-4 border-t border-white/10 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="font-f1 font-black text-white tracking-wider block uppercase flex items-center gap-1.5 text-xs">
+                        <Gauge size={14} className="text-f1-red" />
+                        CORE TECHNICAL COMPETENCIES ({heroForm.telemetryBars?.length || 0})
+                      </span>
+                      <span className="text-[10px] text-f1-gray font-sans block">
+                        Keahlian & telemetry bars di halaman depan.
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleAddTelemetryBar}
+                      className="bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold px-2.5 py-1 rounded flex items-center gap-1 transition text-[11px]"
+                    >
+                      <Plus size={13} />
+                      TAMBAH
+                    </button>
+                  </div>
+
+                  {(!heroForm.telemetryBars || heroForm.telemetryBars.length === 0) ? (
+                    <div className="text-center py-4 border border-dashed border-white/10 rounded bg-white/[0.02] text-f1-gray font-sans text-xs">
+                      Belum ada keahlian. Klik <strong>+ TAMBAH</strong>.
+                    </div>
+                  ) : (
+                    <div className="space-y-2.5">
+                      {heroForm.telemetryBars.map((bar, bIdx) => (
+                        <div
+                          key={bIdx}
+                          className="bg-white/5 border border-white/10 p-3 rounded space-y-2 hover:border-white/20 transition"
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-f1-red font-bold text-xs w-5">#{bIdx + 1}</span>
+                            <div className="flex-1">
+                              <input
+                                type="text"
+                                value={bar.label}
+                                onChange={e => handleTelemetryBarChange(bIdx, 'label', e.target.value)}
+                                placeholder="KEAHLIAN (cth: NETWORK ARCHITECTURE)"
+                                className="w-full bg-[#181822] border border-white/10 px-2.5 py-1 rounded text-white font-f1 font-bold text-xs uppercase focus:border-f1-red outline-none"
+                              />
+                            </div>
+                            <div className="w-24 flex items-center gap-1">
+                              <input
+                                type="number"
+                                min="0"
+                                max="100"
+                                value={bar.percent}
+                                onChange={e => handleTelemetryBarChange(bIdx, 'percent', e.target.value)}
+                                className="w-14 bg-[#181822] border border-white/10 px-1.5 py-1 rounded text-white font-mono text-xs text-right focus:border-f1-red outline-none"
+                              />
+                              <span className="text-f1-gray font-mono text-xs">%</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveTelemetryBar(bIdx)}
+                              className="text-f1-gray hover:text-f1-red p-1 rounded hover:bg-f1-red/10 transition"
+                              title="Hapus keahlian ini"
+                            >
+                              <Trash2 size={15} />
+                            </button>
+                          </div>
+
+                          <div className="flex items-center gap-3">
+                            <input
+                              type="range"
+                              min="0"
+                              max="100"
+                              value={bar.percent}
+                              onChange={e => handleTelemetryBarChange(bIdx, 'percent', e.target.value)}
+                              className="flex-1 accent-[#e10600] h-1.5 bg-white/10 rounded cursor-pointer"
+                            />
+                            <div className="w-24 h-2 bg-white/10 rounded-full overflow-hidden shrink-0">
+                              <div
+                                className="h-full bg-gradient-to-r from-f1-red to-f1-yellow transition-all duration-300"
+                                style={{ width: `${bar.percent}%` }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold py-3 rounded tracking-widest transition"
+                >
+                  SIMPAN HERO & PROFIL DRIVER ✓
+                </button>
+              </form>
+            )}
+
+            {/* TAB 2: BIOGRAPHY */}
+            {activeTab === 'bio' && (
+              <form onSubmit={handleBioSubmit} className="space-y-4 text-xs">
+                <div>
+                  <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">SECTION HEADING</label>
+                  <input
+                    type="text"
+                    value={bioForm.heading}
+                    onChange={e => setBioForm({ ...bioForm, heading: e.target.value })}
+                    className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white uppercase font-f1 font-bold"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">PULL QUOTE</label>
+                  <textarea
+                    rows={2}
+                    value={bioForm.quote}
+                    onChange={e => setBioForm({ ...bioForm, quote: e.target.value })}
+                    className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">QUOTE AUTHOR / SIGNATURE</label>
+                  <input
+                    type="text"
+                    value={bioForm.quoteAuthor}
+                    onChange={e => setBioForm({ ...bioForm, quoteAuthor: e.target.value })}
+                    className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">
+                    PARAGRAF BIOGRAFI (Gunakan baris baru per paragraf)
+                  </label>
+                  <textarea
+                    rows={6}
+                    value={bioForm.paragraphs.join('\n\n')}
+                    onChange={e =>
+                      setBioForm({
+                        ...bioForm,
+                        paragraphs: e.target.value.split('\n\n').map(p => p.trim()).filter(Boolean)
+                      })
+                    }
+                    className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white font-sans text-xs leading-relaxed"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">
+                    SKILL ARSENAL (Pisahkan dengan koma)
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={bioSkillsInput}
+                    onChange={e => setBioSkillsInput(e.target.value)}
+                    className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white font-f1 font-bold text-xs"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold py-3 rounded tracking-widest transition"
+                >
+                  SIMPAN BIOGRAFI & SKILLS ✓
+                </button>
+              </form>
+            )}
+
+            {/* TAB 3: PORTFOLIO PROJECTS */}
+            {activeTab === 'projects' && (
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-f1 font-bold text-f1-gray tracking-wider uppercase">
+                    DAFTAR PROYEK TRACKSIDE ({data.projects.length})
+                  </span>
+                  <button
+                    onClick={() => {
+                      setEditingItem(null);
+                      setModalType('project');
+                    }}
+                    className="bg-f1-red hover:bg-f1-darkRed text-white text-xs font-f1 font-bold px-3 py-1.5 rounded flex items-center gap-1.5 transition"
+                  >
+                    <Plus size={14} />
+                    <span>+ PROYEK BARU</span>
+                  </button>
+                </div>
+
+                <div className="space-y-2.5">
+                  {data.projects.map(proj => (
+                    <div
+                      key={proj.id}
+                      className="p-3.5 bg-f1-panel border border-white/10 rounded flex items-center justify-between gap-4"
+                    >
+                      <div className="min-w-0">
+                        <strong className="text-sm font-f1 font-bold text-white block truncate">
+                          {proj.title}
+                        </strong>
+                        <span className="text-[11px] font-f1 text-f1-gray tracking-wider uppercase">
+                          {proj.category.toUpperCase()} • {proj.year} {proj.featured ? '• ★ FEATURED' : ''}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <button
+                          onClick={() => {
+                            setEditingItem(proj);
+                            setModalType('project');
+                          }}
+                          className="p-1.5 bg-white/10 hover:bg-white/20 text-white rounded transition"
+                          title="Edit Proyek"
+                        >
+                          <Edit2 size={13} />
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (confirm(`Hapus proyek "${proj.title}"?`)) deleteProject(proj.id);
+                          }}
+                          className="p-1.5 bg-f1-red/20 hover:bg-f1-red text-f1-red hover:text-white rounded transition"
+                          title="Hapus Proyek"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* TAB 4: CAREER HISTORY */}
+            {activeTab === 'career' && (
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-f1 font-bold text-f1-gray tracking-wider uppercase">
+                    RIWAYAT MUSIM & KARIR ({data.career.length})
+                  </span>
+                  <button
+                    onClick={() => {
+                      setEditingItem(null);
+                      setModalType('career');
+                    }}
+                    className="bg-f1-red hover:bg-f1-darkRed text-white text-xs font-f1 font-bold px-3 py-1.5 rounded flex items-center gap-1.5 transition"
+                  >
+                    <Plus size={14} />
+                    <span>+ KARIR BARU</span>
+                  </button>
+                </div>
+
+                <div className="space-y-2.5">
+                  {data.career.map(car => (
+                    <div
+                      key={car.id}
+                      className="p-3.5 bg-f1-panel border border-white/10 rounded flex items-center justify-between gap-4"
+                    >
+                      <div className="min-w-0">
+                        <strong className="text-sm font-f1 font-bold text-white block truncate">
+                          {car.role} — {car.team}
+                        </strong>
+                        <span className="text-[11px] font-f1 text-f1-gray tracking-wider uppercase">
+                          {car.year} • {car.points}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <button
+                          onClick={() => {
+                            setEditingItem(car);
+                            setModalType('career');
+                          }}
+                          className="p-1.5 bg-white/10 hover:bg-white/20 text-white rounded transition"
+                        >
+                          <Edit2 size={13} />
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (confirm(`Hapus karir "${car.role}"?`)) deleteCareer(car.id);
+                          }}
+                          className="p-1.5 bg-f1-red/20 hover:bg-f1-red text-f1-red hover:text-white rounded transition"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* TAB 5: TICKER */}
+            {activeTab === 'ticker' && (
+              <form onSubmit={handleTickerSubmit} className="space-y-4 text-xs">
+                <div>
+                  <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">
+                    KATA KUNCI RUNNING TICKER (Pisahkan koma)
+                  </label>
+                  <textarea
+                    rows={4}
+                    value={tickerInput}
+                    onChange={e => setTickerInput(e.target.value)}
+                    placeholder="F1 TELEMETRY, WEB DEV, IT SYSTEMS..."
+                    className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white font-f1 font-bold text-xs"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="w-full bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold py-3 rounded tracking-widest transition"
+                >
+                  SIMPAN RUNNING TICKER ✓
+                </button>
+              </form>
+            )}
+
+            {/* TAB 6: AWARDS */}
+            {activeTab === 'awards' && (
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-f1 font-bold text-f1-gray tracking-wider uppercase">
+                    DAFTAR PODIUM PENGHARGAAN ({data.awards.length})
+                  </span>
+                  <button
+                    onClick={() => {
+                      setEditingItem(null);
+                      setModalType('award');
+                    }}
+                    className="bg-f1-red hover:bg-f1-darkRed text-white text-xs font-f1 font-bold px-3 py-1.5 rounded flex items-center gap-1.5 transition"
+                  >
+                    <Plus size={14} />
+                    <span>+ PENGHARGAAN BARU</span>
+                  </button>
+                </div>
+
+                <div className="space-y-2.5">
+                  {data.awards.map(awd => (
+                    <div
+                      key={awd.id}
+                      className="p-3.5 bg-f1-panel border border-white/10 rounded flex items-center justify-between gap-4"
+                    >
+                      <div className="min-w-0">
+                        <strong className="text-sm font-f1 font-bold text-white block truncate">
+                          {awd.title}
+                        </strong>
+                        <span className="text-[11px] font-f1 text-f1-yellow tracking-wider uppercase">
+                          {awd.position} • {awd.year}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <button
+                          onClick={() => {
+                            setEditingItem(awd);
+                            setModalType('award');
+                          }}
+                          className="p-1.5 bg-white/10 hover:bg-white/20 text-white rounded transition"
+                        >
+                          <Edit2 size={13} />
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (confirm(`Hapus penghargaan "${awd.title}"?`)) deleteAward(awd.id);
+                          }}
+                          className="p-1.5 bg-f1-red/20 hover:bg-f1-red text-f1-red hover:text-white rounded transition"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* TAB 7: CONTACT */}
+            {activeTab === 'contact' && (
+              <form onSubmit={handleContactSubmit} className="space-y-4 text-xs">
+                <div>
+                  <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">HEADLINE</label>
+                  <input
+                    type="text"
+                    value={contactForm.heading}
+                    onChange={e => setContactForm({ ...contactForm, heading: e.target.value })}
+                    className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white"
+                  />
+                </div>
+                <div>
+                  <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">DESKRIPSI</label>
+                  <textarea
+                    rows={2}
+                    value={contactForm.description}
+                    onChange={e => setContactForm({ ...contactForm, description: e.target.value })}
+                    className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">EMAIL</label>
+                    <input
+                      type="email"
+                      value={contactForm.email}
+                      onChange={e => setContactForm({ ...contactForm, email: e.target.value })}
+                      className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">TELEPON / WA</label>
+                    <input
+                      type="text"
+                      value={contactForm.phone}
+                      onChange={e => setContactForm({ ...contactForm, phone: e.target.value })}
+                      className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">GITHUB</label>
+                    <input
+                      type="text"
+                      value={contactForm.github}
+                      onChange={e => setContactForm({ ...contactForm, github: e.target.value })}
+                      className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">LINKEDIN</label>
+                    <input
+                      type="text"
+                      value={contactForm.linkedin}
+                      onChange={e => setContactForm({ ...contactForm, linkedin: e.target.value })}
+                      className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">LOKASI / BASE</label>
+                  <input
+                    type="text"
+                    value={contactForm.base}
+                    onChange={e => setContactForm({ ...contactForm, base: e.target.value })}
+                    className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="w-full bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold py-3 rounded tracking-widest transition"
+                >
+                  SIMPAN INFORMASI KONTAK ✓
+                </button>
+              </form>
+            )}
+
+            {/* TAB 8: BACKUP & SYSTEM */}
+            {activeTab === 'backup' && (
+              <div className="space-y-6 text-xs">
+                <div className="space-y-3">
+                  <span className="font-f1 font-bold text-white tracking-wider block uppercase">
+                    BACKUP & RESTORE DATA
+                  </span>
+                  <button
+                    onClick={exportJSON}
+                    className="w-full bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold py-3 rounded flex items-center justify-center gap-2 transition"
+                  >
+                    <Download size={16} />
+                    <span>DOWNLOAD CADANGAN DATA (EXPORT JSON)</span>
+                  </button>
+
+                  <label className="w-full bg-white/10 hover:bg-white/15 border border-white/20 text-white font-f1 font-bold py-3 rounded flex items-center justify-center gap-2 cursor-pointer transition">
+                    <Upload size={16} />
+                    <span>UPLOAD & RESTORE DARI JSON</span>
+                    <input type="file" accept=".json" onChange={handleImportFile} className="hidden" />
+                  </label>
+                </div>
+
+                {/* Reset Factory Defaults */}
+                <div className="p-4 bg-f1-red/10 border border-f1-red/30 rounded space-y-2">
+                  <strong className="text-f1-red font-f1 font-bold text-xs tracking-wider uppercase block">
+                    ⚠️ DANGER ZONE: FACTORY RESET
+                  </strong>
+                  <p className="text-[11px] text-f1-gray">
+                    Reset seluruh data portofolio ke pengaturan awal bawaan.
+                  </p>
+                  <button
+                    onClick={() => {
+                      if (confirm('Yakin ingin mereset seluruh data ke setelan bawaan?')) resetToDefaults();
+                    }}
+                    className="w-full bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold py-2.5 rounded transition"
+                  >
+                    RESET SEMUA KE DEFAULT
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </aside>
+      </div>
+
+      {/* Item Edit Modal (Project / Career / Award) */}
+      <ItemEditModal
+        type={modalType}
+        item={editingItem}
+        onClose={() => {
+          setModalType(null);
+          setEditingItem(null);
+        }}
+      />
+    </>
+  );
+};
