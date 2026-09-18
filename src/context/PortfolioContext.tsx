@@ -81,25 +81,8 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       const parsed = JSON.parse(saved);
 
       const hero = { ...DEFAULT_PORTFOLIO_DATA.hero, ...(parsed.hero || {}) };
-      // Migration: if saved stats has obsolete labels, force fresh default stats
-      const hasOldStats = !hero.stats || hero.stats.some(
-        (s: any) => s.label === 'ENGINEER ID' || s.label === 'SYSTEM UPTIME' || s.label === 'HONORS & AWARDS' || (hero.stats.length > 0 && hero.stats[0]?.label === 'INSTITUTION')
-      );
-      if (hasOldStats) {
-        hero.stats = DEFAULT_PORTFOLIO_DATA.hero.stats;
-      }
-
-      // Upgrade awards if missing rich descriptions
-      let awards = Array.isArray(parsed.awards) ? parsed.awards : DEFAULT_PORTFOLIO_DATA.awards;
-      if (awards.length > 0 && !awards[0].description) {
-        awards = DEFAULT_PORTFOLIO_DATA.awards;
-      }
-
-      // Upgrade career if missing TMC Surakarta
-      let career = Array.isArray(parsed.career) ? parsed.career : DEFAULT_PORTFOLIO_DATA.career;
-      if (!career.some((c: any) => c.team?.includes('TMC') || c.role?.includes('TMC'))) {
-        career = DEFAULT_PORTFOLIO_DATA.career;
-      }
+      const awards = Array.isArray(parsed.awards) ? parsed.awards : DEFAULT_PORTFOLIO_DATA.awards;
+      const career = Array.isArray(parsed.career) ? parsed.career : DEFAULT_PORTFOLIO_DATA.career;
 
       return {
         ...DEFAULT_PORTFOLIO_DATA,
@@ -161,6 +144,9 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       if (error) {
         console.warn('[Supabase Sync Error]:', error.message);
         setCloudStatus('offline');
+        if (error.code === '42501') {
+          showToast('Sesi Supabase kedaluwarsa. Silakan login ulang agar tersimpan di Cloud.', 'warning');
+        }
       } else {
         setCloudStatus('connected');
       }
@@ -168,7 +154,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       console.warn('[Supabase Sync Network Error]:', err);
       setCloudStatus('offline');
     }
-  }, []);
+  }, [showToast]);
 
   // Fetch initial data from Supabase on load
   useEffect(() => {
@@ -179,13 +165,29 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
     let isMounted = true;
 
-    // Check existing Supabase auth session
+    // Check existing Supabase auth session & listen for state changes
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session && isMounted) {
         setIsAdminUnlocked(true);
         try {
           sessionStorage.setItem(AUTH_KEY, 'true');
         } catch {}
+      } else if (!session && isMounted) {
+        setIsAdminUnlocked(false);
+        try {
+          sessionStorage.removeItem(AUTH_KEY);
+        } catch {}
+      }
+    });
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!isMounted) return;
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session) {
+        setIsAdminUnlocked(true);
+        try { sessionStorage.setItem(AUTH_KEY, 'true'); } catch {}
+      } else if (event === 'SIGNED_OUT') {
+        setIsAdminUnlocked(false);
+        try { sessionStorage.removeItem(AUTH_KEY); } catch {}
       }
     });
 
@@ -206,24 +208,12 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         }
 
         if (row && row.data) {
-          const cloudHero = { ...DEFAULT_PORTFOLIO_DATA.hero, ...(row.data.hero || {}) };
-          const hasOldStats = !cloudHero.stats || cloudHero.stats.some(
-            (s: any) => s.label === 'ENGINEER ID' || s.label === 'SYSTEM UPTIME' || s.label === 'HONORS & AWARDS' || (cloudHero.stats.length > 0 && cloudHero.stats[0]?.label === 'INSTITUTION')
-          );
-          if (hasOldStats) {
-            cloudHero.stats = DEFAULT_PORTFOLIO_DATA.hero.stats;
-          }
-
           setData(prev => {
-            let cloudCareer = Array.isArray(row.data.career) ? row.data.career : prev.career;
-            if (!cloudCareer.some((c: any) => c.team?.includes('TMC') || c.role?.includes('TMC'))) {
-              cloudCareer = DEFAULT_PORTFOLIO_DATA.career;
-            }
-
-            let cloudAwards = Array.isArray(row.data.awards) ? row.data.awards : prev.awards;
-            if (cloudAwards.length > 0 && !cloudAwards[0].description) {
-              cloudAwards = DEFAULT_PORTFOLIO_DATA.awards;
-            }
+            const cloudHero = { ...DEFAULT_PORTFOLIO_DATA.hero, ...(row.data.hero || {}) };
+            const cloudCareer = Array.isArray(row.data.career) ? row.data.career : prev.career;
+            const cloudAwards = Array.isArray(row.data.awards) ? row.data.awards : prev.awards;
+            const cloudProjects = Array.isArray(row.data.projects) ? row.data.projects : prev.projects;
+            const cloudTicker = Array.isArray(row.data.ticker) ? row.data.ticker : prev.ticker;
 
             return {
               ...prev,
@@ -231,11 +221,11 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
               hero: cloudHero,
               career: cloudCareer,
               awards: cloudAwards,
-              biography: { ...prev.biography, ...(row.data.biography || {}) },
-              contact: { ...prev.contact, ...(row.data.contact || {}) },
-              security: { ...prev.security, ...(row.data.security || {}) },
-              projects: Array.isArray(row.data.projects) ? row.data.projects : prev.projects,
-              ticker: Array.isArray(row.data.ticker) ? row.data.ticker : prev.ticker
+              biography: { ...DEFAULT_PORTFOLIO_DATA.biography, ...prev.biography, ...(row.data.biography || {}) },
+              contact: { ...DEFAULT_PORTFOLIO_DATA.contact, ...prev.contact, ...(row.data.contact || {}) },
+              security: { ...DEFAULT_PORTFOLIO_DATA.security, ...prev.security, ...(row.data.security || {}) },
+              projects: cloudProjects,
+              ticker: cloudTicker
             };
           });
           setCloudStatus('connected');
@@ -251,18 +241,57 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
     loadCloudData();
 
+    // Listen for real-time updates across tabs and devices
+    const realtimeChannel = supabase
+      .channel('portfolio_content_realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'portfolio_content' },
+        (payload: any) => {
+          if (!isMounted) return;
+          if (payload?.new && payload.new.data) {
+            setData(prev => ({
+              ...prev,
+              ...payload.new.data,
+              hero: { ...prev.hero, ...(payload.new.data.hero || {}) },
+              biography: { ...prev.biography, ...(payload.new.data.biography || {}) },
+              contact: { ...prev.contact, ...(payload.new.data.contact || {}) },
+              career: Array.isArray(payload.new.data.career) ? payload.new.data.career : prev.career,
+              awards: Array.isArray(payload.new.data.awards) ? payload.new.data.awards : prev.awards,
+              projects: Array.isArray(payload.new.data.projects) ? payload.new.data.projects : prev.projects,
+              ticker: Array.isArray(payload.new.data.ticker) ? payload.new.data.ticker : prev.ticker
+            }));
+          }
+        }
+      )
+      .subscribe();
+
     return () => {
       isMounted = false;
+      authListener.subscription.unsubscribe();
+      if (supabase) {
+        supabase.removeChannel(realtimeChannel);
+      }
     };
   }, [syncToSupabase]);
 
-  // Sync to localStorage
+  // Sync to localStorage with quota protection
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     } catch (e) {
-      console.error('LocalStorage quota error:', e);
-      showToast('Memori lokal penuh! Gunakan ukuran gambar lebih kecil.', 'error');
+      console.warn('LocalStorage quota exceeded, storing lean data:', e);
+      try {
+        const leanData = JSON.parse(JSON.stringify(data));
+        if (leanData.hero?.banner?.startsWith('data:')) {
+          leanData.hero.banner = 'assets/driver-f1-banner.webp';
+        }
+        if (leanData.hero?.photo?.startsWith('data:')) {
+          leanData.hero.photo = 'assets/driver-portrait.png';
+        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(leanData));
+      } catch {}
+      showToast('Penyimpanan lokal penuh. Gambar disarankan diunggah ke CDN Supabase.', 'warning');
     }
   }, [data, showToast]);
 
@@ -276,14 +305,18 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
 
     try {
-      const cleanInput = emailOrUser.trim();
-      const candidateEmails = cleanInput.includes('@')
-        ? [cleanInput]
-        : [
-            'ladzdzahhanannaafimufidz@gmail.com',
-            `${cleanInput.toLowerCase()}@portfolio.admin`,
-            `${cleanInput.toLowerCase()}@gmail.com`
-          ];
+      const cleanInput = emailOrUser.trim().toLowerCase();
+      const candidateEmails: string[] = [];
+      if (cleanInput.includes('@')) {
+        candidateEmails.push(cleanInput);
+      }
+      if (!candidateEmails.includes('ladzdzahhanannaafimufidz@gmail.com')) {
+        candidateEmails.push('ladzdzahhanannaafimufidz@gmail.com');
+      }
+      if (!cleanInput.includes('@')) {
+        candidateEmails.push(`${cleanInput}@portfolio.admin`);
+        candidateEmails.push(`${cleanInput}@gmail.com`);
+      }
 
       let lastError = 'Email atau username tidak ditemukan.';
       for (const candidate of candidateEmails) {
@@ -572,21 +605,26 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   ): Promise<string> => {
     if (isSupabaseConfigured() && supabase) {
       try {
-        const fallbackExt = fileOrBlob.type.includes('pdf')
+        const isWebpBlob = fileOrBlob.type.includes('webp');
+        const isPdf = fileOrBlob.type.includes('pdf');
+        const fallbackExt = isPdf
           ? 'pdf'
           : fileOrBlob.type.includes('png')
           ? 'png'
-          : fileOrBlob.type.includes('webp')
+          : isWebpBlob
           ? 'webp'
           : 'jpg';
 
-        let ext = fallbackExt;
+        let ext = isPdf ? 'pdf' : (isWebpBlob ? 'webp' : fallbackExt);
         let rawBaseName: string = folder;
 
         if (originalFileName) {
           const parts = originalFileName.split('.');
           if (parts.length > 1) {
-            ext = parts.pop() || fallbackExt;
+            const originalExt = (parts.pop() || fallbackExt).toLowerCase();
+            if (!isWebpBlob && !isPdf) {
+              ext = originalExt;
+            }
             rawBaseName = parts.join('.');
           } else {
             rawBaseName = originalFileName;
@@ -599,13 +637,14 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           .slice(0, 32);
 
         const filePath = `${folder}/${Date.now()}_${cleanName}.${ext}`;
+        const contentType = fileOrBlob.type || (ext === 'webp' ? 'image/webp' : ext === 'pdf' ? 'application/pdf' : 'image/jpeg');
 
         const { data: uploadData, error } = await supabase.storage
           .from('portfolio-assets')
           .upload(filePath, fileOrBlob, {
             cacheControl: '31536000',
             upsert: true,
-            contentType: fileOrBlob.type || undefined
+            contentType
           });
 
         if (!error && uploadData?.path) {

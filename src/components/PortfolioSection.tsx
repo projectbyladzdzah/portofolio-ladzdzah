@@ -3,7 +3,7 @@ import { usePortfolio } from '../context/PortfolioContext';
 import { Plus, Eye } from 'lucide-react';
 
 export const PortfolioSection: React.FC = () => {
-  const { data, setActiveProjectModal, setIsAdminOpen, isAdminUnlocked } = usePortfolio();
+  const { data, setActiveProjectModal, isAdminUnlocked } = usePortfolio();
   const [activeCategory, setActiveCategory] = useState<string>('all');
 
   const projects = data.projects;
@@ -72,14 +72,20 @@ export const PortfolioSection: React.FC = () => {
             </div>
 
             {isAdminUnlocked && (
-              <button
-                onClick={() => setIsAdminOpen(true)}
+              <a
+                href="/admin"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.history.pushState({}, '', '/admin');
+                  window.dispatchEvent(new PopStateEvent('popstate'));
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
                 className="bg-white/5 hover:bg-f1-red border border-white/10 hover:border-f1-red text-white font-f1 font-bold text-xs tracking-wider px-3 py-1.5 rounded flex items-center gap-1.5 transition"
-                title="Add New Project"
+                title="Buka Control Room Admin untuk Tambah/Kelola Proyek"
               >
                 <Plus size={14} />
-                <span>ADD</span>
-              </button>
+                <span>ADD PROYEK</span>
+              </a>
             )}
           </div>
         </div>

@@ -11,7 +11,7 @@ export const DEFAULT_PORTFOLIO_DATA: PortfolioData = {
     team: "TELKOM UNIVERSITY // SOFTWARE ENGINEERING",
     role: "ENGINEER ON SITE",
     photo: "assets/driver-portrait.png",
-    banner: "assets/driver-f1-banner.png",
+    banner: "assets/driver-f1-banner.webp",
     eyebrow: "PROFESSIONAL ENGINEERING & IT PORTFOLIO",
     quote: "Driven by problem solving for a better tomorrow.",
     bioSummary: "Software Engineering graduate specialized in high-performance web systems, IT infrastructure maintenance, database design, and visual media production.",

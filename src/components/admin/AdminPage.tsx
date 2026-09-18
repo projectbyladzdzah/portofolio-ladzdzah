@@ -127,8 +127,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
       try {
         showToast('Mengunggah foto portrait ke Supabase Storage...', 'warning');
         const url = await uploadImage(file, 'portraits', 800, 0.88);
-        setHeroForm(prev => ({ ...prev, photo: url }));
-        showToast('Foto portrait tersimpan di Supabase Storage! Klik SIMPAN PERUBAHAN.', 'success');
+        const updated = { ...heroForm, photo: url };
+        setHeroForm(updated);
+        updateHero(updated);
+        showToast('Foto portrait berhasil diunggah & langsung diterapkan!', 'success');
       } catch {
         showToast('Gagal memproses gambar.', 'error');
       }
@@ -141,8 +143,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
       try {
         showToast('Mengunggah banner ke Supabase Storage...', 'warning');
         const url = await uploadImage(file, 'banners', 1920, 0.88);
-        setHeroForm(prev => ({ ...prev, banner: url }));
-        showToast('Foto banner tersimpan di Supabase Storage! Klik SIMPAN PERUBAHAN.', 'success');
+        const updated = { ...heroForm, banner: url };
+        setHeroForm(updated);
+        updateHero(updated);
+        showToast('Foto banner berhasil diunggah & langsung diterapkan!', 'success');
       } catch {
         showToast('Gagal memproses banner.', 'error');
       }
@@ -520,52 +524,121 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
             {/* Photo Uploads */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
               <div>
-                <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">AVATAR / PORTRAIT PHOTO</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="font-f1 font-bold text-f1-gray tracking-wider block">AVATAR / PORTRAIT PHOTO</label>
+                  {heroForm.photo !== data.hero.photo && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        updateHero(heroForm);
+                        showToast('Foto portrait berhasil disimpan!', 'success');
+                      }}
+                      className="text-[10px] bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold px-2 py-0.5 rounded transition uppercase"
+                    >
+                      SIMPAN FOTO
+                    </button>
+                  )}
+                </div>
                 <div className="flex items-center gap-4 p-3 bg-white/5 border border-white/10 rounded">
                   <img
                     src={heroForm.photo || 'assets/driver-portrait.png'}
                     alt="Preview"
-                    className="w-16 h-16 object-cover rounded border border-white/20"
+                    onError={(e) => {
+                      if (!e.currentTarget.src.includes('driver-portrait.png')) {
+                        e.currentTarget.src = 'assets/driver-portrait.png';
+                      }
+                    }}
+                    className="w-16 h-16 object-cover rounded border border-white/20 shrink-0"
                   />
-                  <div className="space-y-1 flex-1">
+                  <div className="space-y-1.5 flex-1 min-w-0">
                     <input
                       type="file"
                       accept="image/*"
                       onChange={handleDriverPhotoUpload}
-                      className="text-xs text-f1-gray file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-f1-red file:text-white file:text-xs"
+                      className="text-xs text-f1-gray file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-f1-red file:text-white file:text-xs file:font-f1 file:font-bold file:cursor-pointer w-full"
                     />
-                    <input
-                      type="text"
-                      value={heroForm.photo}
-                      onChange={e => setHeroForm({ ...heroForm, photo: e.target.value })}
-                      placeholder="Atau URL gambar portrait..."
-                      className="w-full bg-[#181822] border border-white/10 px-2.5 py-1 rounded text-white text-xs outline-none"
-                    />
+                    <div className="flex gap-1.5">
+                      <input
+                        type="text"
+                        value={heroForm.photo || ''}
+                        onChange={e => setHeroForm({ ...heroForm, photo: e.target.value })}
+                        placeholder="Atau URL gambar portrait..."
+                        className="flex-1 bg-[#181822] border border-white/10 px-2.5 py-1 rounded text-white text-xs outline-none focus:border-f1-red"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          updateHero(heroForm);
+                          showToast('Foto portrait diperbarui!', 'success');
+                        }}
+                        className="bg-white/10 hover:bg-white/20 text-white px-2 py-1 rounded text-[11px] font-f1 font-bold transition whitespace-nowrap"
+                      >
+                        Terapkan
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
 
               <div>
-                <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">WIDESCREEN HERO BANNER</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="font-f1 font-bold text-f1-gray tracking-wider block">WIDESCREEN HERO BANNER</label>
+                  {heroForm.banner !== data.hero.banner && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        updateHero(heroForm);
+                        showToast('Banner berhasil disimpan!', 'success');
+                      }}
+                      className="text-[10px] bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold px-2 py-0.5 rounded transition uppercase"
+                    >
+                      SIMPAN BANNER
+                    </button>
+                  )}
+                </div>
                 <div className="space-y-2 p-3 bg-white/5 border border-white/10 rounded">
                   {heroForm.banner && (
-                    <div className="aspect-[21/8] w-full rounded overflow-hidden border border-white/20">
-                      <img src={heroForm.banner} alt="Banner Preview" className="w-full h-full object-cover" />
+                    <div className="aspect-[21/8] w-full rounded overflow-hidden border border-white/20 relative">
+                      <img
+                        src={heroForm.banner}
+                        alt="Banner Preview"
+                        onError={(e) => {
+                          if (!e.currentTarget.src.includes('driver-f1-banner.webp')) {
+                            e.currentTarget.src = 'assets/driver-f1-banner.webp';
+                          }
+                        }}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute bottom-1 right-1 bg-black/75 px-1.5 py-0.5 rounded text-[9px] font-mono text-white/80">
+                        {heroForm.banner.startsWith('http') ? '✓ Supabase CDN' : heroForm.banner.startsWith('data:') ? 'Lokal (Base64)' : 'Aset Lokal'}
+                      </div>
                     </div>
                   )}
                   <input
                     type="file"
                     accept="image/*"
                     onChange={handleDriverBannerUpload}
-                    className="text-xs text-f1-gray file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-f1-red file:text-white file:text-xs"
+                    className="text-xs text-f1-gray file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-f1-red file:text-white file:text-xs file:font-f1 file:font-bold file:cursor-pointer w-full"
                   />
-                  <input
-                    type="text"
-                    value={heroForm.banner || ''}
-                    onChange={e => setHeroForm({ ...heroForm, banner: e.target.value })}
-                    placeholder="Atau URL banner (assets/driver-f1-banner.webp)..."
-                    className="w-full bg-[#181822] border border-white/10 px-2.5 py-1 rounded text-white text-xs outline-none"
-                  />
+                  <div className="flex gap-1.5">
+                    <input
+                      type="text"
+                      value={heroForm.banner || ''}
+                      onChange={e => setHeroForm({ ...heroForm, banner: e.target.value })}
+                      placeholder="Atau URL banner (assets/driver-f1-banner.webp)..."
+                      className="flex-1 bg-[#181822] border border-white/10 px-2.5 py-1 rounded text-white text-xs outline-none focus:border-f1-red"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        updateHero(heroForm);
+                        showToast('Banner diperbarui & disimpan!', 'success');
+                      }}
+                      className="bg-white/10 hover:bg-white/20 text-white px-2.5 py-1 rounded text-[11px] font-f1 font-bold transition whitespace-nowrap"
+                    >
+                      Terapkan
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

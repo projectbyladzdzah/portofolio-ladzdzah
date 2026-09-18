@@ -5,7 +5,7 @@ import pbylLogo from '../assets/pbyl-logo.webp';
 import pbylLogoPng from '../assets/pbyl-logo.png';
 
 export const F1Header: React.FC = () => {
-  const { data } = usePortfolio();
+  const { data, isAdminUnlocked } = usePortfolio();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState('');
 
@@ -47,12 +47,27 @@ export const F1Header: React.FC = () => {
             </nav>
           </div>
 
-          {/* Right: Verified Badge & Mobile Toggle */}
-          <div className="flex items-center gap-4">
+          {/* Right: Verified Badge, Control Room Shortcut & Mobile Toggle */}
+          <div className="flex items-center gap-3 sm:gap-4">
             {/* Verified Professional Badge */}
             <div className="hidden sm:flex items-center justify-center px-2.5 h-6 rounded-full border border-white/30 text-[9px] font-f1 font-black text-white bg-white/5 tracking-wider">
               VERIFIED
             </div>
+
+            {isAdminUnlocked && (
+              <a
+                href="/admin"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.history.pushState({}, '', '/admin');
+                  window.dispatchEvent(new PopStateEvent('popstate'));
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded bg-f1-red hover:bg-f1-darkRed text-white text-[10px] font-f1 font-bold tracking-wider uppercase transition shadow-md"
+              >
+                <span>CONTROL ROOM</span>
+              </a>
+            )}
 
             {/* Mobile Toggle */}
             <button
@@ -70,8 +85,24 @@ export const F1Header: React.FC = () => {
           <div className="lg:hidden mt-3 pt-3 border-t border-white/10 flex flex-col space-y-1 font-f1 font-bold text-xs tracking-wider pb-2 bg-[#101017] -mx-4 px-4">
             <a href="#hero" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 text-white bg-white/5 rounded flex items-center justify-between">
               <span>PROFILE OVERVIEW</span>
-              <span className="text-f1-red text-[10px]">#16</span>
+              <span className="text-f1-red text-[10px]">#{data.hero.number}</span>
             </a>
+            {isAdminUnlocked && (
+              <a
+                href="/admin"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setMobileMenuOpen(false);
+                  window.history.pushState({}, '', '/admin');
+                  window.dispatchEvent(new PopStateEvent('popstate'));
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="px-3 py-2 text-f1-red bg-f1-red/10 border border-f1-red/30 rounded flex items-center justify-between"
+              >
+                <span>ADMIN CONTROL ROOM</span>
+                <span className="text-xs">⚙</span>
+              </a>
+            )}
             <a href="#statistics" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 text-f1-gray hover:text-white hover:bg-white/5 rounded transition">
               SKILLS & METRICS
             </a>

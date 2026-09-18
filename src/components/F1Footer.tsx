@@ -42,13 +42,24 @@ export const F1Footer: React.FC = () => {
           <span>
             © {new Date().getFullYear()} {data.hero.firstName}. ALL RIGHTS RESERVED.
           </span>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4">
             <span className="flex items-center gap-1">
               <Shield size={12} className="text-f1-red" />
               ENGINEERED FOR HIGH PERFORMANCE & MAXIMUM RELIABILITY
             </span>
             <span className="text-white/20">|</span>
-            <span className="text-white">v3.0 REACT & TAILWIND</span>
+            <a
+              href="/admin"
+              onClick={(e) => {
+                e.preventDefault();
+                window.history.pushState({}, '', '/admin');
+                window.dispatchEvent(new PopStateEvent('popstate'));
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="text-white/60 hover:text-f1-red transition font-mono tracking-widest text-[10px]"
+            >
+              CONTROL ROOM ⚙
+            </a>
           </div>
         </div>
       </div>

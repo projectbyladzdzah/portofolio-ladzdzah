@@ -7,7 +7,6 @@ export const DriverHero: React.FC = () => {
   const { hero } = data;
 
   const bannerImg = hero.banner || 'assets/driver-f1-banner.webp';
-  const isCustomUrl = Boolean(hero.banner && (hero.banner.startsWith('http') || hero.banner.startsWith('data:')));
 
   return (
     <section id="hero" className="bg-[#0b0b0e] text-white">
@@ -18,18 +17,19 @@ export const DriverHero: React.FC = () => {
       <div className="w-full relative overflow-hidden bg-[#50020f]">
         {/* Full-bleed Edge-to-Edge Container with exact 4K master aspect ratio (4058x1550) */}
         <div className="relative w-full aspect-[4058/1550] flex items-center justify-center overflow-hidden">
-          <picture className="w-full h-full block">
-            {!isCustomUrl && (
-              <source srcSet="assets/driver-f1-banner.webp" type="image/webp" />
-            )}
-            <img
-              src={bannerImg}
-              alt={`${hero.firstName} ${hero.lastName}`}
-              fetchPriority="high"
-              decoding="sync"
-              className="w-full h-full object-cover select-none pointer-events-none"
-            />
-          </picture>
+          <img
+            src={bannerImg}
+            alt={`${hero.firstName} ${hero.lastName}`}
+            fetchPriority="high"
+            decoding="sync"
+            onError={(e) => {
+              // Fallback to local default webp if custom URL fails to load
+              if (!e.currentTarget.src.includes('driver-f1-banner.webp')) {
+                e.currentTarget.src = 'assets/driver-f1-banner.webp';
+              }
+            }}
+            className="w-full h-full object-cover select-none pointer-events-none"
+          />
 
           {/* Desktop Overlay Action Buttons (Ferrari style on desktop) */}
           <div className="hidden sm:flex absolute bottom-4 sm:bottom-6 md:bottom-8 lg:bottom-10 left-6 sm:left-8 md:left-12 lg:left-16 items-center gap-3">
@@ -65,6 +65,71 @@ export const DriverHero: React.FC = () => {
         >
           CONTACT
         </a>
+      </div>
+
+      {/* ============================================================ */}
+      {/* OFFICIAL F1 DRIVER PROFILE BAR (NAME, NUMBER, ROLE, TEAM, AVATAR) */}
+      {/* ============================================================ */}
+      <div className="bg-[#121219] border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-5 sm:py-6">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-6">
+            {/* Left: Driver Avatar + Big Bold Name & Team */}
+            <div className="flex items-center gap-4 sm:gap-5 min-w-0">
+              {/* Driver Portrait Avatar */}
+              <div className="relative shrink-0">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-sm overflow-hidden border-2 border-f1-red shadow-lg bg-black/60">
+                  <img
+                    src={hero.photo || 'assets/driver-portrait.png'}
+                    alt={`${hero.firstName} ${hero.lastName}`}
+                    onError={(e) => {
+                      if (!e.currentTarget.src.includes('driver-portrait.png')) {
+                        e.currentTarget.src = 'assets/driver-portrait.png';
+                      }
+                    }}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                {/* Mini Driver Number Tag */}
+                <span className="absolute -bottom-1.5 -right-1.5 bg-f1-red text-white text-[10px] font-f1 font-black px-1.5 py-0.5 rounded-sm shadow border border-black leading-none">
+                  #{hero.number}
+                </span>
+              </div>
+
+              {/* Driver Titles & Name */}
+              <div className="space-y-0.5 min-w-0">
+                <div className="flex flex-wrap items-center gap-2 text-[10px] sm:text-xs font-f1 font-bold tracking-wider text-f1-gray uppercase">
+                  <span className="inline-flex items-center gap-1 text-white bg-white/10 px-2 py-0.5 rounded-sm">
+                    <span>{hero.flagEmoji}</span>
+                    <span>{hero.country}</span>
+                  </span>
+                  <span className="text-f1-red font-black">•</span>
+                  <span className="text-f1-red tracking-widest">{hero.role}</span>
+                </div>
+
+                <h1 className="text-xl sm:text-3xl md:text-4xl font-f1 font-black italic tracking-tight text-white uppercase leading-none truncate">
+                  <span className="text-white/80">{hero.firstName}</span>{' '}
+                  <span className="text-white">{hero.lastName}</span>
+                </h1>
+
+                <p className="text-xs sm:text-sm font-f1 font-bold text-f1-gray tracking-wider uppercase truncate">
+                  {hero.team}
+                </p>
+              </div>
+            </div>
+
+            {/* Right: Driver Quote & Short Bio Pill */}
+            {(hero.quote || hero.bioSummary) && (
+              <div className="hidden lg:block max-w-md bg-white/[0.03] border border-white/10 p-3 rounded-sm">
+                <p className="text-xs text-f1-lightGray font-sans italic leading-relaxed">
+                  "{hero.quote || hero.bioSummary}"
+                </p>
+                <span className="text-[10px] font-f1 font-bold text-f1-gray tracking-widest uppercase block mt-1 text-right">
+                  — DRIVER RADIO // TRANSMISSION READY
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* ============================================================ */}

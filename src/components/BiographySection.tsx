@@ -35,7 +35,7 @@ export const BiographySection: React.FC = () => {
               </p>
               <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs font-f1 font-bold tracking-wider text-f1-gray">
                 <span>{biography.quoteAuthor}</span>
-                <span className="text-f1-red">#16 SPEC</span>
+                <span className="text-f1-red">#{data.hero.number} SPEC</span>
               </div>
             </div>
 
@@ -46,22 +46,27 @@ export const BiographySection: React.FC = () => {
                 <span>ACTIVE CAPABILITIES</span>
               </div>
               <ul className="space-y-2 text-xs font-sans text-f1-gray">
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 size={14} className="text-f1-yellow flex-shrink-0" />
-                  <span>Full-Stack Web Engineering & Modern Frameworks</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 size={14} className="text-f1-yellow flex-shrink-0" />
-                  <span>Enterprise IT Support & Network Troubleshooting</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 size={14} className="text-f1-yellow flex-shrink-0" />
-                  <span>Relational Database Management & SQL Optimization</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 size={14} className="text-f1-yellow flex-shrink-0" />
-                  <span>High-Speed Visual Production & Digital Media</span>
-                </li>
+                {(data.hero.telemetryBars && data.hero.telemetryBars.length > 0
+                  ? data.hero.telemetryBars.map((bar, bIdx) => (
+                      <li key={bIdx} className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 truncate">
+                          <CheckCircle2 size={14} className="text-[#00ff66] flex-shrink-0" />
+                          <span className="truncate">{bar.label}</span>
+                        </div>
+                        <span className="font-mono text-[10px] text-f1-gray shrink-0">{bar.percent}%</span>
+                      </li>
+                    ))
+                  : [
+                      'Full-Stack Web Engineering & Modern Frameworks',
+                      'Enterprise IT Support & Network Troubleshooting',
+                      'Relational Database Management & SQL Optimization',
+                      'High-Speed Visual Production & Digital Media'
+                    ].map((cap, cIdx) => (
+                      <li key={cIdx} className="flex items-center gap-2">
+                        <CheckCircle2 size={14} className="text-[#00ff66] flex-shrink-0" />
+                        <span>{cap}</span>
+                      </li>
+                    )))}
               </ul>
             </div>
           </div>
