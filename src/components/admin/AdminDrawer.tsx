@@ -10,7 +10,9 @@ import {
   Upload,
   LogOut,
   Database,
-  Gauge
+  Gauge,
+  ChevronUp,
+  ChevronDown
 } from 'lucide-react';
 
 export const AdminDrawer: React.FC = () => {
@@ -71,17 +73,86 @@ export const AdminDrawer: React.FC = () => {
     }
   };
 
+  const [newBannerUrl, setNewBannerUrl] = useState('');
+
   const handleDriverBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     try {
       showToast('Mengunggah banner ke Supabase Storage...', 'warning');
       const url = await uploadImage(file, 'banners', 1920, 0.88);
-      setHeroForm(prev => ({ ...prev, banner: url }));
-      showToast('Foto banner tersimpan di Supabase Storage!', 'success');
+      const currentBanners = heroForm.banners && heroForm.banners.length > 0
+        ? [...heroForm.banners]
+        : [heroForm.banner || 'assets/driver-f1-banner.webp'];
+      const updatedBanners = [...currentBanners, url];
+      const updated = {
+        ...heroForm,
+        banner: updatedBanners[0],
+        banners: updatedBanners
+      };
+      setHeroForm(updated);
+      updateHero(updated);
+      showToast('Foto banner tersimpan di Supabase Storage & ditambahkan ke slider!', 'success');
+      e.target.value = '';
     } catch {
       showToast('Gagal memproses gambar banner', 'error');
     }
+  };
+
+  const handleRemoveBanner = (indexToRemove: number) => {
+    const currentBanners = heroForm.banners && heroForm.banners.length > 0
+      ? [...heroForm.banners]
+      : [heroForm.banner || 'assets/driver-f1-banner.webp'];
+    if (currentBanners.length <= 1) {
+      showToast('Minimal harus ada 1 banner.', 'warning');
+      return;
+    }
+    const updatedBanners = currentBanners.filter((_, idx) => idx !== indexToRemove);
+    const updated = {
+      ...heroForm,
+      banner: updatedBanners[0],
+      banners: updatedBanners
+    };
+    setHeroForm(updated);
+    updateHero(updated);
+    showToast('Banner berhasil dihapus.', 'success');
+  };
+
+  const handleMoveBanner = (index: number, direction: 'up' | 'down') => {
+    const currentBanners = heroForm.banners && heroForm.banners.length > 0
+      ? [...heroForm.banners]
+      : [heroForm.banner || 'assets/driver-f1-banner.webp'];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= currentBanners.length) return;
+    const reordered = [...currentBanners];
+    const temp = reordered[index];
+    reordered[index] = reordered[targetIndex];
+    reordered[targetIndex] = temp;
+    const updated = {
+      ...heroForm,
+      banner: reordered[0],
+      banners: reordered
+    };
+    setHeroForm(updated);
+    updateHero(updated);
+    showToast('Urutan banner diperbarui.', 'success');
+  };
+
+  const handleAddBannerUrl = () => {
+    if (!newBannerUrl.trim()) return;
+    const currentBanners = heroForm.banners && heroForm.banners.length > 0
+      ? [...heroForm.banners]
+      : [heroForm.banner || 'assets/driver-f1-banner.webp'];
+    const updatedBanners = [...currentBanners, newBannerUrl.trim()];
+    const updated = {
+      ...heroForm,
+      banner: updatedBanners[0],
+      banners: updatedBanners
+    };
+    setHeroForm(updated);
+    updateHero(updated);
+    setNewBannerUrl('');
+    showToast('Banner baru ditambahkan ke slider!', 'success');
   };
 
   const handleHeroSubmit = (e: React.FormEvent) => {
@@ -372,32 +443,107 @@ export const AdminDrawer: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Widescreen Banner Upload */}
+                {/* Widescreen Banners Slider Upload */}
                 <div>
-                  <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">
-                    WIDESCREEN HERO BANNER (FOTO UTAMA)
-                  </label>
-                  <div className="space-y-2 p-3 bg-white/5 border border-white/10 rounded">
-                    {heroForm.banner && (
-                      <div className="aspect-[21/8] w-full rounded overflow-hidden border border-white/20">
-                        <img src={heroForm.banner} alt="Banner Preview" className="w-full h-full object-cover" />
-                      </div>
-                    )}
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="font-f1 font-bold text-f1-gray tracking-wider block">
+                      WIDESCREEN HERO BANNERS (MULTI-BANNER)
+                    </label>
+                    <span className="text-[9px] bg-f1-red/20 text-f1-red border border-f1-red/40 px-1.5 py-0.2 rounded font-f1 font-bold">
+                      {((heroForm.banners && heroForm.banners.length > 0) ? heroForm.banners : [heroForm.banner || 'assets/driver-f1-banner.webp']).length} Banner
+                    </span>
+                  </div>
+
+                  <div className="space-y-3 p-3 bg-white/5 border border-white/10 rounded">
+                    {/* Banners list */}
+                    <div className="space-y-2">
+                      {((heroForm.banners && heroForm.banners.length > 0) ? heroForm.banners : [heroForm.banner || 'assets/driver-f1-banner.webp']).map((bannerUrl, bIdx, arr) => (
+                        <div key={bIdx} className="bg-[#12121a] border border-white/10 p-2 rounded flex items-center gap-2.5">
+                          <div className="w-20 aspect-[21/8] rounded overflow-hidden border border-white/15 shrink-0 bg-black relative">
+                            <img
+                              src={bannerUrl}
+                              alt={`Banner ${bIdx + 1}`}
+                              onError={(e) => {
+                                if (!e.currentTarget.src.includes('driver-f1-banner.webp')) {
+                                  e.currentTarget.src = 'assets/driver-f1-banner.webp';
+                                }
+                              }}
+                              className="w-full h-full object-cover"
+                            />
+                            <span className="absolute top-0.5 left-0.5 bg-black/80 text-[8px] font-f1 font-black text-f1-red px-1 rounded">
+                              #{bIdx + 1}
+                            </span>
+                          </div>
+
+                          <div className="flex-1 min-w-0">
+                            <span className="text-[10px] font-f1 font-bold text-white block uppercase truncate">
+                              {bIdx === 0 ? '★ Utama' : `Slide #${bIdx + 1}`}
+                            </span>
+                            <span className="text-[9px] text-f1-gray block truncate font-mono">
+                              {bannerUrl}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-1 shrink-0">
+                            <button
+                              type="button"
+                              disabled={bIdx === 0}
+                              onClick={() => handleMoveBanner(bIdx, 'up')}
+                              className="p-1 rounded bg-white/5 hover:bg-white/15 text-white disabled:opacity-30"
+                              title="Ke Atas"
+                            >
+                              <ChevronUp size={12} />
+                            </button>
+                            <button
+                              type="button"
+                              disabled={bIdx === arr.length - 1}
+                              onClick={() => handleMoveBanner(bIdx, 'down')}
+                              className="p-1 rounded bg-white/5 hover:bg-white/15 text-white disabled:opacity-30"
+                              title="Ke Bawah"
+                            >
+                              <ChevronDown size={12} />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveBanner(bIdx)}
+                              className="p-1 rounded bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white"
+                              title="Hapus"
+                            >
+                              <Trash2 size={12} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Add banner controls */}
+                    <div className="pt-2 border-t border-white/10 space-y-1.5">
+                      <span className="text-[9px] font-f1 font-bold text-f1-gray uppercase block">
+                        + TAMBAH BANNER BARU
+                      </span>
                       <input
                         type="file"
                         accept="image/*"
                         onChange={handleDriverBannerUpload}
-                        className="text-xs text-f1-gray file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-f1-red file:text-white file:text-xs"
+                        className="text-xs text-f1-gray file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-f1-red file:text-white file:text-xs w-full"
                       />
+                      <div className="flex gap-1 pt-0.5">
+                        <input
+                          type="text"
+                          value={newBannerUrl}
+                          onChange={e => setNewBannerUrl(e.target.value)}
+                          placeholder="Atau URL gambar banner..."
+                          className="flex-1 bg-[#181822] border border-white/10 px-2 py-1 rounded text-white text-xs outline-none"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleAddBannerUrl}
+                          className="bg-f1-red hover:bg-f1-darkRed text-white px-2.5 py-1 rounded text-xs font-f1 font-bold transition whitespace-nowrap"
+                        >
+                          + Tambah
+                        </button>
+                      </div>
                     </div>
-                    <input
-                      type="text"
-                      value={heroForm.banner || ''}
-                      onChange={e => setHeroForm({ ...heroForm, banner: e.target.value })}
-                      placeholder="Atau URL banner widescreen (assets/driver-f1-banner.png)..."
-                      className="w-full bg-[#181822] border border-white/10 px-2.5 py-1 rounded text-white text-xs outline-none"
-                    />
                   </div>
                 </div>
 

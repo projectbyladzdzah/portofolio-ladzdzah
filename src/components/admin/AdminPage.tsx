@@ -16,7 +16,9 @@ import {
   Upload,
   Gauge,
   Cloud,
-  UploadCloud
+  UploadCloud,
+  ChevronUp,
+  ChevronDown
 } from 'lucide-react';
 import { isSupabaseConfigured } from '../../lib/supabase';
 import pbylLogo from '../../assets/pbyl-logo.webp';
@@ -137,20 +139,87 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
     }
   };
 
+  const [newBannerUrl, setNewBannerUrl] = useState('');
+
   const handleDriverBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       try {
         showToast('Mengunggah banner ke Supabase Storage...', 'warning');
         const url = await uploadImage(file, 'banners', 1920, 0.88);
-        const updated = { ...heroForm, banner: url };
+        const currentBanners = heroForm.banners && heroForm.banners.length > 0
+          ? [...heroForm.banners]
+          : [heroForm.banner || 'assets/driver-f1-banner.webp'];
+        const updatedBanners = [...currentBanners, url];
+        const updated = { 
+          ...heroForm, 
+          banner: updatedBanners[0], 
+          banners: updatedBanners 
+        };
         setHeroForm(updated);
         updateHero(updated);
-        showToast('Foto banner berhasil diunggah & langsung diterapkan!', 'success');
+        showToast('Foto banner berhasil diunggah & ditambahkan ke slider!', 'success');
+        e.target.value = '';
       } catch {
         showToast('Gagal memproses banner.', 'error');
       }
     }
+  };
+
+  const handleRemoveBanner = (indexToRemove: number) => {
+    const currentBanners = heroForm.banners && heroForm.banners.length > 0
+      ? [...heroForm.banners]
+      : [heroForm.banner || 'assets/driver-f1-banner.webp'];
+    if (currentBanners.length <= 1) {
+      showToast('Minimal harus ada 1 banner dalam slider.', 'warning');
+      return;
+    }
+    const updatedBanners = currentBanners.filter((_, idx) => idx !== indexToRemove);
+    const updated = {
+      ...heroForm,
+      banner: updatedBanners[0],
+      banners: updatedBanners
+    };
+    setHeroForm(updated);
+    updateHero(updated);
+    showToast('Banner berhasil dihapus dari slider.', 'success');
+  };
+
+  const handleMoveBanner = (index: number, direction: 'up' | 'down') => {
+    const currentBanners = heroForm.banners && heroForm.banners.length > 0
+      ? [...heroForm.banners]
+      : [heroForm.banner || 'assets/driver-f1-banner.webp'];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= currentBanners.length) return;
+    const reordered = [...currentBanners];
+    const temp = reordered[index];
+    reordered[index] = reordered[targetIndex];
+    reordered[targetIndex] = temp;
+    const updated = {
+      ...heroForm,
+      banner: reordered[0],
+      banners: reordered
+    };
+    setHeroForm(updated);
+    updateHero(updated);
+    showToast('Urutan banner diperbarui!', 'success');
+  };
+
+  const handleAddBannerUrl = () => {
+    if (!newBannerUrl.trim()) return;
+    const currentBanners = heroForm.banners && heroForm.banners.length > 0
+      ? [...heroForm.banners]
+      : [heroForm.banner || 'assets/driver-f1-banner.webp'];
+    const updatedBanners = [...currentBanners, newBannerUrl.trim()];
+    const updated = {
+      ...heroForm,
+      banner: updatedBanners[0],
+      banners: updatedBanners
+    };
+    setHeroForm(updated);
+    updateHero(updated);
+    setNewBannerUrl('');
+    showToast('Banner baru berhasil ditambahkan ke slider!', 'success');
   };
 
   const handleSyncAssets = async () => {
@@ -581,63 +650,123 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
               </div>
 
               <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="font-f1 font-bold text-f1-gray tracking-wider block">WIDESCREEN HERO BANNER</label>
-                  {heroForm.banner !== data.hero.banner && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        updateHero(heroForm);
-                        showToast('Banner berhasil disimpan!', 'success');
-                      }}
-                      className="text-[10px] bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold px-2 py-0.5 rounded transition uppercase"
-                    >
-                      SIMPAN BANNER
-                    </button>
-                  )}
+                <div className="flex items-center justify-between mb-2">
+                  <div>
+                    <label className="font-f1 font-bold text-f1-gray tracking-wider block">
+                      WIDESCREEN HERO BANNERS (MULTI-BANNER SLIDER)
+                    </label>
+                    <span className="text-[10px] text-f1-lightGray block font-sans">
+                      Banner dapat digeser ke kiri/kanan oleh pengunjung. Banner #1 adalah banner awal yang tampil.
+                    </span>
+                  </div>
+                  <span className="text-[10px] bg-f1-red/20 text-f1-red border border-f1-red/40 px-2 py-0.5 rounded font-f1 font-bold">
+                    {((heroForm.banners && heroForm.banners.length > 0) ? heroForm.banners : [heroForm.banner || 'assets/driver-f1-banner.webp']).length} Banner
+                  </span>
                 </div>
-                <div className="space-y-2 p-3 bg-white/5 border border-white/10 rounded">
-                  {heroForm.banner && (
-                    <div className="aspect-[21/8] w-full rounded overflow-hidden border border-white/20 relative">
-                      <img
-                        src={heroForm.banner}
-                        alt="Banner Preview"
-                        onError={(e) => {
-                          if (!e.currentTarget.src.includes('driver-f1-banner.webp')) {
-                            e.currentTarget.src = 'assets/driver-f1-banner.webp';
-                          }
-                        }}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute bottom-1 right-1 bg-black/75 px-1.5 py-0.5 rounded text-[9px] font-mono text-white/80">
-                        {heroForm.banner.startsWith('http') ? '✓ Supabase CDN' : heroForm.banner.startsWith('data:') ? 'Lokal (Base64)' : 'Aset Lokal'}
+
+                <div className="space-y-3 p-3.5 bg-white/5 border border-white/10 rounded">
+                  {/* List of current banners */}
+                  <div className="space-y-2.5">
+                    {((heroForm.banners && heroForm.banners.length > 0) ? heroForm.banners : [heroForm.banner || 'assets/driver-f1-banner.webp']).map((bannerUrl, bIdx, arr) => (
+                      <div key={bIdx} className="bg-[#12121a] border border-white/10 p-2.5 rounded flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                        {/* Thumbnail */}
+                        <div className="w-full sm:w-32 aspect-[21/8] sm:aspect-[16/9] rounded overflow-hidden border border-white/15 shrink-0 relative bg-black/50">
+                          <img
+                            src={bannerUrl}
+                            alt={`Banner ${bIdx + 1}`}
+                            onError={(e) => {
+                              if (!e.currentTarget.src.includes('driver-f1-banner.webp')) {
+                                e.currentTarget.src = 'assets/driver-f1-banner.webp';
+                              }
+                            }}
+                            className="w-full h-full object-cover"
+                          />
+                          <span className="absolute top-1 left-1 bg-black/80 px-1 py-0.2 rounded text-[9px] font-f1 font-black text-f1-red">
+                            #{bIdx + 1}
+                          </span>
+                        </div>
+
+                        {/* Banner Info */}
+                        <div className="flex-1 min-w-0 space-y-1">
+                          <div className="flex items-center gap-2">
+                            <span className="text-[11px] font-f1 font-bold text-white uppercase">
+                              {bIdx === 0 ? '★ Banner Utama (#1)' : `Banner Slide #${bIdx + 1}`}
+                            </span>
+                            <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-white/10 text-f1-gray">
+                              {bannerUrl.startsWith('http') ? 'CDN Supabase' : bannerUrl.startsWith('data:') ? 'Base64' : 'Aset Lokal'}
+                            </span>
+                          </div>
+                          <p className="text-[10px] text-f1-gray truncate font-mono" title={bannerUrl}>
+                            {bannerUrl}
+                          </p>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
+                          <button
+                            type="button"
+                            disabled={bIdx === 0}
+                            onClick={() => handleMoveBanner(bIdx, 'up')}
+                            title="Pindah ke Atas (Sebelumnya)"
+                            className="p-1.5 rounded bg-white/5 hover:bg-white/15 text-white disabled:opacity-30 disabled:cursor-not-allowed transition"
+                          >
+                            <ChevronUp size={14} />
+                          </button>
+                          <button
+                            type="button"
+                            disabled={bIdx === arr.length - 1}
+                            onClick={() => handleMoveBanner(bIdx, 'down')}
+                            title="Pindah ke Bawah (Berikutnya)"
+                            className="p-1.5 rounded bg-white/5 hover:bg-white/15 text-white disabled:opacity-30 disabled:cursor-not-allowed transition"
+                          >
+                            <ChevronDown size={14} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveBanner(bIdx)}
+                            title="Hapus Banner ini"
+                            className="p-1.5 rounded bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white transition ml-1"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
                       </div>
+                    ))}
+                  </div>
+
+                  {/* Add New Banner Controls */}
+                  <div className="pt-2 border-t border-white/10 space-y-2">
+                    <span className="text-[10px] font-f1 font-bold text-f1-gray tracking-wider uppercase block">
+                      + TAMBAH BANNER BARU KE SLIDER
+                    </span>
+                    
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] text-f1-lightGray block">Unggah Gambar (Format JPG/PNG/WebP):</label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleDriverBannerUpload}
+                        className="text-xs text-f1-gray file:mr-2 file:py-1.5 file:px-3 file:rounded file:border-0 file:bg-f1-red file:text-white file:text-xs file:font-f1 file:font-bold file:cursor-pointer w-full"
+                      />
                     </div>
-                  )}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleDriverBannerUpload}
-                    className="text-xs text-f1-gray file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-f1-red file:text-white file:text-xs file:font-f1 file:font-bold file:cursor-pointer w-full"
-                  />
-                  <div className="flex gap-1.5">
-                    <input
-                      type="text"
-                      value={heroForm.banner || ''}
-                      onChange={e => setHeroForm({ ...heroForm, banner: e.target.value })}
-                      placeholder="Atau URL banner (assets/driver-f1-banner.webp)..."
-                      className="flex-1 bg-[#181822] border border-white/10 px-2.5 py-1 rounded text-white text-xs outline-none focus:border-f1-red"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        updateHero(heroForm);
-                        showToast('Banner diperbarui & disimpan!', 'success');
-                      }}
-                      className="bg-white/10 hover:bg-white/20 text-white px-2.5 py-1 rounded text-[11px] font-f1 font-bold transition whitespace-nowrap"
-                    >
-                      Terapkan
-                    </button>
+
+                    <div className="flex gap-1.5 pt-1">
+                      <input
+                        type="text"
+                        value={newBannerUrl}
+                        onChange={e => setNewBannerUrl(e.target.value)}
+                        placeholder="Atau masukkan URL gambar banner (https://...)..."
+                        className="flex-1 bg-[#181822] border border-white/10 px-2.5 py-1.5 rounded text-white text-xs outline-none focus:border-f1-red"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddBannerUrl}
+                        className="bg-f1-red hover:bg-f1-darkRed text-white px-3 py-1.5 rounded text-xs font-f1 font-bold transition whitespace-nowrap flex items-center gap-1"
+                      >
+                        <Plus size={13} />
+                        <span>Tambah</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

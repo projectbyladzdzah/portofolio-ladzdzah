@@ -286,6 +286,12 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         if (leanData.hero?.banner?.startsWith('data:')) {
           leanData.hero.banner = 'assets/driver-f1-banner.webp';
         }
+        if (Array.isArray(leanData.hero?.banners)) {
+          leanData.hero.banners = leanData.hero.banners.filter((b: string) => !b.startsWith('data:'));
+          if (leanData.hero.banners.length === 0) {
+            leanData.hero.banners = ['assets/driver-f1-banner.webp'];
+          }
+        }
         if (leanData.hero?.photo?.startsWith('data:')) {
           leanData.hero.photo = 'assets/driver-portrait.png';
         }

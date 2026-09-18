@@ -1,38 +1,171 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { usePortfolio } from '../context/PortfolioContext';
-import { Gauge, ArrowUpRight } from 'lucide-react';
+import { Gauge, ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export const DriverHero: React.FC = () => {
   const { data, setActiveAwardModal } = usePortfolio();
   const { hero } = data;
 
-  const bannerImg = hero.banner || 'assets/driver-f1-banner.webp';
+  // Resolve banners array (fallback safely to hero.banner or default asset)
+  const banners: string[] = (hero.banners && hero.banners.length > 0)
+    ? hero.banners
+    : [hero.banner || 'assets/driver-f1-banner.webp'];
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [touchDeltaX, setTouchDeltaX] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStartX, setDragStartX] = useState(0);
+  const [dragDeltaX, setDragDeltaX] = useState(0);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const minSwipeDistance = 45;
+
+  // Keep index within bounds if banners list changes
+  useEffect(() => {
+    if (currentIndex >= banners.length) {
+      setCurrentIndex(0);
+    }
+  }, [banners.length, currentIndex]);
+
+  const prevSlide = useCallback(() => {
+    setCurrentIndex((prev) => (prev === 0 ? banners.length - 1 : prev - 1));
+  }, [banners.length]);
+
+  const nextSlide = useCallback(() => {
+    setCurrentIndex((prev) => (prev === banners.length - 1 ? 0 : prev + 1));
+  }, [banners.length]);
+
+  const goToSlide = (idx: number) => {
+    setCurrentIndex(idx);
+  };
+
+  // Autoplay (5.5 seconds per slide, pauses on hover/drag)
+  useEffect(() => {
+    if (banners.length <= 1 || isPaused || isDragging) return;
+    const timer = setInterval(() => {
+      nextSlide();
+    }, 5500);
+    return () => clearInterval(timer);
+  }, [banners.length, isPaused, isDragging, nextSlide]);
+
+  // Touch Swipe Handlers (Mobile / Tablet)
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.targetTouches[0].clientX);
+    setTouchDeltaX(0);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartX === null) return;
+    const currentX = e.targetTouches[0].clientX;
+    setTouchDeltaX(currentX - touchStartX);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX === null) return;
+    if (touchDeltaX < -minSwipeDistance) {
+      nextSlide();
+    } else if (touchDeltaX > minSwipeDistance) {
+      prevSlide();
+    }
+    setTouchStartX(null);
+    setTouchDeltaX(0);
+  };
+
+  // Mouse Drag Handlers (Desktop click & swipe)
+  const handleMouseDown = (e: React.MouseEvent) => {
+    // Only drag with primary left button
+    if (e.button !== 0 || banners.length <= 1) return;
+    setIsDragging(true);
+    setDragStartX(e.clientX);
+    setDragDeltaX(0);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    setDragDeltaX(e.clientX - dragStartX);
+  };
+
+  const handleMouseUp = () => {
+    if (!isDragging) return;
+    if (dragDeltaX < -minSwipeDistance) {
+      nextSlide();
+    } else if (dragDeltaX > minSwipeDistance) {
+      prevSlide();
+    }
+    setIsDragging(false);
+    setDragDeltaX(0);
+  };
+
+  const handleMouseLeave = () => {
+    if (isDragging) {
+      if (dragDeltaX < -minSwipeDistance) {
+        nextSlide();
+      } else if (dragDeltaX > minSwipeDistance) {
+        prevSlide();
+      }
+      setIsDragging(false);
+      setDragDeltaX(0);
+    }
+    setIsPaused(false);
+  };
 
   return (
     <section id="hero" className="bg-[#0b0b0e] text-white">
       {/* ============================================================ */}
-      {/* THE OFFICIAL F1 FULL-WIDTH RED DRIVER BANNER (CHARLES LECLERC STYLE) */}
+      {/* THE OFFICIAL F1 FULL-WIDTH RED DRIVER BANNER (SWIPEABLE SLIDER) */}
       {/* Full width edge-to-edge from left edge to right edge of screen */}
       {/* ============================================================ */}
-      <div className="w-full relative overflow-hidden bg-[#50020f]">
+      <div 
+        ref={containerRef}
+        className="w-full relative overflow-hidden bg-[#50020f] select-none group"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={handleMouseLeave}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        style={{ touchAction: 'pan-y' }}
+      >
         {/* Full-bleed Edge-to-Edge Container with exact 4K master aspect ratio (4058x1550) */}
-        <div className="relative w-full aspect-[4058/1550] flex items-center justify-center overflow-hidden">
-          <img
-            src={bannerImg}
-            alt={`${hero.firstName} ${hero.lastName}`}
-            fetchPriority="high"
-            decoding="sync"
-            onError={(e) => {
-              // Fallback to local default webp if custom URL fails to load
-              if (!e.currentTarget.src.includes('driver-f1-banner.webp')) {
-                e.currentTarget.src = 'assets/driver-f1-banner.webp';
-              }
+        <div className="relative w-full aspect-[4058/1550] overflow-hidden">
+          {/* Slides Track */}
+          <div 
+            className={`flex w-full h-full ${isDragging ? '' : 'transition-transform duration-500 ease-out'}`}
+            style={{
+              transform: `translateX(calc(-${currentIndex * 100}% + ${isDragging ? dragDeltaX : touchDeltaX}px))`,
+              cursor: banners.length > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default'
             }}
-            className="w-full h-full object-cover select-none pointer-events-none"
-          />
+          >
+            {banners.map((imgUrl, idx) => (
+              <div 
+                key={idx} 
+                className="w-full h-full shrink-0 relative flex items-center justify-center overflow-hidden"
+              >
+                <img
+                  src={imgUrl}
+                  alt={`${hero.firstName} ${hero.lastName} - Banner ${idx + 1}`}
+                  fetchPriority={idx === 0 ? 'high' : 'auto'}
+                  loading={idx === 0 ? 'eager' : 'lazy'}
+                  decoding="sync"
+                  onError={(e) => {
+                    // Fallback to local default webp if custom URL fails to load
+                    if (!e.currentTarget.src.includes('driver-f1-banner.webp')) {
+                      e.currentTarget.src = 'assets/driver-f1-banner.webp';
+                    }
+                  }}
+                  className="w-full h-full object-cover select-none pointer-events-none"
+                  draggable={false}
+                />
+              </div>
+            ))}
+          </div>
 
           {/* Desktop Overlay Action Buttons (Ferrari style on desktop) */}
-          <div className="hidden sm:flex absolute bottom-4 sm:bottom-6 md:bottom-8 lg:bottom-10 left-6 sm:left-8 md:left-12 lg:left-16 items-center gap-3">
+          <div className="hidden sm:flex absolute bottom-4 sm:bottom-6 md:bottom-8 lg:bottom-10 left-6 sm:left-8 md:left-12 lg:left-16 items-center gap-3 z-10 pointer-events-auto">
             <a
               href="#portfolio"
               className="bg-black/60 hover:bg-white text-white hover:text-black border-2 border-white rounded-full px-5 sm:px-7 py-1.5 sm:py-2 text-xs sm:text-sm font-f1 font-bold tracking-wider transition-all duration-300 shadow-xl flex items-center gap-2 backdrop-blur-sm"
@@ -47,6 +180,60 @@ export const DriverHero: React.FC = () => {
               Get In Touch
             </a>
           </div>
+
+          {/* Navigation Controls (Visible when more than 1 banner) */}
+          {banners.length > 1 && (
+            <>
+              {/* Prev Button */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  prevSlide();
+                }}
+                aria-label="Previous Banner"
+                className="absolute left-2 sm:left-4 md:left-6 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-black/60 hover:bg-f1-red text-white flex items-center justify-center transition-all duration-300 backdrop-blur-md border border-white/20 hover:scale-110 shadow-2xl opacity-90 sm:opacity-0 sm:group-hover:opacity-100"
+              >
+                <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 -ml-0.5" />
+              </button>
+
+              {/* Next Button */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  nextSlide();
+                }}
+                aria-label="Next Banner"
+                className="absolute right-2 sm:right-4 md:right-6 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-black/60 hover:bg-f1-red text-white flex items-center justify-center transition-all duration-300 backdrop-blur-md border border-white/20 hover:scale-110 shadow-2xl opacity-90 sm:opacity-0 sm:group-hover:opacity-100"
+              >
+                <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 -mr-0.5" />
+              </button>
+
+              {/* F1 Sector / Slide Dots Indicators */}
+              <div className="absolute bottom-3 sm:bottom-4 md:bottom-6 right-3 sm:right-6 md:right-10 z-20 flex items-center gap-1.5 sm:gap-2 bg-black/70 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border border-white/15 backdrop-blur-md shadow-xl pointer-events-auto">
+                <span className="text-[9px] sm:text-[10px] font-f1 font-black text-white/90 tracking-widest mr-1 uppercase">
+                  {currentIndex + 1}/{banners.length}
+                </span>
+                {banners.map((_, dotIdx) => (
+                  <button
+                    key={dotIdx}
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      goToSlide(dotIdx);
+                    }}
+                    aria-label={`Lihat banner ${dotIdx + 1}`}
+                    className={`h-1.5 sm:h-2 rounded-full transition-all duration-300 ${
+                      currentIndex === dotIdx
+                        ? 'w-5 sm:w-7 bg-f1-red shadow-md shadow-f1-red/50'
+                        : 'w-1.5 sm:w-2 bg-white/40 hover:bg-white/80'
+                    }`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </div>
 
