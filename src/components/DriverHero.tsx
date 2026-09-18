@@ -74,7 +74,7 @@ export const DriverHero: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-5 sm:py-6">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-6">
             {/* Left: Driver Avatar + Big Bold Name & Team */}
-            <div className="flex items-center gap-4 sm:gap-5 min-w-0">
+            <div className="flex items-center gap-4 sm:gap-5 flex-1 min-w-0">
               {/* Driver Portrait Avatar */}
               <div className="relative shrink-0">
                 <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-sm overflow-hidden border-2 border-f1-red shadow-lg bg-black/60">
@@ -96,7 +96,7 @@ export const DriverHero: React.FC = () => {
               </div>
 
               {/* Driver Titles & Name */}
-              <div className="space-y-0.5 min-w-0">
+              <div className="space-y-1 flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2 text-[10px] sm:text-xs font-f1 font-bold tracking-wider text-f1-gray uppercase">
                   <span className="inline-flex items-center gap-1 text-white bg-white/10 px-2 py-0.5 rounded-sm">
                     <span>{hero.flagEmoji}</span>
@@ -106,12 +106,12 @@ export const DriverHero: React.FC = () => {
                   <span className="text-f1-red tracking-widest">{hero.role}</span>
                 </div>
 
-                <h1 className="text-xl sm:text-3xl md:text-4xl font-f1 font-black italic tracking-tight text-white uppercase leading-none truncate">
+                <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-f1 font-black italic tracking-tight text-white uppercase leading-normal py-0.5 pr-4 break-words">
                   <span className="text-white/80">{hero.firstName}</span>{' '}
                   <span className="text-white">{hero.lastName}</span>
                 </h1>
 
-                <p className="text-xs sm:text-sm font-f1 font-bold text-f1-gray tracking-wider uppercase truncate">
+                <p className="text-xs sm:text-sm font-f1 font-bold text-f1-gray tracking-wider uppercase">
                   {hero.team}
                 </p>
               </div>
@@ -119,7 +119,7 @@ export const DriverHero: React.FC = () => {
 
             {/* Right: Driver Quote & Short Bio Pill */}
             {(hero.quote || hero.bioSummary) && (
-              <div className="hidden lg:block max-w-md bg-white/[0.03] border border-white/10 p-3 rounded-sm">
+              <div className="hidden xl:block max-w-sm shrink-0 bg-white/[0.03] border border-white/10 p-3 rounded-sm ml-4">
                 <p className="text-xs text-f1-lightGray font-sans italic leading-relaxed">
                   "{hero.quote || hero.bioSummary}"
                 </p>
