@@ -209,6 +209,9 @@ export const PortfolioSection: React.FC = () => {
                     }
                     title={project.title}
                     aspectRatio="aspect-[16/10]"
+                    defaultFit="contain"
+                    showFitToggle={false}
+                    allowZoom={false}
                     showCounter={true}
                     onImageClick={() => setActiveProjectModal(project)}
                   />

@@ -31,7 +31,7 @@ export const ProjectModal: React.FC = () => {
       onClick={() => setActiveProjectModal(null)}
     >
       <div
-        className="bg-[#121218] border border-white/20 rounded-md w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl shadow-f1-red/20 text-white"
+        className="bg-[#121218] border border-white/20 rounded-md w-full max-w-4xl lg:max-w-5xl max-h-[92vh] overflow-y-auto shadow-2xl shadow-f1-red/20 text-white"
         onClick={e => e.stopPropagation()}
       >
         {/* Modal Header */}
@@ -57,13 +57,16 @@ export const ProjectModal: React.FC = () => {
         {/* Modal Body */}
         <div className="p-6 space-y-6">
           {/* Image Banner Slider with Thumbnails */}
-          <div className="w-full rounded-sm overflow-hidden border border-white/10 bg-[#0c0c12]">
+          <div className="w-full rounded-sm overflow-hidden border border-white/10 bg-[#09090e]">
             <ProjectBannerSlider
               images={projectImages}
               title={activeProjectModal.title}
-              aspectRatio="aspect-video"
+              aspectRatio="h-[280px] sm:h-[400px] md:h-[480px]"
+              defaultFit="contain"
+              showFitToggle={true}
               showThumbnails={true}
               showCounter={true}
+              allowZoom={true}
             />
           </div>
 
