@@ -85,7 +85,7 @@ export const CareerHistory: React.FC = () => {
                   {/* Column 3: Full Detailed Responsibilities & Infrastructure (No line-clamp, 100% readable) */}
                   <div className="lg:col-span-5 bg-black/25 p-3.5 rounded border border-white/5 space-y-1">
                     <span className="text-[10px] font-f1 font-bold text-f1-gray tracking-wider uppercase block lg:hidden">
-                      URAIAN TUGAS & TANGGUNG JAWAB:
+                      RESPONSIBILITIES & KEY IMPACT:
                     </span>
                     <p className="text-xs md:text-sm text-f1-lightGray font-sans leading-relaxed break-words whitespace-normal selection:bg-f1-red selection:text-white">
                       {entry.description}

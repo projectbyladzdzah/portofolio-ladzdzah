@@ -65,12 +65,12 @@ export const AdminDrawer: React.FC = () => {
     const file = e.target.files?.[0];
     if (!file) return;
     try {
-      showToast('Mengunggah portrait ke Supabase Storage...', 'warning');
+      showToast('Uploading portrait to Supabase Storage...', 'warning');
       const url = await uploadImage(file, 'portraits', 800, 0.88);
       setHeroForm(prev => ({ ...prev, photo: url }));
-      showToast('Foto portrait tersimpan di Supabase Storage!', 'success');
+      showToast('Portrait photo saved to Supabase Storage!', 'success');
     } catch {
-      showToast('Gagal memproses gambar', 'error');
+      showToast('Failed to process image', 'error');
     }
   };
 
@@ -80,7 +80,7 @@ export const AdminDrawer: React.FC = () => {
     const file = e.target.files?.[0];
     if (!file) return;
     try {
-      showToast('Mengunggah banner mobile ke Supabase Storage...', 'warning');
+      showToast('Uploading mobile banner to Supabase Storage...', 'warning');
       const url = await uploadImage(file, 'banners', 1440, 0.9);
       const currentMobileBanners = heroForm.mobileBanners && heroForm.mobileBanners.length > 0
         ? [...heroForm.mobileBanners]
@@ -93,10 +93,10 @@ export const AdminDrawer: React.FC = () => {
       };
       setHeroForm(updated);
       updateHero(updated);
-      showToast('Banner mobile tersimpan di Supabase Storage & ditambahkan ke slider!', 'success');
+      showToast('Mobile banner saved to Supabase Storage & added to slider!', 'success');
       e.target.value = '';
     } catch {
-      showToast('Gagal memproses banner mobile', 'error');
+      showToast('Failed to process mobile banner', 'error');
     }
   };
 
@@ -105,7 +105,7 @@ export const AdminDrawer: React.FC = () => {
       ? [...heroForm.mobileBanners]
       : [heroForm.mobileBanner || 'assets/driver-f1-banner-mobile.png'];
     if (currentMobileBanners.length <= 1) {
-      showToast('Minimal harus ada 1 banner mobile.', 'warning');
+      showToast('At least 1 mobile banner is required.', 'warning');
       return;
     }
     const updatedMobileBanners = currentMobileBanners.filter((_, idx) => idx !== indexToRemove);
@@ -116,7 +116,7 @@ export const AdminDrawer: React.FC = () => {
     };
     setHeroForm(updated);
     updateHero(updated);
-    showToast('Banner mobile berhasil dihapus.', 'success');
+    showToast('Mobile banner removed successfully.', 'success');
   };
 
   const handleMoveMobileBanner = (index: number, direction: 'up' | 'down') => {
@@ -136,7 +136,7 @@ export const AdminDrawer: React.FC = () => {
     };
     setHeroForm(updated);
     updateHero(updated);
-    showToast('Urutan banner mobile diperbarui.', 'success');
+    showToast('Mobile banner order updated.', 'success');
   };
 
   const handleAddMobileBannerUrl = () => {
@@ -153,7 +153,7 @@ export const AdminDrawer: React.FC = () => {
     setHeroForm(updated);
     updateHero(updated);
     setNewMobileBannerUrl('');
-    showToast('Banner mobile baru ditambahkan ke slider!', 'success');
+    showToast('New mobile banner added to slider!', 'success');
   };
 
   const [newBannerUrl, setNewBannerUrl] = useState('');
@@ -162,7 +162,7 @@ export const AdminDrawer: React.FC = () => {
     const file = e.target.files?.[0];
     if (!file) return;
     try {
-      showToast('Mengunggah banner ke Supabase Storage...', 'warning');
+      showToast('Uploading banner to Supabase Storage...', 'warning');
       const url = await uploadImage(file, 'banners', 1920, 0.88);
       const currentBanners = heroForm.banners && heroForm.banners.length > 0
         ? [...heroForm.banners]
@@ -175,10 +175,10 @@ export const AdminDrawer: React.FC = () => {
       };
       setHeroForm(updated);
       updateHero(updated);
-      showToast('Foto banner tersimpan di Supabase Storage & ditambahkan ke slider!', 'success');
+      showToast('Banner photo saved to Supabase Storage & added to slider!', 'success');
       e.target.value = '';
     } catch {
-      showToast('Gagal memproses gambar banner', 'error');
+      showToast('Failed to process image banner', 'error');
     }
   };
 
@@ -187,7 +187,7 @@ export const AdminDrawer: React.FC = () => {
       ? [...heroForm.banners]
       : [heroForm.banner || 'assets/driver-f1-banner.webp'];
     if (currentBanners.length <= 1) {
-      showToast('Minimal harus ada 1 banner.', 'warning');
+      showToast('At least 1 banner is required.', 'warning');
       return;
     }
     const updatedBanners = currentBanners.filter((_, idx) => idx !== indexToRemove);
@@ -198,7 +198,7 @@ export const AdminDrawer: React.FC = () => {
     };
     setHeroForm(updated);
     updateHero(updated);
-    showToast('Banner berhasil dihapus.', 'success');
+    showToast('Banner removed successfully.', 'success');
   };
 
   const handleMoveBanner = (index: number, direction: 'up' | 'down') => {
@@ -218,7 +218,7 @@ export const AdminDrawer: React.FC = () => {
     };
     setHeroForm(updated);
     updateHero(updated);
-    showToast('Urutan banner diperbarui.', 'success');
+    showToast('Banner order updated.', 'success');
   };
 
   const handleAddBannerUrl = () => {
@@ -235,7 +235,7 @@ export const AdminDrawer: React.FC = () => {
     setHeroForm(updated);
     updateHero(updated);
     setNewBannerUrl('');
-    showToast('Banner baru ditambahkan ke slider!', 'success');
+    showToast('New banner added to slider!', 'success');
   };
 
   const handleHeroSubmit = (e: React.FormEvent) => {
@@ -253,14 +253,14 @@ export const AdminDrawer: React.FC = () => {
     const file = e.target.files?.[0];
     if (file) {
       try {
-        showToast('Mengunggah foto story...', 'warning');
+        showToast('Uploading story photo...', 'warning');
         const url = await uploadImage(file, 'banners', 1200, 0.88);
         const updated = [...(bioForm.gallery || [])];
         updated[sIdx].image = url;
         setBioForm({ ...bioForm, gallery: updated });
-        showToast('Foto story berhasil diunggah & diterapkan!', 'success');
+        showToast('Story photo uploaded & applied successfully!', 'success');
       } catch {
-        showToast('Gagal memproses unggahan gambar story.', 'error');
+        showToast('Failed to upload story image.', 'error');
       }
     }
   };
@@ -269,20 +269,20 @@ export const AdminDrawer: React.FC = () => {
     const newStory: BiographyGalleryItem = {
       id: `story_${Date.now()}`,
       image: 'assets/driver-f1-banner.webp',
-      title: 'Momen Dokumentasi Baru',
-      caption: 'Deskripsi dokumentasi / implementasi proyek dan sistem.',
+      title: 'New Field Documentation Moment',
+      caption: 'Description of project and field engineering documentation.',
       location: 'Surakarta, Indonesia',
       timestamp: 'Field Milestone • ' + new Date().getFullYear()
     };
     const updated = [...(bioForm.gallery || []), newStory];
     setBioForm({ ...bioForm, gallery: updated });
-    showToast('Story foto baru ditambahkan!', 'success');
+    showToast('New photo story added!', 'success');
   };
 
   const handleDeleteStoryItem = (sIdx: number) => {
     const updated = (bioForm.gallery || []).filter((_, i) => i !== sIdx);
     setBioForm({ ...bioForm, gallery: updated });
-    showToast('Foto story berhasil dihapus!', 'warning');
+    showToast('Story photo removed successfully!', 'warning');
   };
 
   const handleMakeStoryCover = (sIdx: number) => {
@@ -291,7 +291,7 @@ export const AdminDrawer: React.FC = () => {
     const item = current.splice(sIdx, 1)[0];
     current.unshift(item);
     setBioForm({ ...bioForm, gallery: current });
-    showToast('Foto dijadikan cover utama kartu biografi!', 'success');
+    showToast('Photo set as primary biography card cover!', 'success');
   };
 
   const handleMoveStory = (sIdx: number, direction: 'up' | 'down') => {
@@ -384,7 +384,7 @@ export const AdminDrawer: React.FC = () => {
             <div className="flex items-center gap-2">
               <button
                 onClick={logoutAdmin}
-                title="Keluar / Logout Admin"
+                title="Sign Out / Logout Admin"
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-red-950/40 hover:bg-f1-red text-white text-xs font-f1 font-bold border border-red-500/20 transition"
               >
                 <LogOut size={13} />
@@ -393,7 +393,7 @@ export const AdminDrawer: React.FC = () => {
               <button
                 onClick={() => setIsAdminOpen(false)}
                 className="p-1.5 hover:bg-white/10 rounded text-f1-gray hover:text-white transition"
-                aria-label="Tutup Panel"
+                aria-label="Close Panel"
               >
                 <X size={20} />
               </button>
@@ -626,7 +626,7 @@ export const AdminDrawer: React.FC = () => {
                               type="button"
                               onClick={() => handleRemoveMobileBanner(mIdx)}
                               className="p-1 rounded bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white transition"
-                              title="Hapus Banner Mobile"
+                              title="Remove Mobile Banner"
                             >
                               <Trash2 size={13} />
                             </button>
@@ -638,7 +638,7 @@ export const AdminDrawer: React.FC = () => {
                     {/* Add new mobile banner */}
                     <div className="pt-2 border-t border-white/10 space-y-1.5">
                       <label className="text-[10px] font-f1 font-bold text-f1-gray tracking-wider uppercase block">
-                        + Tambah Banner Mobile
+                        + Add Mobile Banner
                       </label>
                       <input
                         type="file"
@@ -651,7 +651,7 @@ export const AdminDrawer: React.FC = () => {
                           type="text"
                           value={newMobileBannerUrl}
                           onChange={e => setNewMobileBannerUrl(e.target.value)}
-                          placeholder="Atau masukkan URL banner..."
+                          placeholder="Or enter banner image URL..."
                           className="flex-1 bg-[#181822] border border-white/10 px-2.5 py-1 rounded text-white text-xs outline-none font-mono"
                         />
                         <button
@@ -659,7 +659,7 @@ export const AdminDrawer: React.FC = () => {
                           onClick={handleAddMobileBannerUrl}
                           className="bg-f1-red hover:bg-f1-darkRed text-white px-2.5 py-1 rounded text-xs font-f1 font-bold transition whitespace-nowrap"
                         >
-                          Tambah
+                          Add
                         </button>
                       </div>
                     </div>
@@ -686,7 +686,7 @@ export const AdminDrawer: React.FC = () => {
                         type="text"
                         value={heroForm.photo}
                         onChange={e => setHeroForm({ ...heroForm, photo: e.target.value })}
-                        placeholder="Atau URL gambar portrait..."
+                        placeholder="Or portrait image URL..."
                         className="w-full bg-[#181822] border border-white/10 px-2.5 py-1 rounded text-white text-xs outline-none"
                       />
                     </div>
@@ -740,7 +740,7 @@ export const AdminDrawer: React.FC = () => {
                               disabled={bIdx === 0}
                               onClick={() => handleMoveBanner(bIdx, 'up')}
                               className="p-1 rounded bg-white/5 hover:bg-white/15 text-white disabled:opacity-30"
-                              title="Ke Atas"
+                              title="Move up"
                             >
                               <ChevronUp size={12} />
                             </button>
@@ -749,7 +749,7 @@ export const AdminDrawer: React.FC = () => {
                               disabled={bIdx === arr.length - 1}
                               onClick={() => handleMoveBanner(bIdx, 'down')}
                               className="p-1 rounded bg-white/5 hover:bg-white/15 text-white disabled:opacity-30"
-                              title="Ke Bawah"
+                              title="Move down"
                             >
                               <ChevronDown size={12} />
                             </button>
@@ -757,7 +757,7 @@ export const AdminDrawer: React.FC = () => {
                               type="button"
                               onClick={() => handleRemoveBanner(bIdx)}
                               className="p-1 rounded bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white"
-                              title="Hapus"
+                              title="Remove"
                             >
                               <Trash2 size={12} />
                             </button>
@@ -769,7 +769,7 @@ export const AdminDrawer: React.FC = () => {
                     {/* Add banner controls */}
                     <div className="pt-2 border-t border-white/10 space-y-1.5">
                       <span className="text-[9px] font-f1 font-bold text-f1-gray uppercase block">
-                        + TAMBAH BANNER BARU
+                        + ADD NEW BANNER
                       </span>
                       <input
                         type="file"
@@ -782,7 +782,7 @@ export const AdminDrawer: React.FC = () => {
                           type="text"
                           value={newBannerUrl}
                           onChange={e => setNewBannerUrl(e.target.value)}
-                          placeholder="Atau URL gambar banner..."
+                          placeholder="Or banner image URL..."
                           className="flex-1 bg-[#181822] border border-white/10 px-2 py-1 rounded text-white text-xs outline-none"
                         />
                         <button
@@ -790,7 +790,7 @@ export const AdminDrawer: React.FC = () => {
                           onClick={handleAddBannerUrl}
                           className="bg-f1-red hover:bg-f1-darkRed text-white px-2.5 py-1 rounded text-xs font-f1 font-bold transition whitespace-nowrap"
                         >
-                          + Tambah
+                          + Add
                         </button>
                       </div>
                     </div>
@@ -839,7 +839,7 @@ export const AdminDrawer: React.FC = () => {
                         CORE TECHNICAL COMPETENCIES ({heroForm.telemetryBars?.length || 0})
                       </span>
                       <span className="text-[10px] text-f1-gray font-sans block">
-                        Keahlian & telemetry bars di halaman depan.
+                        Competency & telemetry bars on front page.
                       </span>
                     </div>
                     <button
@@ -848,13 +848,13 @@ export const AdminDrawer: React.FC = () => {
                       className="bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold px-2.5 py-1 rounded flex items-center gap-1 transition text-[11px]"
                     >
                       <Plus size={13} />
-                      TAMBAH
+                      ADD
                     </button>
                   </div>
 
                   {(!heroForm.telemetryBars || heroForm.telemetryBars.length === 0) ? (
                     <div className="text-center py-4 border border-dashed border-white/10 rounded bg-white/[0.02] text-f1-gray font-sans text-xs">
-                      Belum ada keahlian. Klik <strong>+ TAMBAH</strong>.
+                      No competencies added yet. Click <strong>+ ADD</strong>.
                     </div>
                   ) : (
                     <div className="space-y-2.5">
@@ -870,7 +870,7 @@ export const AdminDrawer: React.FC = () => {
                                 type="text"
                                 value={bar.label}
                                 onChange={e => handleTelemetryBarChange(bIdx, 'label', e.target.value)}
-                                placeholder="KEAHLIAN (cth: NETWORK ARCHITECTURE)"
+                                placeholder="COMPETENCY (e.g. NETWORK ARCHITECTURE)"
                                 className="w-full bg-[#181822] border border-white/10 px-2.5 py-1 rounded text-white font-f1 font-bold text-xs uppercase focus:border-f1-red outline-none"
                               />
                             </div>
@@ -889,7 +889,7 @@ export const AdminDrawer: React.FC = () => {
                               type="button"
                               onClick={() => handleRemoveTelemetryBar(bIdx)}
                               className="text-f1-gray hover:text-f1-red p-1 rounded hover:bg-f1-red/10 transition"
-                              title="Hapus keahlian ini"
+                              title="Remove this competency"
                             >
                               <Trash2 size={15} />
                             </button>
@@ -921,7 +921,7 @@ export const AdminDrawer: React.FC = () => {
                   type="submit"
                   className="w-full bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold py-3 rounded tracking-widest transition"
                 >
-                  SIMPAN HERO & PROFIL DRIVER ✓
+                  SAVE HERO & DRIVER PROFILE ✓
                 </button>
               </form>
             )}
@@ -1009,7 +1009,7 @@ export const AdminDrawer: React.FC = () => {
                         TAMPILKAN KARTU STORY BIOGRAFI
                       </span>
                       <span className="text-[9px] text-f1-lightGray block font-sans">
-                        Tampilkan kartu foto portrait / story di biografi
+                        Display portrait photo / story card in biography
                       </span>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
@@ -1032,7 +1032,7 @@ export const AdminDrawer: React.FC = () => {
                         PORTFOLIO STORIES ({bioForm.gallery?.length || 0})
                       </label>
                       <span className="text-[9px] text-f1-lightGray block font-sans">
-                        #1 otomatis menjadi sampul kartu di biografi.
+                        #1 automatically becomes the cover of the biography card.
                       </span>
                     </div>
                     <button
@@ -1048,7 +1048,7 @@ export const AdminDrawer: React.FC = () => {
                   {(!bioForm.gallery || bioForm.gallery.length === 0) ? (
                     <div className="p-4 text-center border border-dashed border-white/20 rounded bg-black/30">
                       <p className="text-[10px] text-f1-gray font-f1 uppercase tracking-wider mb-2">
-                        Belum ada foto story
+                        No story photos yet
                       </p>
                       <button
                         type="button"
@@ -1056,7 +1056,7 @@ export const AdminDrawer: React.FC = () => {
                         className="bg-white/10 hover:bg-white/20 text-white font-f1 font-bold px-2.5 py-1 rounded text-[10px] transition inline-flex items-center gap-1"
                       >
                         <Plus size={11} />
-                        <span>TAMBAH FOTO PERTAMA</span>
+                        <span>ADD FIRST PHOTO</span>
                       </button>
                     </div>
                   ) : (
@@ -1080,7 +1080,7 @@ export const AdminDrawer: React.FC = () => {
                                   onClick={() => handleMakeStoryCover(sIdx)}
                                   className="text-[9px] text-f1-lightGray hover:text-white bg-white/10 px-1.5 py-0.5 rounded font-f1 font-bold uppercase"
                                 >
-                                  Jadikan Cover
+                                  Set as Cover
                                 </button>
                               )}
                             </div>
@@ -1091,7 +1091,7 @@ export const AdminDrawer: React.FC = () => {
                                 onClick={() => handleMoveStory(sIdx, 'up')}
                                 disabled={sIdx === 0}
                                 className="p-0.5 rounded bg-white/5 hover:bg-white/10 text-white disabled:opacity-25"
-                                title="Geser ke atas"
+                                title="Move up"
                               >
                                 <ChevronUp size={12} />
                               </button>
@@ -1100,7 +1100,7 @@ export const AdminDrawer: React.FC = () => {
                                 onClick={() => handleMoveStory(sIdx, 'down')}
                                 disabled={sIdx === (bioForm.gallery?.length || 0) - 1}
                                 className="p-0.5 rounded bg-white/5 hover:bg-white/10 text-white disabled:opacity-25"
-                                title="Geser ke bawah"
+                                title="Move down"
                               >
                                 <ChevronDown size={12} />
                               </button>
@@ -1108,7 +1108,7 @@ export const AdminDrawer: React.FC = () => {
                                 type="button"
                                 onClick={() => handleDeleteStoryItem(sIdx)}
                                 className="text-red-400 hover:text-red-300 p-1 rounded bg-red-500/10 hover:bg-red-500/20"
-                                title="Hapus story"
+                                title="Remove story"
                               >
                                 <Trash2 size={11} />
                               </button>
@@ -1129,7 +1129,7 @@ export const AdminDrawer: React.FC = () => {
                             </div>
                             <div className="flex-1 min-w-0 space-y-1.5">
                               <div>
-                                <label className="text-[9px] text-f1-gray uppercase font-bold block mb-0.5">Upload / Path Foto</label>
+                                <label className="text-[9px] text-f1-gray uppercase font-bold block mb-0.5">Upload / Photo Path</label>
                                 <input
                                   type="file"
                                   accept="image/*"
@@ -1144,7 +1144,7 @@ export const AdminDrawer: React.FC = () => {
                                     updated[sIdx].image = e.target.value;
                                     setBioForm({ ...bioForm, gallery: updated });
                                   }}
-                                  placeholder="Path/URL gambar..."
+                                  placeholder="Path or image URL..."
                                   className="w-full bg-[#181822] border border-white/10 px-2 py-0.5 rounded text-white text-[10px] font-mono"
                                 />
                               </div>
@@ -1156,7 +1156,7 @@ export const AdminDrawer: React.FC = () => {
                                   updated[sIdx].title = e.target.value;
                                   setBioForm({ ...bioForm, gallery: updated });
                                 }}
-                                placeholder="Judul Story..."
+                                placeholder="Story Title..."
                                 className="w-full bg-[#181822] border border-white/10 px-2 py-0.5 rounded text-white text-[11px] font-f1 font-bold"
                               />
                               <input
@@ -1167,7 +1167,7 @@ export const AdminDrawer: React.FC = () => {
                                   updated[sIdx].location = e.target.value;
                                   setBioForm({ ...bioForm, gallery: updated });
                                 }}
-                                placeholder="Lokasi (mis: Surakarta, Central Java)"
+                                placeholder="Location (e.g. Surakarta, Central Java)"
                                 className="w-full bg-[#181822] border border-white/10 px-2 py-0.5 rounded text-white text-[10px]"
                               />
                               <input
@@ -1178,7 +1178,7 @@ export const AdminDrawer: React.FC = () => {
                                   updated[sIdx].caption = e.target.value;
                                   setBioForm({ ...bioForm, gallery: updated });
                                 }}
-                                placeholder="Deskripsi/caption..."
+                                placeholder="Description / caption..."
                                 className="w-full bg-[#181822] border border-white/10 px-2 py-0.5 rounded text-white text-[10px] font-sans"
                               />
                             </div>
@@ -1194,7 +1194,7 @@ export const AdminDrawer: React.FC = () => {
                   type="submit"
                   className="w-full bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold py-3 rounded tracking-widest transition shadow-lg shadow-f1-red/20"
                 >
-                  SIMPAN BIOGRAFI & STORY GALLERY ✓
+                  SAVE BIOGRAPHY & STORY GALLERY ✓
                 </button>
               </form>
             )}
@@ -1204,7 +1204,7 @@ export const AdminDrawer: React.FC = () => {
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-xs font-f1 font-bold text-f1-gray tracking-wider uppercase">
-                    DAFTAR PROYEK & PORTFOLIO ({data.projects.length})
+                    PROJECT & PORTFOLIO LIST ({data.projects.length})
                   </span>
                   <button
                     onClick={() => {
@@ -1214,7 +1214,7 @@ export const AdminDrawer: React.FC = () => {
                     className="bg-f1-red hover:bg-f1-darkRed text-white text-xs font-f1 font-bold px-3 py-1.5 rounded flex items-center gap-1.5 transition"
                   >
                     <Plus size={14} />
-                    <span>+ PROYEK BARU</span>
+                    <span>+ NEW PROJECT</span>
                   </button>
                 </div>
 
@@ -1229,7 +1229,7 @@ export const AdminDrawer: React.FC = () => {
                           {proj.title}
                         </strong>
                         <span className="text-[11px] font-f1 text-f1-gray tracking-wider uppercase">
-                          {proj.category.toUpperCase()} • {proj.year} • {(proj.images?.length || (proj.image ? 1 : 0))} FOTO {proj.featured ? '• ★ FEATURED' : ''}
+                          {proj.category.toUpperCase()} • {proj.year} • {(proj.images?.length || (proj.image ? 1 : 0))} PHOTOS {proj.featured ? '• ★ FEATURED' : ''}
                         </span>
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0">
@@ -1239,16 +1239,16 @@ export const AdminDrawer: React.FC = () => {
                             setModalType('project');
                           }}
                           className="p-1.5 bg-white/10 hover:bg-white/20 text-white rounded transition"
-                          title="Edit Proyek"
+                          title="Edit Project"
                         >
                           <Edit2 size={13} />
                         </button>
                         <button
                           onClick={() => {
-                            if (confirm(`Hapus proyek "${proj.title}"?`)) deleteProject(proj.id);
+                            if (confirm(`Delete project "${proj.title}"?`)) deleteProject(proj.id);
                           }}
                           className="p-1.5 bg-f1-red/20 hover:bg-f1-red text-f1-red hover:text-white rounded transition"
-                          title="Hapus Proyek"
+                          title="Delete Project"
                         >
                           <Trash2 size={13} />
                         </button>
@@ -1264,7 +1264,7 @@ export const AdminDrawer: React.FC = () => {
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-xs font-f1 font-bold text-f1-gray tracking-wider uppercase">
-                    RIWAYAT PENGALAMAN & KARIR ({data.career.length})
+                    EXPERIENCE & CAREER HISTORY ({data.career.length})
                   </span>
                   <button
                     onClick={() => {
@@ -1274,7 +1274,7 @@ export const AdminDrawer: React.FC = () => {
                     className="bg-f1-red hover:bg-f1-darkRed text-white text-xs font-f1 font-bold px-3 py-1.5 rounded flex items-center gap-1.5 transition"
                   >
                     <Plus size={14} />
-                    <span>+ KARIR BARU</span>
+                    <span>+ NEW CAREER</span>
                   </button>
                 </div>
 
@@ -1304,7 +1304,7 @@ export const AdminDrawer: React.FC = () => {
                         </button>
                         <button
                           onClick={() => {
-                            if (confirm(`Hapus karir "${car.role}"?`)) deleteCareer(car.id);
+                            if (confirm(`Delete career "${car.role}"?`)) deleteCareer(car.id);
                           }}
                           className="p-1.5 bg-f1-red/20 hover:bg-f1-red text-f1-red hover:text-white rounded transition"
                         >
@@ -1336,7 +1336,7 @@ export const AdminDrawer: React.FC = () => {
                   type="submit"
                   className="w-full bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold py-3 rounded tracking-widest transition"
                 >
-                  SIMPAN RUNNING TICKER ✓
+                  SAVE RUNNING TICKER ✓
                 </button>
               </form>
             )}
@@ -1346,7 +1346,7 @@ export const AdminDrawer: React.FC = () => {
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-xs font-f1 font-bold text-f1-gray tracking-wider uppercase">
-                    DAFTAR PODIUM PENGHARGAAN ({data.awards.length})
+                    HONORS & CERTIFICATES LIST ({data.awards.length})
                   </span>
                   <button
                     onClick={() => {
@@ -1356,7 +1356,7 @@ export const AdminDrawer: React.FC = () => {
                     className="bg-f1-red hover:bg-f1-darkRed text-white text-xs font-f1 font-bold px-3 py-1.5 rounded flex items-center gap-1.5 transition"
                   >
                     <Plus size={14} />
-                    <span>+ PENGHARGAAN BARU</span>
+                    <span>+ NEW CERTIFICATE</span>
                   </button>
                 </div>
 
@@ -1386,7 +1386,7 @@ export const AdminDrawer: React.FC = () => {
                         </button>
                         <button
                           onClick={() => {
-                            if (confirm(`Hapus penghargaan "${awd.title}"?`)) deleteAward(awd.id);
+                            if (confirm(`Delete certificate "${awd.title}"?`)) deleteAward(awd.id);
                           }}
                           className="p-1.5 bg-f1-red/20 hover:bg-f1-red text-f1-red hover:text-white rounded transition"
                         >
@@ -1412,7 +1412,7 @@ export const AdminDrawer: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">DESKRIPSI</label>
+                  <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">DESCRIPTION</label>
                   <textarea
                     rows={2}
                     value={contactForm.description}
@@ -1473,7 +1473,7 @@ export const AdminDrawer: React.FC = () => {
                   type="submit"
                   className="w-full bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold py-3 rounded tracking-widest transition"
                 >
-                  SIMPAN INFORMASI KONTAK ✓
+                  SAVE CONTACT INFORMATION ✓
                 </button>
               </form>
             )}
@@ -1506,15 +1506,15 @@ export const AdminDrawer: React.FC = () => {
                     ⚠️ DANGER ZONE: FACTORY RESET
                   </strong>
                   <p className="text-[11px] text-f1-gray">
-                    Reset seluruh data portofolio ke pengaturan awal bawaan.
+                    Reset all portfolio data to factory default presets.
                   </p>
                   <button
                     onClick={() => {
-                      if (confirm('Yakin ingin mereset seluruh data ke setelan bawaan?')) resetToDefaults();
+                      if (confirm('Are you sure you want to reset all data to default presets?')) resetToDefaults();
                     }}
                     className="w-full bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold py-2.5 rounded transition"
                   >
-                    RESET SEMUA KE DEFAULT
+                    RESET ALL DATA TO DEFAULTS
                   </button>
                 </div>
               </div>

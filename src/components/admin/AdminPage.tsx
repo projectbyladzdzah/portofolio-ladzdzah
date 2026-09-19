@@ -90,12 +90,12 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
     try {
       const result = await loginWithSupabase(email, password);
       if (result.success) {
-        setSuccessMsg('Autentikasi Berhasil! Membuka Control Room...');
+        setSuccessMsg('Authentication Successful! Launching Control Room...');
       } else {
-        setErrorMsg(result.error || 'Email atau password tidak sesuai.');
+        setErrorMsg(result.error || 'Invalid email or password.');
       }
     } catch (err: any) {
-      setErrorMsg(err?.message || 'Terjadi kesalahan saat menghubungi server autentikasi.');
+      setErrorMsg(err?.message || 'Error communicating with authentication server.');
     } finally {
       setLoading(false);
     }
@@ -128,14 +128,14 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
     const file = e.target.files?.[0];
     if (file) {
       try {
-        showToast('Mengunggah foto portrait ke Supabase Storage...', 'warning');
+        showToast('Uploading portrait image to Supabase Storage...', 'warning');
         const url = await uploadImage(file, 'portraits', 800, 0.88);
         const updated = { ...heroForm, photo: url };
         setHeroForm(updated);
         updateHero(updated);
-        showToast('Foto portrait berhasil diunggah & langsung diterapkan!', 'success');
+        showToast('Portrait image uploaded and applied successfully!', 'success');
       } catch {
-        showToast('Gagal memproses gambar.', 'error');
+        showToast('Failed to process image.', 'error');
       }
     }
   };
@@ -146,7 +146,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
     const file = e.target.files?.[0];
     if (file) {
       try {
-        showToast('Mengunggah banner mobile ke Supabase Storage...', 'warning');
+        showToast('Uploading mobile banner to Supabase Storage...', 'warning');
         const url = await uploadImage(file, 'banners', 1440, 0.9);
         const currentMobileBanners = heroForm.mobileBanners && heroForm.mobileBanners.length > 0
           ? [...heroForm.mobileBanners]
@@ -154,15 +154,15 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
         const updatedMobileBanners = [...currentMobileBanners, url];
         const updated = { 
           ...heroForm, 
-          mobileBanner: updatedMobileBanners[0],
+          mobileBanner: updatedMobileBanners[0], 
           mobileBanners: updatedMobileBanners
         };
         setHeroForm(updated);
         updateHero(updated);
-        showToast('Banner mobile berhasil diunggah & ditambahkan ke slider!', 'success');
+        showToast('Mobile banner uploaded and added to slider!', 'success');
         e.target.value = '';
       } catch {
-        showToast('Gagal memproses banner mobile.', 'error');
+        showToast('Failed to process mobile banner.', 'error');
       }
     }
   };
@@ -172,7 +172,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
       ? [...heroForm.mobileBanners]
       : [heroForm.mobileBanner || 'assets/driver-f1-banner-mobile.png'];
     if (currentMobileBanners.length <= 1) {
-      showToast('Minimal harus ada 1 banner mobile dalam slider.', 'warning');
+      showToast('At least 1 mobile banner must remain in the slider.', 'warning');
       return;
     }
     const updatedMobileBanners = currentMobileBanners.filter((_, idx) => idx !== indexToRemove);
@@ -183,7 +183,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
     };
     setHeroForm(updated);
     updateHero(updated);
-    showToast('Banner mobile berhasil dihapus dari slider.', 'success');
+    showToast('Mobile banner removed from slider.', 'success');
   };
 
   const handleMoveMobileBanner = (index: number, direction: 'up' | 'down') => {
@@ -203,7 +203,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
     };
     setHeroForm(updated);
     updateHero(updated);
-    showToast('Urutan banner mobile diperbarui!', 'success');
+    showToast('Mobile banner order updated!', 'success');
   };
 
   const handleAddMobileBannerUrl = () => {
@@ -220,7 +220,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
     setHeroForm(updated);
     updateHero(updated);
     setNewMobileBannerUrl('');
-    showToast('Banner mobile baru berhasil ditambahkan ke slider!', 'success');
+    showToast('New mobile banner added to slider!', 'success');
   };
 
   const [newBannerUrl, setNewBannerUrl] = useState('');
@@ -229,7 +229,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
     const file = e.target.files?.[0];
     if (file) {
       try {
-        showToast('Mengunggah banner ke Supabase Storage...', 'warning');
+        showToast('Uploading banner to Supabase Storage...', 'warning');
         const url = await uploadImage(file, 'banners', 1920, 0.88);
         const currentBanners = heroForm.banners && heroForm.banners.length > 0
           ? [...heroForm.banners]
@@ -242,10 +242,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
         };
         setHeroForm(updated);
         updateHero(updated);
-        showToast('Foto banner berhasil diunggah & ditambahkan ke slider!', 'success');
+        showToast('Banner uploaded and added to slider!', 'success');
         e.target.value = '';
       } catch {
-        showToast('Gagal memproses banner.', 'error');
+        showToast('Failed to process banner.', 'error');
       }
     }
   };
@@ -255,7 +255,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
       ? [...heroForm.banners]
       : [heroForm.banner || 'assets/driver-f1-banner.webp'];
     if (currentBanners.length <= 1) {
-      showToast('Minimal harus ada 1 banner dalam slider.', 'warning');
+      showToast('At least 1 banner must remain in the slider.', 'warning');
       return;
     }
     const updatedBanners = currentBanners.filter((_, idx) => idx !== indexToRemove);
@@ -266,7 +266,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
     };
     setHeroForm(updated);
     updateHero(updated);
-    showToast('Banner berhasil dihapus dari slider.', 'success');
+    showToast('Banner removed from slider.', 'success');
   };
 
   const handleMoveBanner = (index: number, direction: 'up' | 'down') => {
@@ -286,7 +286,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
     };
     setHeroForm(updated);
     updateHero(updated);
-    showToast('Urutan banner diperbarui!', 'success');
+    showToast('Banner order updated!', 'success');
   };
 
   const handleAddBannerUrl = () => {
@@ -303,21 +303,21 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
     setHeroForm(updated);
     updateHero(updated);
     setNewBannerUrl('');
-    showToast('Banner baru berhasil ditambahkan ke slider!', 'success');
+    showToast('New banner added to slider!', 'success');
   };
 
   const handleStoryImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, sIdx: number) => {
     const file = e.target.files?.[0];
     if (file) {
       try {
-        showToast('Mengunggah foto story ke storage...', 'warning');
+        showToast('Uploading story photo to storage...', 'warning');
         const url = await uploadImage(file, 'banners', 1200, 0.88);
         const updated = [...(bioForm.gallery || [])];
         updated[sIdx].image = url;
         setBioForm({ ...bioForm, gallery: updated });
-        showToast('Foto story berhasil diunggah & diterapkan!', 'success');
+        showToast('Story photo uploaded and applied!', 'success');
       } catch {
-        showToast('Gagal memproses unggahan gambar story.', 'error');
+        showToast('Failed to process story image upload.', 'error');
       }
     }
   };
@@ -326,20 +326,20 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
     const newStory: BiographyGalleryItem = {
       id: `story_${Date.now()}`,
       image: 'assets/driver-f1-banner.webp',
-      title: 'Momen Dokumentasi Baru',
-      caption: 'Deskripsi dokumentasi / implementasi proyek dan sistem.',
+      title: 'New Field Story Moment',
+      caption: 'Description of milestone or on-site operational deployment.',
       location: 'Surakarta, Indonesia',
       timestamp: 'Field Milestone • ' + new Date().getFullYear()
     };
     const updated = [...(bioForm.gallery || []), newStory];
     setBioForm({ ...bioForm, gallery: updated });
-    showToast('Story foto baru ditambahkan! Silakan upload gambar atau ubah judul.', 'success');
+    showToast('New story moment added! Upload an image or edit details.', 'success');
   };
 
   const handleDeleteStoryItem = (sIdx: number) => {
     const updated = (bioForm.gallery || []).filter((_, i) => i !== sIdx);
     setBioForm({ ...bioForm, gallery: updated });
-    showToast('Foto story berhasil dihapus!', 'warning');
+    showToast('Story photo removed!', 'warning');
   };
 
   const handleMakeStoryCover = (sIdx: number) => {
@@ -348,7 +348,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
     const item = current.splice(sIdx, 1)[0];
     current.unshift(item);
     setBioForm({ ...bioForm, gallery: current });
-    showToast('Foto dijadikan cover utama kartu biografi!', 'success');
+    showToast('Photo set as primary cover for biography card!', 'success');
   };
 
   const handleMoveStory = (sIdx: number, direction: 'up' | 'down') => {
@@ -436,7 +436,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
             className="flex items-center gap-2 text-xs font-f1 font-bold text-f1-gray hover:text-white transition px-3 py-1.5 rounded border border-white/10 hover:border-white/30"
           >
             <ArrowLeft size={14} />
-            <span>KEMBALI KE PORTFOLIO</span>
+            <span>RETURN TO PORTFOLIO</span>
           </button>
         </header>
 
@@ -486,23 +486,23 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
               <form onSubmit={handleSupabaseSubmit} className="space-y-4 font-f1">
                 {!supabaseReady && (
                   <div className="p-3 bg-yellow-950/30 border border-yellow-500/30 rounded text-xs text-yellow-200/90 font-sans space-y-1">
-                    <p className="font-bold font-f1 text-f1-yellow">KUNCI SUPABASE BELUM TERHUBUNG</p>
+                    <p className="font-bold font-f1 text-f1-yellow">SUPABASE CREDENTIALS NOT CONNECTED</p>
                     <p>
-                      Pastikan variabel <code>VITE_SUPABASE_URL</code> dan <code>VITE_SUPABASE_ANON_KEY</code> sudah terisi di file <code>.env</code> atau Vercel.
+                      Ensure <code>VITE_SUPABASE_URL</code> and <code>VITE_SUPABASE_ANON_KEY</code> are configured in <code>.env</code> or deployment dashboard.
                     </p>
                   </div>
                 )}
 
                 <div>
                   <label className="text-[11px] font-bold text-f1-gray tracking-wider block mb-1 uppercase">
-                    USERNAME / EMAIL ADMIN
+                    ADMIN USERNAME / EMAIL
                   </label>
                   <input
                     type="text"
                     required
                     value={email}
                     onChange={e => setEmail(e.target.value)}
-                    placeholder="ladzdzah atau email@anda.com"
+                    placeholder="username or email@domain.com"
                     className="w-full bg-[#181824] border border-white/15 focus:border-f1-red px-3.5 py-2.5 rounded text-white text-xs font-sans outline-none transition"
                   />
                 </div>
@@ -526,9 +526,9 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                   disabled={loading}
                   className="w-full bg-f1-red hover:bg-f1-darkRed disabled:opacity-50 text-white font-bold text-xs tracking-widest py-3 rounded uppercase transition flex items-center justify-center gap-2 shadow-lg shadow-f1-red/20"
                 >
-                  {loading ? <span>MEMERIKSA KREDENSIAL...</span> : (
+                  {loading ? <span>VERIFYING CREDENTIALS...</span> : (
                     <>
-                      <span>MASUK KE CONTROL ROOM</span>
+                      <span>ENTER CONTROL ROOM</span>
                       <ArrowRight size={14} />
                     </>
                   )}
@@ -542,7 +542,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                 onClick={onNavigateHome}
                 className="text-f1-red hover:text-white transition"
               >
-                KEMBALI KE WEB
+                RETURN TO SITE
               </button>
             </div>
           </div>
@@ -584,7 +584,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                 </span>
               </div>
               <span className="text-[10px] font-f1 tracking-wider text-f1-gray hidden sm:block">
-                Kelola profil, proyek, keahlian, dan konten website secara real-time
+                Manage hero telemetry, projects, career, certificates, and content in real time
               </span>
             </div>
           </div>
@@ -596,8 +596,8 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
               className="flex items-center gap-2 text-xs font-f1 font-bold text-white hover:text-f1-red transition px-3 py-1.5 rounded border border-white/15 hover:border-white/30 bg-white/5"
             >
               <ArrowLeft size={13} />
-              <span className="hidden sm:inline">LIHAT WEBSITE PUBLIK</span>
-              <span className="sm:hidden">WEB</span>
+              <span className="hidden sm:inline">VIEW PUBLIC WEBSITE</span>
+              <span className="sm:hidden">SITE</span>
             </button>
 
             <button
@@ -643,8 +643,8 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
         {activeTab === 'hero' && (
           <form onSubmit={handleHeroSubmit} className="space-y-6 bg-[#13131b] border border-white/10 p-6 rounded-sm shadow-xl text-xs">
             <div className="border-b border-white/10 pb-3 flex justify-between items-center">
-              <h2 className="text-lg font-f1 font-black text-white uppercase">INFORMASI HERO & PROFIL UTAMA</h2>
-              <span className="text-f1-red font-f1 font-bold">TABEL ID #{heroForm.number}</span>
+              <h2 className="text-lg font-f1 font-black text-white uppercase">HERO TELEMETRY & PRIMARY PROFILE</h2>
+              <span className="text-f1-red font-f1 font-bold">PROFILE ID #{heroForm.number}</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -738,16 +738,16 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                     type="button"
                     onClick={() => {
                       updateHero(heroForm);
-                      showToast('Foto portrait berhasil disimpan!', 'success');
+                      showToast('Portrait photo saved successfully!', 'success');
                     }}
                     className="text-[10px] bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold px-2 py-0.5 rounded transition uppercase"
                   >
-                    SIMPAN FOTO
+                    SAVE PHOTO
                   </button>
                 )}
               </div>
               <span className="text-[10px] text-f1-gray block font-sans mb-2">
-                Foto profile avatar kotak untuk bar profil desktop dan identitas driver
+                Square avatar photo for desktop profile identity and driver credential cards
               </span>
               <div className="flex items-center gap-4 p-3 bg-black/50 border border-white/10 rounded">
                 <img
@@ -772,18 +772,18 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                       type="text"
                       value={heroForm.photo || ''}
                       onChange={e => setHeroForm({ ...heroForm, photo: e.target.value })}
-                      placeholder="Atau URL gambar portrait..."
+                      placeholder="Or paste portrait image URL..."
                       className="flex-1 bg-[#181822] border border-white/10 px-2.5 py-1 rounded text-white text-xs outline-none focus:border-f1-red font-mono"
                     />
                     <button
                       type="button"
                       onClick={() => {
                         updateHero(heroForm);
-                        showToast('Foto portrait diperbarui!', 'success');
+                        showToast('Portrait photo updated!', 'success');
                       }}
                       className="bg-white/10 hover:bg-white/20 text-white px-2 py-1 rounded text-[11px] font-f1 font-bold transition whitespace-nowrap"
                     >
-                      Terapkan
+                      Apply
                     </button>
                   </div>
                 </div>
@@ -798,18 +798,18 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                   <div>
                     <div className="flex items-center gap-2">
                       <label className="font-f1 font-bold text-white tracking-wider block text-xs">
-                        BANNER MOBILE (MULTI-BANNER SLIDER)
+                        MOBILE HERO BANNERS (MULTI-SLIDE CAROUSEL)
                       </label>
                       <span className="text-[9px] bg-f1-red text-white font-f1 font-black px-1.5 py-0.2 rounded uppercase">
                         Mobile Only
                       </span>
                     </div>
                     <span className="text-[10px] text-f1-lightGray block font-sans">
-                      Dapat digeser / diswipe di HP. Rasio 4:5 atau 1080x1350 px.
+                      Swipeable on mobile devices. 4:5 or 1080x1350 px recommended.
                     </span>
                   </div>
                   <span className="text-[10px] bg-f1-red text-white px-2 py-0.5 rounded font-f1 font-bold">
-                    {((heroForm.mobileBanners && heroForm.mobileBanners.length > 0) ? heroForm.mobileBanners : [heroForm.mobileBanner || 'assets/driver-f1-banner-mobile.png']).length} Banner
+                    {((heroForm.mobileBanners && heroForm.mobileBanners.length > 0) ? heroForm.mobileBanners : [heroForm.mobileBanner || 'assets/driver-f1-banner-mobile.png']).length} Banners
                   </span>
                 </div>
 
@@ -839,10 +839,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                         <div className="flex-1 min-w-0 space-y-0.5">
                           <div className="flex items-center gap-1.5">
                             <span className="text-[11px] font-f1 font-bold text-white uppercase">
-                              {mIdx === 0 ? '★ Banner Awal (#1)' : `Slide #${mIdx + 1}`}
+                              {mIdx === 0 ? '★ Primary (#1)' : `Slide #${mIdx + 1}`}
                             </span>
                             <span className="text-[8px] font-mono px-1 py-0.2 rounded bg-white/10 text-f1-gray">
-                              {mUrl.startsWith('http') ? 'CDN' : mUrl.startsWith('data:') ? 'Base64' : 'Lokal'}
+                              {mUrl.startsWith('http') ? 'CDN' : mUrl.startsWith('data:') ? 'Base64' : 'Local'}
                             </span>
                           </div>
                           <p className="text-[9px] text-f1-gray truncate font-mono" title={mUrl}>
@@ -856,7 +856,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                             type="button"
                             disabled={mIdx === 0}
                             onClick={() => handleMoveMobileBanner(mIdx, 'up')}
-                            title="Pindah ke Atas"
+                            title="Move Up"
                             className="p-1 rounded bg-white/5 hover:bg-white/15 text-white disabled:opacity-30 disabled:cursor-not-allowed transition"
                           >
                             <ChevronUp size={13} />
@@ -865,7 +865,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                             type="button"
                             disabled={mIdx === arr.length - 1}
                             onClick={() => handleMoveMobileBanner(mIdx, 'down')}
-                            title="Pindah ke Bawah"
+                            title="Move Down"
                             className="p-1 rounded bg-white/5 hover:bg-white/15 text-white disabled:opacity-30 disabled:cursor-not-allowed transition"
                           >
                             <ChevronDown size={13} />
@@ -873,7 +873,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                           <button
                             type="button"
                             onClick={() => handleRemoveMobileBanner(mIdx)}
-                            title="Hapus Banner ini"
+                            title="Remove Banner"
                             className="p-1 rounded bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white transition"
                           >
                             <Trash2 size={13} />
@@ -886,11 +886,11 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                   {/* Add New Mobile Banner Controls */}
                   <div className="pt-2 border-t border-white/10 space-y-2">
                     <span className="text-[10px] font-f1 font-bold text-f1-gray tracking-wider uppercase block">
-                      + TAMBAH BANNER MOBILE BARU
+                      + ADD NEW MOBILE BANNER
                     </span>
                     
                     <div className="space-y-1">
-                      <label className="text-[10px] text-f1-lightGray block">Unggah Gambar (JPG/PNG/WebP):</label>
+                      <label className="text-[10px] text-f1-lightGray block">Upload Image (JPG/PNG/WebP):</label>
                       <input
                         type="file"
                         accept="image/*"
@@ -904,7 +904,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                         type="text"
                         value={newMobileBannerUrl}
                         onChange={e => setNewMobileBannerUrl(e.target.value)}
-                        placeholder="Atau URL gambar mobile banner..."
+                        placeholder="Or paste mobile banner image URL..."
                         className="flex-1 bg-[#181822] border border-white/10 px-2.5 py-1 rounded text-white text-xs outline-none focus:border-f1-red font-mono"
                       />
                       <button
@@ -913,7 +913,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                         className="bg-f1-red hover:bg-f1-darkRed text-white px-2.5 py-1 rounded text-xs font-f1 font-bold transition whitespace-nowrap flex items-center gap-1"
                       >
                         <Plus size={12} />
-                        <span>Tambah</span>
+                        <span>Add</span>
                       </button>
                     </div>
                   </div>
@@ -928,11 +928,11 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                       WIDESCREEN HERO BANNERS (DESKTOP SLIDER)
                     </label>
                     <span className="text-[10px] text-f1-lightGray block font-sans">
-                      Banner layar komputer/tablet. Rasio widescreen 21:8 (4058x1550).
+                      Desktop widescreen banner. Recommended aspect ratio 21:8 (4058x1550 px).
                     </span>
                   </div>
                   <span className="text-[10px] bg-f1-red/20 text-f1-red border border-f1-red/40 px-2 py-0.5 rounded font-f1 font-bold">
-                    {((heroForm.banners && heroForm.banners.length > 0) ? heroForm.banners : [heroForm.banner || 'assets/driver-f1-banner.webp']).length} Banner
+                    {((heroForm.banners && heroForm.banners.length > 0) ? heroForm.banners : [heroForm.banner || 'assets/driver-f1-banner.webp']).length} Banners
                   </span>
                 </div>
 
@@ -962,10 +962,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                         <div className="flex-1 min-w-0 space-y-0.5">
                           <div className="flex items-center gap-1.5">
                             <span className="text-[11px] font-f1 font-bold text-white uppercase">
-                              {bIdx === 0 ? '★ Banner Awal (#1)' : `Slide #${bIdx + 1}`}
+                              {bIdx === 0 ? '★ Primary (#1)' : `Slide #${bIdx + 1}`}
                             </span>
                             <span className="text-[8px] font-mono px-1 py-0.2 rounded bg-white/10 text-f1-gray">
-                              {bannerUrl.startsWith('http') ? 'CDN' : bannerUrl.startsWith('data:') ? 'Base64' : 'Lokal'}
+                              {bannerUrl.startsWith('http') ? 'CDN' : bannerUrl.startsWith('data:') ? 'Base64' : 'Local'}
                             </span>
                           </div>
                           <p className="text-[9px] text-f1-gray truncate font-mono" title={bannerUrl}>
@@ -979,7 +979,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                             type="button"
                             disabled={bIdx === 0}
                             onClick={() => handleMoveBanner(bIdx, 'up')}
-                            title="Pindah ke Atas (Sebelumnya)"
+                            title="Move Up (Previous)"
                             className="p-1 rounded bg-white/5 hover:bg-white/15 text-white disabled:opacity-30 disabled:cursor-not-allowed transition"
                           >
                             <ChevronUp size={13} />
@@ -988,7 +988,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                             type="button"
                             disabled={bIdx === arr.length - 1}
                             onClick={() => handleMoveBanner(bIdx, 'down')}
-                            title="Pindah ke Bawah (Berikutnya)"
+                            title="Move Down (Next)"
                             className="p-1 rounded bg-white/5 hover:bg-white/15 text-white disabled:opacity-30 disabled:cursor-not-allowed transition"
                           >
                             <ChevronDown size={13} />
@@ -996,7 +996,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                           <button
                             type="button"
                             onClick={() => handleRemoveBanner(bIdx)}
-                            title="Hapus Banner ini"
+                            title="Remove Banner"
                             className="p-1 rounded bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white transition"
                           >
                             <Trash2 size={13} />
@@ -1009,11 +1009,11 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                   {/* Add New Banner Controls */}
                   <div className="pt-2 border-t border-white/10 space-y-2">
                     <span className="text-[10px] font-f1 font-bold text-f1-gray tracking-wider uppercase block">
-                      + TAMBAH BANNER DESKTOP BARU
+                      + ADD NEW DESKTOP BANNER
                     </span>
                     
                     <div className="space-y-1">
-                      <label className="text-[10px] text-f1-lightGray block">Unggah Gambar (JPG/PNG/WebP):</label>
+                      <label className="text-[10px] text-f1-lightGray block">Upload Image (JPG/PNG/WebP):</label>
                       <input
                         type="file"
                         accept="image/*"
@@ -1027,7 +1027,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                         type="text"
                         value={newBannerUrl}
                         onChange={e => setNewBannerUrl(e.target.value)}
-                        placeholder="Atau masukkan URL gambar banner (https://...)..."
+                        placeholder="Or paste banner image URL (https://...)..."
                         className="flex-1 bg-[#181822] border border-white/10 px-2.5 py-1 rounded text-white text-xs outline-none focus:border-f1-red font-mono"
                       />
                       <button
@@ -1036,7 +1036,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                         className="bg-f1-red hover:bg-f1-darkRed text-white px-2.5 py-1 rounded text-xs font-f1 font-bold transition whitespace-nowrap flex items-center gap-1"
                       >
                         <Plus size={12} />
-                        <span>Tambah</span>
+                        <span>Add</span>
                       </button>
                     </div>
                   </div>
@@ -1047,7 +1047,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
             {/* 2x4 Stats Editor */}
             <div className="pt-4 border-t border-white/10 space-y-3">
               <span className="font-f1 font-black text-white tracking-wider block uppercase">
-                METRIK STATISTIK KARIR (2x4 GRID)
+                CAREER TELEMETRY STATS (2x4 GRID)
               </span>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {heroForm.stats.map((stat, sIdx) => (
@@ -1071,7 +1071,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                         newStats[sIdx].value = e.target.value;
                         setHeroForm({ ...heroForm, stats: newStats });
                       }}
-                      placeholder="NILAI"
+                      placeholder="VALUE"
                       className="w-full text-xs font-f1 font-bold text-white bg-transparent outline-none"
                     />
                   </div>
@@ -1088,7 +1088,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                     CORE TECHNICAL COMPETENCIES ({heroForm.telemetryBars?.length || 0})
                   </span>
                   <p className="text-[11px] text-f1-gray font-sans">
-                    Keahlian teknis & telemetry bar yang tampil di halaman depan portofolio.
+                    Technical competencies & telemetry bars displayed on the front-page hero section.
                   </p>
                 </div>
                 <button
@@ -1097,13 +1097,13 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                   className="bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold px-3 py-1.5 rounded flex items-center gap-1.5 transition text-xs shadow-md"
                 >
                   <Plus size={14} />
-                  TAMBAH KEAHLIAN
+                  ADD COMPETENCY
                 </button>
               </div>
 
               {(!heroForm.telemetryBars || heroForm.telemetryBars.length === 0) ? (
                 <div className="text-center py-6 border border-dashed border-white/10 rounded bg-white/[0.02] text-f1-gray font-sans">
-                  Belum ada keahlian telemetry. Klik tombol <strong>+ TAMBAH KEAHLIAN</strong> di atas.
+                  No technical telemetry bars defined yet. Click <strong>+ ADD COMPETENCY</strong> above.
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -1119,7 +1119,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                             type="text"
                             value={bar.label}
                             onChange={e => handleTelemetryBarChange(bIdx, 'label', e.target.value)}
-                            placeholder="NAMA KEAHLIAN (cth: NETWORK ARCHITECTURE)"
+                            placeholder="COMPETENCY TITLE (e.g. NETWORK ARCHITECTURE)"
                             className="w-full bg-[#181822] border border-white/10 px-3 py-1.5 rounded text-white font-f1 font-bold text-xs uppercase focus:border-f1-red outline-none"
                           />
                         </div>
@@ -1138,7 +1138,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                           type="button"
                           onClick={() => handleRemoveTelemetryBar(bIdx)}
                           className="text-f1-gray hover:text-f1-red p-1.5 rounded hover:bg-f1-red/10 transition"
-                          title="Hapus keahlian ini"
+                          title="Remove competency"
                         >
                           <Trash2 size={16} />
                         </button>
@@ -1171,7 +1171,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
               type="submit"
               className="w-full bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold py-3 rounded tracking-widest uppercase transition text-xs shadow-lg shadow-f1-red/20"
             >
-              SIMPAN PROFIL HERO ✓
+              SAVE HERO PROFILE ✓
             </button>
           </form>
         )}
@@ -1180,16 +1180,16 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
         {activeTab === 'bio' && (
           <form onSubmit={handleBioSubmit} className="space-y-6 bg-[#13131b] border border-white/10 p-6 rounded-sm shadow-xl text-xs">
             <div className="flex items-center justify-between border-b border-white/10 pb-3">
-              <h2 className="text-lg font-f1 font-black text-white uppercase">BIOGRAFI, DRIVER DATA & STORY GALLERY</h2>
+              <h2 className="text-lg font-f1 font-black text-white uppercase">BIOGRAPHY, DRIVER DATA & STORY GALLERY</h2>
               <span className="text-[10px] bg-f1-red text-white font-f1 font-bold px-2 py-0.5 rounded uppercase">
-                F1 Leclerc Layout
+                F1 Editorial Layout
               </span>
             </div>
 
             {/* Date & Place of Birth Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">DATE OF BIRTH (TANGGAL LAHIR)</label>
+                <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">DATE OF BIRTH</label>
                 <input
                   type="text"
                   value={bioForm.dateOfBirth || ''}
@@ -1199,7 +1199,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                 />
               </div>
               <div>
-                <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">PLACE OF BIRTH / BASE (TEMPAT LAHIR / DOMISILI)</label>
+                <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">BASE OF OPERATIONS / LOCATION</label>
                 <input
                   type="text"
                   value={bioForm.placeOfBirth || ''}
@@ -1211,7 +1211,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
             </div>
 
             <div>
-              <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">PULL QUOTE (KUTIPAN KARIR)</label>
+              <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">FEATURED EDITORIAL PULL QUOTE</label>
               <textarea
                 rows={2}
                 value={bioForm.quote}
@@ -1232,7 +1232,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
             </div>
 
             <div>
-              <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">PARAGRAF PROFIL (PISAHKAN DENGAN ENTER DUA KALI)</label>
+              <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">BIOGRAPHY PARAGRAPHS (SEPARATE WITH DOUBLE NEWLINE)</label>
               <textarea
                 rows={6}
                 value={bioForm.paragraphs.join('\n\n')}
@@ -1242,7 +1242,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
             </div>
 
             <div>
-              <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">DAFTAR SKILLS (PISAHKAN DENGAN KOMA)</label>
+              <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">TECHNICAL SKILLS LIST (COMMA SEPARATED)</label>
               <input
                 type="text"
                 value={bioSkillsInput}
@@ -1256,10 +1256,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
               <div className="flex items-center justify-between p-3.5 bg-black/40 border border-white/10 rounded">
                 <div>
                   <span className="font-f1 font-bold text-white text-xs block">
-                    TAMPILKAN KARTU STORY / FOTO BIOGRAFI
+                    DISPLAY STORY CARD / BIOGRAPHY PHOTO
                   </span>
                   <span className="text-[10px] text-f1-lightGray block font-sans">
-                    Aktifkan untuk menampilkan kartu foto portrait / story dokumentasi di sebelah kiri paragraf biografi.
+                    Enable to display interactive portrait / field story card beside biography paragraphs.
                   </span>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
@@ -1279,10 +1279,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
               <div className="flex items-center justify-between">
                 <div>
                   <label className="font-f1 font-bold text-white tracking-wider block text-sm">
-                    PORTFOLIO STORIES & FOTO DOKUMENTASI BIOGRAFI ({bioForm.gallery?.length || 0})
+                    PORTFOLIO STORIES & FIELD DOCUMENTATION ({bioForm.gallery?.length || 0})
                   </label>
                   <span className="text-[10px] text-f1-lightGray block font-sans">
-                    Foto-foto dokumentasi yang dapat diklik pengunjung untuk membuka tampilan ala Instagram Story. Foto pertama (#1) otomatis menjadi sampul kartu.
+                    Field documentation photos that open in a fullscreen story viewer. Slide #1 automatically serves as the primary card cover.
                   </span>
                 </div>
                 <button
@@ -1291,14 +1291,14 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                   className="bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold px-3 py-1.5 rounded text-xs transition flex items-center gap-1.5 shadow-md"
                 >
                   <Plus size={13} />
-                  <span>TAMBAH FOTO / STORY</span>
+                  <span>ADD PHOTO / STORY</span>
                 </button>
               </div>
 
               {(!bioForm.gallery || bioForm.gallery.length === 0) ? (
                 <div className="p-6 text-center border border-dashed border-white/20 rounded bg-black/30">
                   <p className="text-xs text-f1-gray font-f1 uppercase tracking-wider mb-2">
-                    Belum ada foto story yang ditambahkan.
+                    No story photos added yet.
                   </p>
                   <button
                     type="button"
@@ -1306,7 +1306,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                     className="bg-white/10 hover:bg-white/20 text-white font-f1 font-bold px-3 py-1.5 rounded text-xs transition inline-flex items-center gap-1.5"
                   >
                     <Plus size={13} />
-                    <span>TAMBAH FOTO PERTAMA</span>
+                    <span>ADD FIRST STORY</span>
                   </button>
                 </div>
               ) : (
@@ -1322,7 +1322,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                           </span>
                           {sIdx === 0 ? (
                             <span className="bg-f1-red text-white text-[9px] font-f1 font-black px-2 py-0.5 rounded tracking-wider uppercase">
-                              ★ COVER UTAMA KARTU
+                              ★ PRIMARY COVER
                             </span>
                           ) : (
                             <button
@@ -1330,7 +1330,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                               onClick={() => handleMakeStoryCover(sIdx)}
                               className="text-[10px] text-f1-lightGray hover:text-white bg-white/10 hover:bg-white/20 px-2 py-0.5 rounded font-f1 font-bold tracking-wider uppercase transition"
                             >
-                              Jadikan Cover Utama
+                              Set as Cover
                             </button>
                           )}
                         </div>
@@ -1342,7 +1342,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                             onClick={() => handleMoveStory(sIdx, 'up')}
                             disabled={sIdx === 0}
                             className="p-1 rounded bg-white/5 hover:bg-white/10 text-white disabled:opacity-25 transition"
-                            title="Geser ke atas"
+                            title="Move up"
                           >
                             <ChevronUp size={14} />
                           </button>
@@ -1351,7 +1351,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                             onClick={() => handleMoveStory(sIdx, 'down')}
                             disabled={sIdx === (bioForm.gallery?.length || 0) - 1}
                             className="p-1 rounded bg-white/5 hover:bg-white/10 text-white disabled:opacity-25 transition"
-                            title="Geser ke bawah"
+                            title="Move down"
                           >
                             <ChevronDown size={14} />
                           </button>
@@ -1359,10 +1359,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                             type="button"
                             onClick={() => handleDeleteStoryItem(sIdx)}
                             className="text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 px-2 py-1 rounded text-xs font-f1 font-bold flex items-center gap-1 transition"
-                            title="Hapus foto story ini"
+                            title="Remove story photo"
                           >
                             <Trash2 size={12} />
-                            <span>HAPUS</span>
+                            <span>DELETE</span>
                           </button>
                         </div>
                       </div>
@@ -1389,7 +1389,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                           {/* Upload File or Path */}
                           <div>
                             <label className="text-[10px] font-f1 font-bold text-f1-gray uppercase tracking-wider block mb-1">
-                              FOTO STORY (UPLOAD DARI PERANGKAT ATAU URL)
+                              STORY PHOTO (UPLOAD FROM DEVICE OR URL)
                             </label>
                             <div className="flex flex-col sm:flex-row gap-2">
                               <input
@@ -1406,7 +1406,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                                   updated[sIdx].image = e.target.value;
                                   setBioForm({ ...bioForm, gallery: updated });
                                 }}
-                                placeholder="Atau URL / assets path..."
+                                placeholder="Or image URL / asset path..."
                                 className="flex-1 bg-[#181822] border border-white/10 px-2.5 py-1 rounded text-white text-xs font-mono"
                               />
                             </div>
@@ -1415,7 +1415,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             <div>
                               <label className="text-[10px] font-f1 font-bold text-f1-gray uppercase tracking-wider block mb-1">
-                                JUDUL STORY
+                                STORY TITLE
                               </label>
                               <input
                                 type="text"
@@ -1425,13 +1425,13 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                                   updated[sIdx].title = e.target.value;
                                   setBioForm({ ...bioForm, gallery: updated });
                                 }}
-                                placeholder="Contoh: IT Operations & Systems"
+                                placeholder="e.g. IT Operations & Systems"
                                 className="w-full bg-[#181822] border border-white/10 px-2.5 py-1.5 rounded text-white text-xs font-f1 font-bold"
                               />
                             </div>
                             <div>
                               <label className="text-[10px] font-f1 font-bold text-f1-gray uppercase tracking-wider block mb-1">
-                                LOKASI
+                                LOCATION
                               </label>
                               <input
                                 type="text"
@@ -1441,7 +1441,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                                   updated[sIdx].location = e.target.value;
                                   setBioForm({ ...bioForm, gallery: updated });
                                 }}
-                                placeholder="Contoh: Surakarta, Central Java"
+                                placeholder="e.g. Surakarta, Central Java"
                                 className="w-full bg-[#181822] border border-white/10 px-2.5 py-1.5 rounded text-white text-xs"
                               />
                             </div>
@@ -1460,13 +1460,13 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                                   updated[sIdx].timestamp = e.target.value;
                                   setBioForm({ ...bioForm, gallery: updated });
                                 }}
-                                placeholder="Contoh: TMC Operations • 2026"
+                                placeholder="e.g. TMC Operations • 2026"
                                 className="w-full bg-[#181822] border border-white/10 px-2.5 py-1.5 rounded text-white text-xs font-mono"
                               />
                             </div>
                             <div>
                               <label className="text-[10px] font-f1 font-bold text-f1-gray uppercase tracking-wider block mb-1">
-                                CAPTION / DESKRIPSI
+                                CAPTION / DESCRIPTION
                               </label>
                               <input
                                 type="text"
@@ -1476,7 +1476,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                                   updated[sIdx].caption = e.target.value;
                                   setBioForm({ ...bioForm, gallery: updated });
                                 }}
-                                placeholder="Deskripsi momen atau pencapaian..."
+                                placeholder="Description of milestone, stack, or achievement..."
                                 className="w-full bg-[#181822] border border-white/10 px-2.5 py-1.5 rounded text-white text-xs font-sans"
                               />
                             </div>
@@ -1495,7 +1495,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
               type="submit"
               className="w-full bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold py-3 rounded tracking-widest uppercase transition text-xs shadow-lg shadow-f1-red/20"
             >
-              SIMPAN BIOGRAFI & STORY GALLERY ✓
+              SAVE BIOGRAPHY & STORY GALLERY ✓
             </button>
           </form>
         )}
@@ -1504,14 +1504,14 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
         {activeTab === 'projects' && (
           <div className="space-y-4 bg-[#13131b] border border-white/10 p-6 rounded-sm shadow-xl text-xs">
             <div className="flex justify-between items-center border-b border-white/10 pb-3">
-              <span className="font-f1 font-black text-white text-base uppercase">DAFTAR PROYEK ({data.projects.length})</span>
+              <span className="font-f1 font-black text-white text-base uppercase">PROJECT DIRECTORY ({data.projects.length})</span>
               <button
                 type="button"
                 onClick={() => { setEditingItem(null); setModalType('project'); }}
                 className="bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold px-3 py-1.5 rounded flex items-center gap-1.5 transition text-xs"
               >
                 <Plus size={14} />
-                <span>TAMBAH PROYEK</span>
+                <span>ADD PROJECT</span>
               </button>
             </div>
 
@@ -1521,7 +1521,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                   <div>
                     <strong className="text-sm font-f1 font-bold text-white block">{proj.title}</strong>
                     <span className="text-[10px] text-f1-gray font-f1">
-                      {proj.category.toUpperCase()} • {proj.year} • {(proj.images?.length || (proj.image ? 1 : 0))} FOTO {proj.featured ? '• ★ FEATURED' : ''}
+                      {proj.category.toUpperCase()} • {proj.year} • {(proj.images?.length || (proj.image ? 1 : 0))} PHOTOS {proj.featured ? '• ★ FEATURED' : ''}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -1533,9 +1533,9 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                       <Edit2 size={13} />
                     </button>
                     <button
-                      onClick={() => { if (confirm('Hapus proyek ini?')) deleteProject(proj.id); }}
+                      onClick={() => { if (confirm('Delete this project?')) deleteProject(proj.id); }}
                       className="p-1.5 bg-red-950/40 hover:bg-f1-red text-white rounded transition"
-                      title="Hapus"
+                      title="Delete"
                     >
                       <Trash2 size={13} />
                     </button>
@@ -1550,14 +1550,14 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
         {activeTab === 'career' && (
           <div className="space-y-4 bg-[#13131b] border border-white/10 p-6 rounded-sm shadow-xl text-xs">
             <div className="flex justify-between items-center border-b border-white/10 pb-3">
-              <span className="font-f1 font-black text-white text-base uppercase">RIWAYAT PENGALAMAN KERJA ({data.career.length})</span>
+              <span className="font-f1 font-black text-white text-base uppercase">CAREER TIMELINE & ROLES ({data.career.length})</span>
               <button
                 type="button"
                 onClick={() => { setEditingItem(null); setModalType('career'); }}
                 className="bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold px-3 py-1.5 rounded flex items-center gap-1.5 transition text-xs"
               >
                 <Plus size={14} />
-                <span>TAMBAH PENGALAMAN</span>
+                <span>ADD EXPERIENCE</span>
               </button>
             </div>
 
@@ -1577,9 +1577,9 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                       <Edit2 size={13} />
                     </button>
                     <button
-                      onClick={() => { if (confirm('Hapus pengalaman kerja ini?')) deleteCareer(c.id); }}
+                      onClick={() => { if (confirm('Delete this career entry?')) deleteCareer(c.id); }}
                       className="p-1.5 bg-red-950/40 hover:bg-f1-red text-white rounded transition"
-                      title="Hapus"
+                      title="Delete"
                     >
                       <Trash2 size={13} />
                     </button>
@@ -1593,9 +1593,9 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
         {/* TAB 5: TICKER */}
         {activeTab === 'ticker' && (
           <form onSubmit={handleTickerSubmit} className="space-y-4 bg-[#13131b] border border-white/10 p-6 rounded-sm shadow-xl text-xs">
-            <h2 className="text-lg font-f1 font-black text-white uppercase border-b border-white/10 pb-3">RUNNING TICKER (TEKS BERJALAN)</h2>
+            <h2 className="text-lg font-f1 font-black text-white uppercase border-b border-white/10 pb-3">RUNNING TICKER STRIP</h2>
             <p className="text-f1-gray font-sans">
-              Masukkan kalimat-kalimat yang akan ditampilkan pada strip teks berjalan di bawah hero. Pisahkan setiap kalimat dengan tanda koma.
+              Enter announcement phrases to display on the running ticker strip below the hero banner. Separate each item with a comma.
             </p>
             <textarea
               rows={4}
@@ -1607,7 +1607,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
               type="submit"
               className="w-full bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold py-3 rounded tracking-widest uppercase transition text-xs shadow-lg shadow-f1-red/20"
             >
-              SIMPAN TICKER ✓
+              SAVE TICKER ✓
             </button>
           </form>
         )}
@@ -1616,14 +1616,14 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
         {activeTab === 'awards' && (
           <div className="space-y-4 bg-[#13131b] border border-white/10 p-6 rounded-sm shadow-xl text-xs">
             <div className="flex justify-between items-center border-b border-white/10 pb-3">
-              <span className="font-f1 font-black text-white text-base uppercase">DAFTAR SERTIFIKAT DIGITAL ({data.awards.length})</span>
+              <span className="font-f1 font-black text-white text-base uppercase">DIGITAL CERTIFICATES ({data.awards.length})</span>
               <button
                 type="button"
                 onClick={() => { setEditingItem(null); setModalType('award'); }}
                 className="bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold px-3 py-1.5 rounded flex items-center gap-1.5 transition text-xs"
               >
                 <Plus size={14} />
-                <span>TAMBAH SERTIFIKAT</span>
+                <span>ADD CERTIFICATE</span>
               </button>
             </div>
 
@@ -1643,9 +1643,9 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                       <Edit2 size={13} />
                     </button>
                     <button
-                      onClick={() => { if (confirm('Hapus sertifikat ini?')) deleteAward(awd.id); }}
+                      onClick={() => { if (confirm('Delete this certificate record?')) deleteAward(awd.id); }}
                       className="p-1.5 bg-red-950/40 hover:bg-f1-red text-white rounded transition"
-                      title="Hapus"
+                      title="Delete"
                     >
                       <Trash2 size={13} />
                     </button>
@@ -1659,7 +1659,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
         {/* TAB 7: CONTACT */}
         {activeTab === 'contact' && (
           <form onSubmit={handleContactSubmit} className="space-y-4 bg-[#13131b] border border-white/10 p-6 rounded-sm shadow-xl text-xs">
-            <h2 className="text-lg font-f1 font-black text-white uppercase border-b border-white/10 pb-3">INFORMASI KONTAK</h2>
+            <h2 className="text-lg font-f1 font-black text-white uppercase border-b border-white/10 pb-3">CONTACT INFORMATION</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">EMAIL</label>
@@ -1703,7 +1703,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
             </div>
 
             <div>
-              <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">LOKASI / BASE</label>
+              <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">BASE LOCATION</label>
               <input
                 type="text"
                 value={contactForm.base}
@@ -1716,7 +1716,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
               type="submit"
               className="w-full bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold py-3 rounded tracking-widest uppercase transition text-xs shadow-lg shadow-f1-red/20"
             >
-              SIMPAN INFORMASI KONTAK ✓
+              SAVE CONTACT DETAILS ✓
             </button>
           </form>
         )}
@@ -1735,11 +1735,11 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                     SUPABASE STORAGE CDN (BUCKET: portfolio-assets)
                   </strong>
                   <p className="text-f1-gray font-sans text-xs">
-                    Semua foto avatar, banner hero, proyek, dan file dokumen sertifikat disimpan di cloud storage Supabase.
+                    All profile avatars, hero banners, project galleries, and verified credentials are hosted on Supabase Storage.
                   </p>
                 </div>
                 <div className="flex items-center gap-2 text-xs font-mono">
-                  <span className="text-f1-gray">Status Storage:</span>
+                  <span className="text-f1-gray">Storage Status:</span>
                   <span className={supabaseReady ? 'text-[#00ff66] font-bold' : 'text-f1-red font-bold'}>
                     {supabaseReady ? 'CONNECTED' : 'UNCONFIGURED'}
                   </span>
@@ -1750,13 +1750,13 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                 <div className="p-2.5 bg-black/30 rounded border border-white/5 space-y-1">
                   <span className="text-f1-gray font-mono text-[10px] block">AVATAR PORTRAIT:</span>
                   <span className="text-white font-mono truncate block">
-                    {data.hero.photo?.startsWith('http') ? '✓ Supabase CDN' : 'Lokal / Default'}
+                    {data.hero.photo?.startsWith('http') ? '✓ Supabase CDN' : 'Local / Default'}
                   </span>
                 </div>
                 <div className="p-2.5 bg-black/30 rounded border border-white/5 space-y-1">
                   <span className="text-f1-gray font-mono text-[10px] block">HERO BANNER:</span>
                   <span className="text-white font-mono truncate block">
-                    {data.hero.banner?.startsWith('http') ? '✓ Supabase CDN' : 'Lokal / Default'}
+                    {data.hero.banner?.startsWith('http') ? '✓ Supabase CDN' : 'Local / Default'}
                   </span>
                 </div>
               </div>
@@ -1772,7 +1772,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                 }`}
               >
                 <UploadCloud size={16} />
-                <span>{isSyncingAssets ? 'MENGUNGGAH SEMUA ASSET KE SUPABASE...' : 'SINKRONISASI SEMUA ASSET LOKAL KE SUPABASE STORAGE'}</span>
+                <span>{isSyncingAssets ? 'UPLOADING ALL MEDIA TO SUPABASE...' : 'SYNC ALL LOCAL ASSETS TO SUPABASE STORAGE'}</span>
               </button>
             </div>
 
@@ -1780,22 +1780,22 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="p-4 bg-white/5 border border-white/10 rounded space-y-2">
                 <strong className="text-sm font-f1 font-bold text-white block uppercase">EXPORT BACKUP JSON</strong>
-                <p className="text-f1-gray font-sans text-xs">Unduh salinan cadangan seluruh isi portofolio.</p>
+                <p className="text-f1-gray font-sans text-xs">Download a complete JSON snapshot of your portfolio.</p>
                 <button
                   onClick={exportJSON}
                   className="w-full bg-white/10 hover:bg-white/20 text-white font-f1 font-bold py-2 rounded flex items-center justify-center gap-2 transition"
                 >
                   <Download size={14} />
-                  <span>DOWNLOAD JSON</span>
+                  <span>DOWNLOAD BACKUP</span>
                 </button>
               </div>
 
               <div className="p-4 bg-white/5 border border-white/10 rounded space-y-2">
-                <strong className="text-sm font-f1 font-bold text-white block uppercase">IMPORT RESTORE JSON</strong>
-                <p className="text-f1-gray font-sans text-xs">Pulihkan data dari file JSON cadangan Anda.</p>
+                <strong className="text-sm font-f1 font-bold text-white block uppercase">IMPORT / RESTORE JSON</strong>
+                <p className="text-f1-gray font-sans text-xs">Restore your entire portfolio state from a backup JSON file.</p>
                 <label className="w-full bg-white/10 hover:bg-white/20 text-white font-f1 font-bold py-2 rounded flex items-center justify-center gap-2 cursor-pointer transition">
                   <Upload size={14} />
-                  <span>PILIH FILE JSON</span>
+                  <span>CHOOSE JSON FILE</span>
                   <input type="file" accept=".json" onChange={handleJSONFileImport} className="hidden" />
                 </label>
               </div>
@@ -1804,14 +1804,14 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
             {/* Reset Defaults */}
             <div className="p-4 bg-red-950/30 border border-red-500/20 rounded flex flex-col sm:flex-row justify-between items-center gap-4">
               <div>
-                <strong className="text-sm font-f1 font-bold text-red-200 block">RESET KE DATA AWAL</strong>
-                <p className="text-xs text-red-300/80 font-sans">Kembalikan seluruh konten ke profil awal bawaan sistem.</p>
+                <strong className="text-sm font-f1 font-bold text-red-200 block">FACTORY RESET DATA</strong>
+                <p className="text-xs text-red-300/80 font-sans">Reset all portfolio data back to initial factory defaults.</p>
               </div>
               <button
-                onClick={() => { if (confirm('Yakin reset semua data ke setelan awal?')) resetToDefaults(); }}
+                onClick={() => { if (confirm('Are you sure you want to restore all portfolio data to factory defaults?')) resetToDefaults(); }}
                 className="bg-red-600 hover:bg-red-700 text-white font-f1 font-bold px-4 py-2 rounded transition whitespace-nowrap"
               >
-                RESET SEMUA DATA
+                RESET ALL DATA
               </button>
             </div>
           </div>

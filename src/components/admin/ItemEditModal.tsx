@@ -108,7 +108,7 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
       });
     } catch (err) {
       console.error(err);
-      alert('Gagal mengunggah foto proyek.');
+      alert('Failed to upload project photo.');
     } finally {
       setIsUploadingImages(false);
       e.target.value = '';
@@ -241,7 +241,7 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
         certificateFileName: processed.name
       }));
     } catch {
-      alert('Gagal memproses file sertifikat.');
+      alert('Failed to process certificate document.');
     }
   };
 
@@ -257,7 +257,7 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
         {/* Header */}
         <div className="flex justify-between items-center px-6 py-4 border-b border-white/10 bg-f1-surface">
           <h3 className="text-xl font-f1 font-black tracking-wider text-white uppercase">
-            {item ? (type === 'award' ? 'EDIT SERTIFIKAT' : `EDIT ${type.toUpperCase()}`) : (type === 'award' ? '+ TAMBAH SERTIFIKAT' : `+ TAMBAH ${type.toUpperCase()}`)}
+            {item ? (type === 'award' ? 'EDIT CERTIFICATE' : `EDIT ${type.toUpperCase()}`) : (type === 'award' ? '+ ADD CERTIFICATE' : `+ ADD ${type.toUpperCase()}`)}
           </h3>
           <button onClick={onClose} className="text-f1-gray hover:text-white transition">
             <X size={20} />
@@ -270,32 +270,32 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
           {type === 'project' && (
             <>
               <div className="space-y-1.5">
-                <label className="font-f1 font-bold text-f1-gray tracking-wider block">JUDUL PROYEK</label>
+                <label className="font-f1 font-bold text-f1-gray tracking-wider block">PROJECT TITLE</label>
                 <input
                   type="text"
                   required
                   value={projectForm.title || ''}
                   onChange={e => setProjectForm({ ...projectForm, title: e.target.value })}
-                  placeholder="e.g. Website Presensi Pegawai"
+                  placeholder="e.g. Geolocation Attendance System"
                   className="w-full bg-[#181822] border border-white/10 focus:border-f1-red px-3.5 py-2.5 rounded text-white outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="font-f1 font-bold text-f1-gray tracking-wider block">KATEGORI</label>
+                  <label className="font-f1 font-bold text-f1-gray tracking-wider block">CATEGORY</label>
                   <select
                     value={projectForm.category || 'web'}
                     onChange={e => setProjectForm({ ...projectForm, category: e.target.value as any })}
                     className="w-full bg-[#181822] border border-white/10 focus:border-f1-red px-3 py-2.5 rounded text-white outline-none"
                   >
-                    <option value="web">Web Developer</option>
-                    <option value="photo">Fotografer / Visual</option>
-                    <option value="other">Lainnya / IT Support</option>
+                    <option value="web">Web Development</option>
+                    <option value="photo">Photography & Visual</option>
+                    <option value="other">IT Infrastructure & Support</option>
                   </select>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="font-f1 font-bold text-f1-gray tracking-wider block">TAHUN</label>
+                  <label className="font-f1 font-bold text-f1-gray tracking-wider block">YEAR</label>
                   <input
                     type="text"
                     required
@@ -307,24 +307,24 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
               </div>
 
               <div className="space-y-1.5">
-                <label className="font-f1 font-bold text-f1-gray tracking-wider block">DESKRIPSI LENGKAP</label>
+                <label className="font-f1 font-bold text-f1-gray tracking-wider block">FULL PROJECT DESCRIPTION</label>
                 <textarea
                   rows={3}
                   required
                   value={projectForm.description || ''}
                   onChange={e => setProjectForm({ ...projectForm, description: e.target.value })}
-                  placeholder="Deskripsikan fitur dan pencapaian proyek..."
+                  placeholder="Describe the architecture, key features, and project outcomes..."
                   className="w-full bg-[#181822] border border-white/10 focus:border-f1-red px-3.5 py-2.5 rounded text-white outline-none"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="font-f1 font-bold text-f1-gray tracking-wider block">TAGS (Pisahkan koma)</label>
+                <label className="font-f1 font-bold text-f1-gray tracking-wider block">TAGS (Comma separated)</label>
                 <input
                   type="text"
                   value={tagInput}
                   onChange={e => setTagInput(e.target.value)}
-                  placeholder="WEB, INTERNAL SYSTEM, SQL"
+                  placeholder="REACT, TYPESCRIPT, SUPABASE"
                   className="w-full bg-[#181822] border border-white/10 focus:border-f1-red px-3.5 py-2.5 rounded text-white outline-none"
                 />
               </div>
@@ -341,7 +341,7 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="font-f1 font-bold text-f1-gray tracking-wider block">GITHUB URL</label>
+                  <label className="font-f1 font-bold text-f1-gray tracking-wider block">GITHUB REPO URL</label>
                   <input
                     type="url"
                     value={projectForm.githubUrl || ''}
@@ -358,14 +358,14 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
                   <div>
                     <label className="font-f1 font-bold text-white tracking-wider block flex items-center gap-1.5">
                       <ImageIcon size={14} className="text-f1-red" />
-                      <span>FOTO / BANNER PROYEK (BISA LEBIH DARI 1)</span>
+                      <span>PROJECT MEDIA & BANNER GALLERY</span>
                     </label>
                     <span className="text-[11px] text-f1-gray font-sans block mt-0.5">
-                      Upload beberapa foto atau masukkan link. Foto dapat digeser seperti banner di halaman proyek.
+                      Upload multiple images or paste URLs. Visitors can navigate through them as a banner carousel.
                     </span>
                   </div>
                   <span className="text-[11px] font-f1 font-bold text-white/70 bg-white/10 px-2 py-0.5 rounded">
-                    {(projectForm.images?.length || (projectForm.image ? 1 : 0))} FOTO
+                    {(projectForm.images?.length || (projectForm.image ? 1 : 0))} PHOTOS
                   </span>
                 </div>
 
@@ -376,12 +376,12 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
                     {isUploadingImages ? (
                       <>
                         <Loader2 size={15} className="animate-spin text-f1-red" />
-                        <span>MENGUNGGAH FOTO...</span>
+                        <span>UPLOADING MEDIA...</span>
                       </>
                     ) : (
                       <>
                         <Upload size={15} className="text-f1-red" />
-                        <span>+ PILIH FOTO (BISA BANYAK)</span>
+                        <span>+ SELECT PHOTOS (MULTI-SELECT)</span>
                       </>
                     )}
                     <input
@@ -406,7 +406,7 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
                           handleAddImageUrl();
                         }
                       }}
-                      placeholder="Atau tempel URL gambar..."
+                      placeholder="Or paste image URL here..."
                       className="flex-1 bg-[#181822] border border-white/10 focus:border-f1-red px-3 py-2 rounded text-white text-xs outline-none"
                     />
                     <button
@@ -414,10 +414,10 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
                       onClick={handleAddImageUrl}
                       disabled={!newImageUrl.trim()}
                       className="bg-white/10 hover:bg-f1-red disabled:opacity-30 disabled:hover:bg-white/10 text-white font-f1 font-bold px-3 py-2 rounded transition flex items-center gap-1 flex-shrink-0"
-                      title="Tambah Foto dari URL"
+                      title="Add photo from URL"
                     >
                       <Plus size={14} />
-                      <span>TAMBAH</span>
+                      <span>ADD</span>
                     </button>
                   </div>
                 </div>
@@ -439,12 +439,12 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
                             alt={`Preview ${idx + 1}`}
                             className="w-full h-full object-cover"
                           />
-                          {/* Badge Slide / Utama */}
+                          {/* Badge Slide / Primary */}
                           <div className="absolute top-1 left-1 flex items-center gap-1">
                             {idx === 0 ? (
                               <span className="bg-f1-red text-white text-[9px] font-f1 font-black px-1.5 py-0.5 rounded-sm uppercase tracking-wider flex items-center gap-0.5">
                                 <Star size={9} fill="currentColor" />
-                                UTAMA
+                                PRIMARY
                               </span>
                             ) : (
                               <span className="bg-black/70 text-white/80 text-[9px] font-f1 font-bold px-1.5 py-0.5 rounded-sm">
@@ -463,7 +463,7 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
                               onClick={() => handleMoveImage(idx, 'left')}
                               disabled={idx === 0}
                               className="p-1 rounded bg-white/5 hover:bg-white/20 disabled:opacity-20 text-white transition"
-                              title="Geser ke kiri"
+                              title="Move left"
                             >
                               <ChevronLeft size={13} />
                             </button>
@@ -473,7 +473,7 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
                               onClick={() => handleMoveImage(idx, 'right')}
                               disabled={idx === (projectForm.images?.length || 0) - 1}
                               className="p-1 rounded bg-white/5 hover:bg-white/20 disabled:opacity-20 text-white transition"
-                              title="Geser ke kanan"
+                              title="Move right"
                             >
                               <ChevronRight size={13} />
                             </button>
@@ -483,9 +483,9 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
                                 type="button"
                                 onClick={() => handleSetPrimaryImage(idx)}
                                 className="px-1.5 py-0.5 text-[9px] font-f1 font-bold rounded bg-white/10 hover:bg-f1-red text-white transition"
-                                title="Jadikan foto utama (banner awal)"
+                                title="Set as primary banner"
                               >
-                                UTAMA
+                                PRIMARY
                               </button>
                             )}
                           </div>
@@ -495,7 +495,7 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
                             type="button"
                             onClick={() => handleRemoveImage(idx)}
                             className="p-1 rounded bg-red-950/40 hover:bg-f1-red text-white transition"
-                            title="Hapus foto ini"
+                            title="Remove photo"
                           >
                             <Trash2 size={13} />
                           </button>
@@ -505,7 +505,7 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
                   </div>
                 ) : (
                   <div className="p-4 bg-white/5 border border-dashed border-white/15 rounded text-center text-f1-gray text-xs">
-                    Belum ada foto yang ditambahkan. Silakan upload atau masukkan URL gambar di atas.
+                    No photos added yet. Upload files or enter image URLs above.
                   </div>
                 )}
               </div>
@@ -518,7 +518,7 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
                     onChange={e => setProjectForm({ ...projectForm, featured: e.target.checked })}
                     className="rounded text-f1-red"
                   />
-                  <span>Tandai sebagai Featured Project (tampilan 2 kolom lebar)</span>
+                  <span>Mark as Featured Project (wide 2-column showcase highlight)</span>
                 </label>
               </div>
             </>
@@ -529,7 +529,7 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
             <>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="font-f1 font-bold text-f1-gray tracking-wider block">TAHUN / PERIODE</label>
+                  <label className="font-f1 font-bold text-f1-gray tracking-wider block">TIMELINE / PERIOD</label>
                   <input
                     type="text"
                     required
@@ -540,7 +540,7 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="font-f1 font-bold text-f1-gray tracking-wider block">STATUS / RATING</label>
+                  <label className="font-f1 font-bold text-f1-gray tracking-wider block">KEY STATUS / KPI</label>
                   <input
                     type="text"
                     value={careerForm.points || ''}
@@ -552,7 +552,7 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
               </div>
 
               <div className="space-y-1.5">
-                <label className="font-f1 font-bold text-f1-gray tracking-wider block">PERAN / POSISI</label>
+                <label className="font-f1 font-bold text-f1-gray tracking-wider block">ROLE / POSITION</label>
                 <input
                   type="text"
                   required
@@ -564,25 +564,25 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
               </div>
 
               <div className="space-y-1.5">
-                <label className="font-f1 font-bold text-f1-gray tracking-wider block">INSTITUSI / TIM</label>
+                <label className="font-f1 font-bold text-f1-gray tracking-wider block">ORGANIZATION / TEAM</label>
                 <input
                   type="text"
                   required
                   value={careerForm.team || ''}
                   onChange={e => setCareerForm({ ...careerForm, team: e.target.value })}
-                  placeholder="e.g. Lembaga Pendidikan SPS TPQ Al Ikhlas"
+                  placeholder="e.g. SPS TPQ Al Ikhlas"
                   className="w-full bg-[#181822] border border-white/10 focus:border-f1-red px-3.5 py-2.5 rounded text-white outline-none"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="font-f1 font-bold text-f1-gray tracking-wider block">DESKRIPSI TUGAS</label>
+                <label className="font-f1 font-bold text-f1-gray tracking-wider block">RESPONSIBILITIES & DELIVERABLES</label>
                 <textarea
                   rows={3}
                   required
                   value={careerForm.description || ''}
                   onChange={e => setCareerForm({ ...careerForm, description: e.target.value })}
-                  placeholder="Jelaskan kontribusi Anda..."
+                  placeholder="Detail your responsibilities, infrastructure management, and key impact..."
                   className="w-full bg-[#181822] border border-white/10 focus:border-f1-red px-3.5 py-2.5 rounded text-white outline-none"
                 />
               </div>
@@ -594,7 +594,7 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
             <>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="font-f1 font-bold text-f1-gray tracking-wider block">TAHUN</label>
+                  <label className="font-f1 font-bold text-f1-gray tracking-wider block">YEAR</label>
                   <input
                     type="text"
                     required
@@ -605,72 +605,72 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="font-f1 font-bold text-f1-gray tracking-wider block">POSISI / LEVEL</label>
+                  <label className="font-f1 font-bold text-f1-gray tracking-wider block">STANDING / AWARD LEVEL</label>
                   <input
                     type="text"
                     required
                     value={awardForm.position || ''}
                     onChange={e => setAwardForm({ ...awardForm, position: e.target.value })}
-                    placeholder="e.g. P1 GOLD / CERTIFIED"
+                    placeholder="e.g. 1ST PLACE GOLD / CERTIFIED"
                     className="w-full bg-[#181822] border border-white/10 focus:border-f1-red px-3.5 py-2.5 rounded text-white outline-none"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="font-f1 font-bold text-f1-gray tracking-wider block">NAMA SERTIFIKAT</label>
+                <label className="font-f1 font-bold text-f1-gray tracking-wider block">CERTIFICATE TITLE</label>
                 <input
                   type="text"
                   required
                   value={awardForm.title || ''}
                   onChange={e => setAwardForm({ ...awardForm, title: e.target.value })}
-                  placeholder="e.g. Juara 1 Indonesia Paku Bumi Open..."
+                  placeholder="e.g. 1st Place Gold Medalist - Paku Bumi Open..."
                   className="w-full bg-[#181822] border border-white/10 focus:border-f1-red px-3.5 py-2.5 rounded text-white outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="font-f1 font-bold text-f1-gray tracking-wider block">LEMBAGA / PENYELENGGARA</label>
+                  <label className="font-f1 font-bold text-f1-gray tracking-wider block">ISSUING BODY / ORGANIZER</label>
                   <input
                     type="text"
                     value={awardForm.issuer || ''}
                     onChange={e => setAwardForm({ ...awardForm, issuer: e.target.value })}
-                    placeholder="e.g. IPSI Jawa Tengah"
+                    placeholder="e.g. IPSI Central Java"
                     className="w-full bg-[#181822] border border-white/10 focus:border-f1-red px-3.5 py-2.5 rounded text-white outline-none"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="font-f1 font-bold text-f1-gray tracking-wider block">KATEGORI / TINGKAT</label>
+                  <label className="font-f1 font-bold text-f1-gray tracking-wider block">CLASSIFICATION / LEVEL</label>
                   <input
                     type="text"
                     value={awardForm.category || ''}
                     onChange={e => setAwardForm({ ...awardForm, category: e.target.value })}
-                    placeholder="e.g. Kejuaraan Internasional"
+                    placeholder="e.g. International Championship"
                     className="w-full bg-[#181822] border border-white/10 focus:border-f1-red px-3.5 py-2.5 rounded text-white outline-none"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="font-f1 font-bold text-f1-gray tracking-wider block">SUBTITLE / KETERANGAN SINGKAT</label>
+                <label className="font-f1 font-bold text-f1-gray tracking-wider block">SUBTITLE / CITATION</label>
                 <input
                   type="text"
                   required
                   value={awardForm.subtitle || ''}
                   onChange={e => setAwardForm({ ...awardForm, subtitle: e.target.value })}
-                  placeholder="e.g. Kejuaraan Pencak Silat Internasional"
+                  placeholder="e.g. International Martial Arts Championship"
                   className="w-full bg-[#181822] border border-white/10 focus:border-f1-red px-3.5 py-2.5 rounded text-white outline-none"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="font-f1 font-bold text-f1-gray tracking-wider block">PENJELASAN LENGKAP SERTIFIKAT</label>
+                <label className="font-f1 font-bold text-f1-gray tracking-wider block">FULL CERTIFICATE DESCRIPTION</label>
                 <textarea
                   rows={3}
                   value={awardForm.description || ''}
                   onChange={e => setAwardForm({ ...awardForm, description: e.target.value })}
-                  placeholder="Ceritakan detail kejuaraan, dedikasi, dan pencapaian medali..."
+                  placeholder="Detail the championship history, competitive skills, and milestones..."
                   className="w-full bg-[#181822] border border-white/10 focus:border-f1-red px-3.5 py-2.5 rounded text-white outline-none font-sans"
                 />
               </div>
@@ -679,12 +679,12 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
               <div className="space-y-2 p-3.5 bg-white/5 border border-white/10 rounded">
                 <div className="flex items-center justify-between">
                   <label className="font-f1 font-bold text-white tracking-wider block">
-                    FILE SERTIFIKAT (PDF / JPG / PNG)
+                    CERTIFICATE ATTACHMENT (PDF / JPG / PNG)
                   </label>
                   {awardForm.certificateUrl && (
                     <span className="text-[10px] text-[#00ff66] font-mono flex items-center gap-1">
                       <CheckCircle2 size={12} />
-                      TERPASANG ({awardForm.certificateType === 'pdf' ? 'PDF' : 'GAMBAR'})
+                      ATTACHED ({awardForm.certificateType === 'pdf' ? 'PDF' : 'IMAGE'})
                     </span>
                   )}
                 </div>
@@ -692,7 +692,7 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
                 <div className="flex items-center gap-2">
                   <label className="flex-1 bg-white/10 hover:bg-white/20 text-white font-f1 font-bold px-3 py-2 rounded flex items-center justify-center gap-2 cursor-pointer transition text-xs">
                     <Upload size={14} />
-                    <span>{awardForm.certificateUrl ? 'GANTI FILE SERTIFIKAT (PDF / JPG)' : 'PILIH FILE SERTIFIKAT (PDF / JPG)'}</span>
+                    <span>{awardForm.certificateUrl ? 'REPLACE CERTIFICATE FILE (PDF / JPG)' : 'CHOOSE CERTIFICATE FILE (PDF / JPG)'}</span>
                     <input
                       type="file"
                       accept=".pdf,image/jpeg,image/png,image/webp"
@@ -711,7 +711,7 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
                         certificateFileName: undefined
                       }))}
                       className="p-2 bg-red-950/40 hover:bg-f1-red text-white rounded transition"
-                      title="Hapus File"
+                      title="Remove file"
                     >
                       <Trash2 size={15} />
                     </button>
@@ -733,13 +733,13 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
               onClick={onClose}
               className="px-4 py-2.5 border border-white/20 text-white hover:bg-white/5 rounded font-f1 font-bold tracking-wider"
             >
-              BATAL
+              CANCEL
             </button>
             <button
               type="submit"
               className="px-6 py-2.5 bg-f1-red hover:bg-f1-darkRed text-white rounded font-f1 font-bold tracking-widest transition"
             >
-              SIMPAN DATA ✓
+              SAVE CHANGES ✓
             </button>
           </div>
         </form>

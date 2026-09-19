@@ -135,7 +135,7 @@ export const BiographySection: React.FC = () => {
               <div 
                 onClick={() => handleOpenStory(0)}
                 className="group relative w-[280px] h-[420px] sm:w-[320px] sm:h-[480px] lg:w-[360px] lg:h-[540px] rounded-xl overflow-hidden shadow-2xl border-2 border-white/15 hover:border-f1-red cursor-pointer transition-all duration-500 bg-[#0f0f15] hover:scale-[1.02]"
-                title="Klik untuk membuka Instagram Story"
+                title="Click to view Field Story"
               >
                 {/* Image */}
                 <img

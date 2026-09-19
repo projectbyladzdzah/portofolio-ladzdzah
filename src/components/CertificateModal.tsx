@@ -67,7 +67,7 @@ export const CertificateModal: React.FC = () => {
     if (!file) return;
 
     try {
-      showToast('Memproses file sertifikat...', 'warning');
+      showToast('Processing certificate document...', 'warning');
       const processed = await processCertificateFile(file);
       const updated: AwardItem = {
         ...currentAward,
@@ -77,9 +77,9 @@ export const CertificateModal: React.FC = () => {
       };
       updateAward(updated);
       setActiveAwardModal(updated);
-      showToast(`File ${processed.name} berhasil diunggah!`, 'success');
+      showToast(`File ${processed.name} uploaded successfully!`, 'success');
     } catch {
-      showToast('Gagal memproses file sertifikat!', 'error');
+      showToast('Failed to process certificate document!', 'error');
     } finally {
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
@@ -88,7 +88,7 @@ export const CertificateModal: React.FC = () => {
   };
 
   const handleRemoveFile = () => {
-    if (confirm('Hapus file sertifikat ini?')) {
+    if (confirm('Delete this certificate document?')) {
       const updated: AwardItem = {
         ...currentAward,
         certificateUrl: undefined,
@@ -98,7 +98,7 @@ export const CertificateModal: React.FC = () => {
       };
       updateAward(updated);
       setActiveAwardModal(updated);
-      showToast('File sertifikat dihapus.', 'warning');
+      showToast('Certificate document removed.', 'warning');
     }
   };
 
@@ -106,11 +106,11 @@ export const CertificateModal: React.FC = () => {
     if (!certificateUrl) return;
     const a = document.createElement('a');
     a.href = certificateUrl;
-    a.download = currentAward.certificateFileName || `Sertifikat_${currentAward.title.replace(/\s+/g, '_')}.${isPdf ? 'pdf' : 'jpg'}`;
+    a.download = currentAward.certificateFileName || `Certificate_${currentAward.title.replace(/\s+/g, '_')}.${isPdf ? 'pdf' : 'jpg'}`;
     document.body.appendChild(a);
     a.click();
     a.remove();
-    showToast('Download dimulai...', 'success');
+    showToast('Download initiated...', 'success');
   };
 
   const handleOpenNewTab = () => {
@@ -144,7 +144,7 @@ export const CertificateModal: React.FC = () => {
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-[10px] font-f1 font-bold tracking-widest text-[#d4af37] uppercase">
-                  DOKUMEN SERTIFIKAT // OFFICIAL CERTIFICATES
+                  OFFICIAL CERTIFICATE // VERIFIED CREDENTIALS
                 </span>
                 <span className="text-[10px] px-2 py-0.5 bg-f1-red/20 text-f1-red border border-f1-red/30 rounded font-f1 font-bold">
                   {currentAward.position || '1ST PLACE GOLD'}
@@ -162,7 +162,7 @@ export const CertificateModal: React.FC = () => {
               <button
                 onClick={handlePrev}
                 className="hover:text-white transition p-0.5"
-                title="Sertifikat Sebelumnya"
+                title="Previous Certificate"
               >
                 <ChevronLeft size={16} />
               </button>
@@ -172,7 +172,7 @@ export const CertificateModal: React.FC = () => {
               <button
                 onClick={handleNext}
                 className="hover:text-white transition p-0.5"
-                title="Sertifikat Selanjutnya"
+                title="Next Certificate"
               >
                 <ChevronRight size={16} />
               </button>
@@ -202,7 +202,7 @@ export const CertificateModal: React.FC = () => {
                   <span className="text-f1-gray uppercase flex items-center gap-1.5 truncate">
                     {isPdf ? <FileText size={15} className="text-f1-red shrink-0" /> : <ImageIcon size={15} className="text-[#d4af37] shrink-0" />}
                     <span className="text-white truncate">
-                      {currentAward.certificateFileName || (isPdf ? 'Dokumen_Sertifikat.pdf' : certificateUrl ? 'Foto_Sertifikat.jpg' : 'Belum Ada File')}
+                      {currentAward.certificateFileName || (isPdf ? 'Certificate_Document.pdf' : certificateUrl ? 'Certificate_Image.jpg' : 'No Document Uploaded')}
                     </span>
                   </span>
                   {certificateUrl && (
@@ -218,7 +218,7 @@ export const CertificateModal: React.FC = () => {
                       <button
                         onClick={() => setZoomLevel(prev => Math.max(0.6, prev - 0.2))}
                         className="p-1 hover:text-white text-f1-gray transition"
-                        title="Perkecil"
+                        title="Zoom Out"
                       >
                         <ZoomOut size={13} />
                       </button>
@@ -228,7 +228,7 @@ export const CertificateModal: React.FC = () => {
                       <button
                         onClick={() => setZoomLevel(prev => Math.min(2.5, prev + 0.2))}
                         className="p-1 hover:text-white text-f1-gray transition"
-                        title="Perbesar"
+                        title="Zoom In"
                       >
                         <ZoomIn size={13} />
                       </button>
@@ -240,14 +240,14 @@ export const CertificateModal: React.FC = () => {
                       <button
                         onClick={handleOpenNewTab}
                         className="p-1.5 hover:bg-white/10 rounded text-f1-gray hover:text-white transition"
-                        title="Buka Layar Penuh di Tab Baru"
+                        title="Open Fullscreen in New Tab"
                       >
                         <Maximize2 size={14} />
                       </button>
                       <button
                         onClick={handleDownload}
                         className="p-1.5 hover:bg-white/10 rounded text-f1-gray hover:text-white transition"
-                        title="Download File"
+                        title="Download Document"
                       >
                         <Download size={14} />
                       </button>
@@ -255,7 +255,7 @@ export const CertificateModal: React.FC = () => {
                         <button
                           onClick={handleRemoveFile}
                           className="p-1.5 hover:bg-f1-red/20 rounded text-f1-gray hover:text-f1-red transition"
-                          title="Hapus File Sertifikat (Admin)"
+                          title="Delete Certificate File (Admin)"
                         >
                           <Trash2 size={14} />
                         </button>
@@ -267,7 +267,7 @@ export const CertificateModal: React.FC = () => {
                   {isAdminUnlocked && (
                     <label className="cursor-pointer bg-[#d4af37] hover:bg-white text-black px-2.5 py-1 rounded text-xs font-f1 font-bold flex items-center gap-1 transition shadow">
                       <Upload size={12} />
-                      <span>{certificateUrl ? 'Ganti' : 'Upload'}</span>
+                      <span>{certificateUrl ? 'Replace' : 'Upload'}</span>
                       <input
                         ref={fileInputRef}
                         type="file"
@@ -287,7 +287,7 @@ export const CertificateModal: React.FC = () => {
                     /* PDF Viewer Frame */
                     <iframe
                       src={certificateUrl}
-                      title={`Sertifikat PDF ${currentAward.title}`}
+                      title={`PDF Certificate ${currentAward.title}`}
                       className="w-full h-full min-h-[300px] sm:min-h-[500px] border-0 rounded"
                     />
                   ) : (
@@ -295,7 +295,7 @@ export const CertificateModal: React.FC = () => {
                     <div className="w-full h-full flex items-center justify-center overflow-auto p-2 sm:p-4">
                       <img
                         src={certificateUrl}
-                        alt={`Sertifikat ${currentAward.title}`}
+                        alt={`Certificate ${currentAward.title}`}
                         style={{ transform: `scale(${zoomLevel})`, transformOrigin: 'center center' }}
                         className="max-h-[320px] sm:max-h-[500px] w-auto object-contain rounded shadow-2xl transition-transform duration-200"
                       />
@@ -309,16 +309,16 @@ export const CertificateModal: React.FC = () => {
                     </div>
                     <div>
                       <h3 className="text-base font-f1 font-bold text-white uppercase tracking-wider">
-                        Upload File Sertifikat (Mode Admin)
+                        Upload Certificate File (Admin Mode)
                       </h3>
                       <p className="text-xs text-f1-gray font-sans mt-1">
-                        Format yang didukung: <strong>PDF, JPG, PNG</strong>. File akan langsung tersimpan dan ditampilkan di portofolio.
+                        Supported formats: <strong>PDF, JPG, PNG</strong>. Files will be saved and displayed instantly in your portfolio.
                       </p>
                     </div>
 
                     <label className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#d4af37] to-[#f3cf65] text-black font-f1 font-black text-xs tracking-wider uppercase rounded shadow-lg hover:brightness-110 cursor-pointer transition">
                       <Upload size={14} />
-                      <span>Pilih File PDF / JPG</span>
+                      <span>Choose PDF / Image File</span>
                       <input
                         ref={fileInputRef}
                         type="file"
@@ -336,10 +336,10 @@ export const CertificateModal: React.FC = () => {
                     </div>
                     <div>
                       <h3 className="text-base font-f1 font-bold text-white uppercase tracking-wider">
-                        ARSIP DOKUMEN FISIK
+                        PHYSICAL DOCUMENT ARCHIVE
                       </h3>
                       <p className="text-xs text-f1-gray font-sans mt-2 leading-relaxed">
-                        Dokumen fisik sertifikat ini telah tercatat dan terverifikasi secara resmi. File scan digital belum dipublikasikan oleh pemilik portofolio.
+                        This physical certificate document has been formally recorded and verified. Digital scan preview is awaiting owner publication.
                       </p>
                     </div>
                     <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded bg-white/5 border border-white/10 text-f1-lightGray text-[11px] font-mono">
@@ -352,14 +352,14 @@ export const CertificateModal: React.FC = () => {
             </div>
 
             {/* ============================================================ */}
-            {/* RIGHT: PENJELASAN & DETAIL PRESTASI (4 COLS) */}
+            {/* RIGHT: CREDENTIAL DETAILS & SUMMARY (4 COLS) */}
             {/* ============================================================ */}
             <div className="lg:col-span-4 flex flex-col justify-between space-y-4 bg-[#14141f] border border-white/10 p-5 rounded-sm">
               <div className="space-y-4">
                 <div className="border-b border-white/10 pb-3 flex items-center justify-between">
                   <span className="text-xs font-f1 font-bold text-[#d4af37] tracking-widest uppercase flex items-center gap-1.5">
                     <CheckCircle2 size={14} />
-                    <span>PENJELASAN PRESTASI</span>
+                    <span>CREDENTIAL DETAILS</span>
                   </span>
                   <span className="text-[11px] font-mono text-f1-gray">
                     #{currentIndex + 1}
@@ -381,7 +381,7 @@ export const CertificateModal: React.FC = () => {
                   <div className="flex items-center gap-2.5 p-2.5 bg-white/5 rounded border border-white/5">
                     <Trophy size={16} className="text-[#d4af37] shrink-0" />
                     <div>
-                      <span className="text-[10px] font-f1 font-bold text-f1-gray block uppercase">Peringkat / Medali</span>
+                      <span className="text-[10px] font-f1 font-bold text-f1-gray block uppercase">Standing / Award</span>
                       <span className="text-white font-f1 font-black">{currentAward.position || '1ST PLACE (GOLD)'}</span>
                     </div>
                   </div>
@@ -389,15 +389,15 @@ export const CertificateModal: React.FC = () => {
                   <div className="flex items-center gap-2.5 p-2.5 bg-white/5 rounded border border-white/5">
                     <Building size={16} className="text-f1-red shrink-0" />
                     <div>
-                      <span className="text-[10px] font-f1 font-bold text-f1-gray block uppercase">Penyelenggara</span>
-                      <span className="text-white font-sans font-medium">{currentAward.issuer || 'IPSI / Organisasi Terkait'}</span>
+                      <span className="text-[10px] font-f1 font-bold text-f1-gray block uppercase">Issuing Authority / Organizer</span>
+                      <span className="text-white font-sans font-medium">{currentAward.issuer || 'Official Organization'}</span>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2.5 p-2.5 bg-white/5 rounded border border-white/5">
                     <Calendar size={16} className="text-[#00ff66] shrink-0" />
                     <div>
-                      <span className="text-[10px] font-f1 font-bold text-f1-gray block uppercase">Tahun Perolehan</span>
+                      <span className="text-[10px] font-f1 font-bold text-f1-gray block uppercase">Year Conferred</span>
                       <span className="text-white font-f1 font-bold">{currentAward.year}</span>
                     </div>
                   </div>
@@ -406,11 +406,11 @@ export const CertificateModal: React.FC = () => {
                 {/* Full Explanation */}
                 <div className="space-y-1.5 pt-2">
                   <span className="text-[10px] font-f1 font-bold text-f1-gray tracking-wider uppercase block">
-                    DESKRIPSI & RINGKASAN KEJUARAAN:
+                    SUMMARY & CITATION:
                   </span>
                   <p className="text-xs text-f1-lightGray font-sans leading-relaxed bg-black/30 p-3 rounded border border-white/5">
                     {currentAward.description ||
-                      `${currentAward.title} merupakan pencapaian kejuaraan resmi yang berhasil diraih dengan torehan ${currentAward.position || 'Juara 1 Medali Emas'}, membuktikan kemampuan kompetitif, ketahanan fisik, fokus mental, dan kedisiplinan tingkat tinggi.`}
+                      `${currentAward.title} represents a verified championship and certified milestone awarded at ${currentAward.position || '1st Place'}, demonstrating high-level technical discipline, physical endurance, competitive performance, and strategic execution.`}
                   </p>
                 </div>
               </div>
@@ -418,7 +418,7 @@ export const CertificateModal: React.FC = () => {
               {/* Bottom Nav / Other Awards Selector */}
               <div className="pt-4 border-t border-white/10 space-y-2">
                 <span className="text-[10px] font-f1 font-bold text-f1-gray tracking-wider uppercase block">
-                  PILIH SERTIFIKAT LAINNYA ({awardsList.length}):
+                  SELECT CERTIFICATE ({awardsList.length}):
                 </span>
                 <div className="grid grid-cols-3 gap-1.5">
                   {awardsList.map((item, idx) => (

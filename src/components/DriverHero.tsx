@@ -570,7 +570,7 @@ export const DriverHero: React.FC = () => {
                   </span>
                   {isAwardStat && (
                     <span className="text-[8px] sm:text-[9px] font-f1 font-black text-[#d4af37] tracking-wider uppercase flex items-center gap-0.5 sm:gap-1 bg-[#d4af37]/15 px-1 sm:px-1.5 py-0.5 rounded border border-[#d4af37]/30 shrink-0">
-                      <span>BUKA</span>
+                      <span>VIEW</span>
                       <ArrowUpRight size={10} />
                     </span>
                   )}

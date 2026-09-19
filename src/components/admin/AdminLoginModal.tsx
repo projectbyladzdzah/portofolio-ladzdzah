@@ -30,16 +30,16 @@ export const AdminLoginModal: React.FC = () => {
     try {
       const result = await loginWithSupabase(email, password);
       if (result.success) {
-        setSuccessMsg('Autentikasi Berhasil! Membuka Control Room...');
+        setSuccessMsg('Authentication Successful! Launching Control Room...');
         setTimeout(() => {
           setIsAdminLoginModalOpen(false);
           setIsAdminOpen(true);
         }, 600);
       } else {
-        setErrorMsg(result.error || 'Email atau password tidak sesuai.');
+        setErrorMsg(result.error || 'Invalid username or password.');
       }
     } catch (err: any) {
-      setErrorMsg(err?.message || 'Terjadi kesalahan saat menghubungi server autentikasi.');
+      setErrorMsg(err?.message || 'Error communicating with authentication server.');
     } finally {
       setLoading(false);
     }
@@ -69,7 +69,7 @@ export const AdminLoginModal: React.FC = () => {
           <button
             onClick={() => setIsAdminLoginModalOpen(false)}
             className="text-f1-gray hover:text-white p-1 rounded transition"
-            aria-label="Tutup"
+            aria-label="Close"
           >
             <X size={18} />
           </button>
@@ -106,16 +106,16 @@ export const AdminLoginModal: React.FC = () => {
           <form onSubmit={handleSupabaseSubmit} className="space-y-4 font-f1">
             {!supabaseReady && (
               <div className="p-2.5 bg-yellow-950/40 border border-yellow-500/30 rounded text-[11px] text-yellow-200/90 font-sans space-y-1">
-                <p className="font-bold font-f1 tracking-wider text-f1-yellow">KUNCI SUPABASE BELUM DISETEL</p>
+                <p className="font-bold font-f1 tracking-wider text-f1-yellow">SUPABASE CREDENTIALS NOT CONFIGURED</p>
                 <p>
-                  Masukkan kredensial Supabase di file <code>.env</code> / Vercel untuk login ke Control Room.
+                  Configure your Supabase credentials in <code>.env</code> or deployment dashboard to log in.
                 </p>
               </div>
             )}
 
             <div>
               <label className="text-[11px] font-bold text-f1-gray tracking-wider block mb-1 uppercase">
-                USERNAME / EMAIL ADMIN
+                ADMIN USERNAME / EMAIL
               </label>
               <div className="relative">
                 <input
@@ -123,7 +123,7 @@ export const AdminLoginModal: React.FC = () => {
                   required
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  placeholder="ladzdzah atau email@anda.com"
+                  placeholder="username or email@domain.com"
                   className="w-full bg-[#181824] border border-white/15 focus:border-f1-red px-3.5 py-2.5 rounded text-white text-xs font-sans outline-none transition"
                 />
                 <Mail size={14} className="absolute right-3.5 top-3 text-white/30" />
@@ -156,7 +156,7 @@ export const AdminLoginModal: React.FC = () => {
                 <span>VERIFYING CREDENTIALS...</span>
               ) : (
                 <>
-                  <span>MASUK KE CONTROL ROOM</span>
+                  <span>ENTER CONTROL ROOM</span>
                   <ArrowRight size={14} />
                 </>
               )}

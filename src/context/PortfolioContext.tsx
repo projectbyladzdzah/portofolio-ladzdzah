@@ -196,7 +196,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         console.warn('[Supabase Sync Error]:', error.message);
         setCloudStatus('offline');
         if (error.code === '42501') {
-          showToast('Sesi Supabase kedaluwarsa. Silakan login ulang agar tersimpan di Cloud.', 'warning');
+          showToast('Supabase session expired. Please re-login to ensure Cloud synchronization.', 'warning');
         }
       } else {
         setCloudStatus('connected');
@@ -360,7 +360,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         }
         localStorage.setItem(STORAGE_KEY, JSON.stringify(leanData));
       } catch {}
-      showToast('Penyimpanan lokal penuh. Gambar disarankan diunggah ke CDN Supabase.', 'warning');
+      showToast('Local storage limit reached. Please upload assets to Supabase Storage CDN.', 'warning');
     }
   }, [data, showToast]);
 
@@ -369,7 +369,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     if (!isSupabaseConfigured() || !supabase) {
       return {
         success: false,
-        error: 'Kunci Supabase belum disetel di .env atau Vercel. Pastikan kredensial Supabase sudah terkonfigurasi.'
+        error: 'Supabase credentials are not configured in .env or deployment settings.'
       };
     }
 
@@ -387,7 +387,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         candidateEmails.push(`${cleanInput}@gmail.com`);
       }
 
-      let lastError = 'Email atau username tidak ditemukan.';
+      let lastError = 'Invalid email or password credentials.';
       for (const candidate of candidateEmails) {
         const { data: authData, error } = await supabase.auth.signInWithPassword({
           email: candidate,
@@ -399,7 +399,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           try {
             sessionStorage.setItem(AUTH_KEY, 'true');
           } catch {}
-          showToast('Login Admin Supabase Berhasil!', 'success');
+          showToast('Admin authentication successful!', 'success');
           return { success: true };
         }
         if (error) {
@@ -409,7 +409,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
       return { success: false, error: lastError };
     } catch (err: any) {
-      return { success: false, error: err?.message || 'Gagal menghubungi server Supabase.' };
+      return { success: false, error: err?.message || 'Failed to connect to authentication server.' };
     }
   };
 
@@ -424,7 +424,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     try {
       sessionStorage.removeItem(AUTH_KEY);
     } catch {}
-    showToast('Admin telah logout.', 'warning');
+    showToast('Admin session signed out.', 'warning');
   };
 
   // Auto-migrate any residual awards stats in localStorage/state
@@ -459,7 +459,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       syncToSupabase(next);
       return next;
     });
-    showToast('Profil Hero & Engineer berhasil disimpan!', 'success');
+    showToast('Hero profile & engineer telemetry saved successfully!', 'success');
   };
 
   const updateBiography = (biography: BiographyData) => {
@@ -468,7 +468,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       syncToSupabase(next);
       return next;
     });
-    showToast('Biografi berhasil disimpan!', 'success');
+    showToast('Biography updated successfully!', 'success');
   };
 
   const updateTicker = (ticker: string[]) => {
@@ -477,7 +477,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       syncToSupabase(next);
       return next;
     });
-    showToast('Teks Ticker berhasil disimpan!', 'success');
+    showToast('Ticker feed updated successfully!', 'success');
   };
 
   const addProject = (project: ProjectItem) => {
@@ -486,7 +486,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       syncToSupabase(next);
       return next;
     });
-    showToast('Proyek baru berhasil ditambahkan!', 'success');
+    showToast('New project created successfully!', 'success');
   };
 
   const updateProject = (project: ProjectItem) => {
@@ -495,7 +495,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       syncToSupabase(next);
       return next;
     });
-    showToast('Proyek berhasil diupdate!', 'success');
+    showToast('Project updated successfully!', 'success');
   };
 
   const deleteProject = (id: string) => {
@@ -504,7 +504,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       syncToSupabase(next);
       return next;
     });
-    showToast('Proyek telah dihapus.', 'warning');
+    showToast('Project removed.', 'warning');
   };
 
   const addCareer = (careerItem: CareerItem) => {
@@ -513,7 +513,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       syncToSupabase(next);
       return next;
     });
-    showToast('Pengalaman kerja baru berhasil ditambahkan!', 'success');
+    showToast('New career experience added successfully!', 'success');
   };
 
   const updateCareer = (careerItem: CareerItem) => {
@@ -522,7 +522,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       syncToSupabase(next);
       return next;
     });
-    showToast('Pengalaman kerja berhasil diupdate!', 'success');
+    showToast('Career experience updated successfully!', 'success');
   };
 
   const deleteCareer = (id: string) => {
@@ -531,7 +531,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       syncToSupabase(next);
       return next;
     });
-    showToast('Riwayat kerja telah dihapus.', 'warning');
+    showToast('Career experience removed.', 'warning');
   };
 
   const addAward = (award: AwardItem) => {
@@ -540,7 +540,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       syncToSupabase(next);
       return next;
     });
-    showToast('Penghargaan baru berhasil ditambahkan!', 'success');
+    showToast('New certificate record added successfully!', 'success');
   };
 
   const updateAward = (award: AwardItem) => {
@@ -549,7 +549,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       syncToSupabase(next);
       return next;
     });
-    showToast('Penghargaan berhasil diupdate!', 'success');
+    showToast('Certificate record updated successfully!', 'success');
   };
 
   const deleteAward = (id: string) => {
@@ -558,7 +558,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       syncToSupabase(next);
       return next;
     });
-    showToast('Penghargaan telah dihapus.', 'warning');
+    showToast('Certificate record removed.', 'warning');
   };
 
   const updateContact = (contact: ContactData) => {
@@ -567,7 +567,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       syncToSupabase(next);
       return next;
     });
-    showToast('Informasi Kontak berhasil disimpan!', 'success');
+    showToast('Contact details saved successfully!', 'success');
   };
 
   const updateSecurity = (security: SecurityConfig) => {
@@ -576,14 +576,14 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       syncToSupabase(next);
       return next;
     });
-    showToast('Pengaturan keamanan PIN berhasil diupdate!', 'success');
+    showToast('Security PIN configuration updated!', 'success');
   };
 
   const resetToDefaults = () => {
     const defaults = JSON.parse(JSON.stringify(DEFAULT_PORTFOLIO_DATA));
     setData(defaults);
     syncToSupabase(defaults);
-    showToast('Seluruh data berhasil direset ke setelan awal!', 'warning');
+    showToast('All portfolio data restored to factory defaults!', 'warning');
   };
 
   const exportJSON = () => {
@@ -594,7 +594,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
-    showToast('File backup JSON berhasil didownload!', 'success');
+    showToast('Portfolio JSON backup downloaded successfully!', 'success');
   };
 
   const importJSON = (jsonStr: string): boolean => {
@@ -605,10 +605,10 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       }
       setData(parsed);
       syncToSupabase(parsed);
-      showToast('Data berhasil diimpor & dimuat ulang!', 'success');
+      showToast('Portfolio data imported & reloaded successfully!', 'success');
       return true;
     } catch {
-      showToast('Gagal mengimpor file JSON: Format tidak sesuai', 'error');
+      showToast('Failed to import JSON file: Invalid schema structure.', 'error');
       return false;
     }
   };
@@ -661,7 +661,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
                 canvas.toBlob(
                   fallbackBlob => {
                     if (fallbackBlob) resolve(fallbackBlob);
-                    else reject(new Error('Gagal menghasilkan blob gambar'));
+                    else reject(new Error('Failed to generate image blob'));
                   },
                   'image/jpeg',
                   quality
@@ -752,9 +752,9 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         } else if (error) {
           console.warn('[Supabase Storage Upload Error]:', error.message);
           if (error.message.toLowerCase().includes('row-level security') || error.message.toLowerCase().includes('policy')) {
-            showToast('Supabase Storage: Izin RLS bucket belum dibuka di Supabase. File dialihkan & disimpan di memori lokal.', 'warning');
+            showToast('Supabase Storage: Bucket RLS permission required. Stored in local fallback.', 'warning');
           } else {
-            showToast(`Supabase Storage: ${error.message}. Fallback ke lokal.`, 'warning');
+            showToast(`Supabase Storage: ${error.message}. Fallback applied.`, 'warning');
           }
         }
       } catch (err: any) {
@@ -929,15 +929,15 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       if (count > 0) {
         setData(nextData);
         syncToSupabase(nextData);
-        showToast(`Berhasil mengunggah & menyimpan ${count} foto asset ke Supabase Storage!`, 'success');
-        return { success: true, count, message: `Berhasil mengunggah ${count} foto asset ke Supabase Storage!` };
+        showToast(`Successfully uploaded & synced ${count} asset(s) to Supabase Storage!`, 'success');
+        return { success: true, count, message: `Successfully uploaded ${count} asset(s) to Supabase Storage!` };
       } else {
-        showToast('Semua foto asset & sertifikat sudah tersimpan di Supabase Storage.', 'success');
-        return { success: true, count: 0, message: 'Semua foto asset sudah tersimpan di Supabase Storage.' };
+        showToast('All media assets & certificates are up to date on Supabase Storage.', 'success');
+        return { success: true, count: 0, message: 'All media assets are synced with Supabase Storage.' };
       }
     } catch (err: any) {
-      showToast(`Gagal sinkronisasi asset: ${err?.message || 'Error'}`, 'error');
-      return { success: false, count: 0, message: err?.message || 'Gagal sinkronisasi asset ke Supabase.' };
+      showToast(`Asset sync failed: ${err?.message || 'Error'}`, 'error');
+      return { success: false, count: 0, message: err?.message || 'Failed to sync assets to Supabase Storage.' };
     }
   };
 

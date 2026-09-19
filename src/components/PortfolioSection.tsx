@@ -95,7 +95,7 @@ export const PortfolioSection: React.FC = () => {
                   activeCategory === 'photo' ? 'bg-f1-red text-white' : 'text-f1-gray hover:text-white'
                 }`}
               >
-                FOTO ({counts.photo})
+                PHOTO ({counts.photo})
               </button>
               <button
                 onClick={() => handleCategoryChange('other')}
@@ -103,7 +103,7 @@ export const PortfolioSection: React.FC = () => {
                   activeCategory === 'other' ? 'bg-f1-red text-white' : 'text-f1-gray hover:text-white'
                 }`}
               >
-                LAINNYA ({counts.other})
+                OTHER ({counts.other})
               </button>
             </div>
 
@@ -117,7 +117,7 @@ export const PortfolioSection: React.FC = () => {
                     ? 'text-white hover:bg-f1-red hover:text-white active:scale-95'
                     : 'text-white/20 cursor-not-allowed'
                 }`}
-                title="Geser Kiri"
+                title="Previous"
                 aria-label="Previous items"
               >
                 <ChevronLeft size={16} />
@@ -133,7 +133,7 @@ export const PortfolioSection: React.FC = () => {
                     ? 'text-white hover:bg-f1-red hover:text-white active:scale-95'
                     : 'text-white/20 cursor-not-allowed'
                 }`}
-                title="Geser Kanan"
+                title="Next"
                 aria-label="Next items"
               >
                 <ChevronRight size={16} />
@@ -150,10 +150,10 @@ export const PortfolioSection: React.FC = () => {
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
                 className="bg-white/5 hover:bg-f1-red border border-white/10 hover:border-f1-red text-white font-f1 font-bold text-xs tracking-wider px-3 py-1.5 rounded flex items-center gap-1.5 transition"
-                title="Buka Control Room Admin untuk Tambah/Kelola Proyek"
+                title="Open Admin Control Room to Manage Projects"
               >
                 <Plus size={14} />
-                <span className="hidden sm:inline">ADD PROYEK</span>
+                <span className="hidden sm:inline">ADD PROJECT</span>
               </a>
             )}
           </div>
@@ -166,8 +166,8 @@ export const PortfolioSection: React.FC = () => {
             <button
               onClick={() => handleScroll('left')}
               className="absolute -left-3 sm:-left-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 bg-f1-black/90 hover:bg-f1-red text-white border border-white/20 hover:border-f1-red rounded-full flex items-center justify-center backdrop-blur-md shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95"
-              aria-label="Geser ke kiri"
-              title="Geser ke kiri"
+              aria-label="Previous"
+              title="Previous"
             >
               <ChevronLeft size={22} />
             </button>
@@ -178,8 +178,8 @@ export const PortfolioSection: React.FC = () => {
             <button
               onClick={() => handleScroll('right')}
               className="absolute -right-3 sm:-right-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 bg-f1-black/90 hover:bg-f1-red text-white border border-white/20 hover:border-f1-red rounded-full flex items-center justify-center backdrop-blur-md shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95"
-              aria-label="Geser ke kanan"
-              title="Geser ke kanan"
+              aria-label="Next"
+              title="Next"
             >
               <ChevronRight size={22} />
             </button>

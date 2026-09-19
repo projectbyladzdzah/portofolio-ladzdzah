@@ -52,8 +52,8 @@ export const AwardsSection: React.FC = () => {
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-[11px] sm:text-xs font-f1 font-bold text-[#d4af37] tracking-widest uppercase flex items-center gap-1.5">
               <Sparkles size={13} />
-              <span className="hidden md:inline">KLIK KARTU UNTUK LIHAT SERTIFIKAT DIGITAL</span>
-              <span className="md:hidden">SERTIFIKAT DIGITAL</span>
+              <span className="hidden md:inline">CLICK CARD TO VIEW VERIFIED CERTIFICATE</span>
+              <span className="md:hidden">VERIFIED CERTIFICATE</span>
             </span>
 
             {/* Navigation Arrows in Header */}
@@ -66,7 +66,7 @@ export const AwardsSection: React.FC = () => {
                     ? 'text-[#d4af37] hover:bg-[#d4af37] hover:text-black active:scale-95'
                     : 'text-white/20 cursor-not-allowed'
                 }`}
-                title="Geser Kiri"
+                title="Previous"
                 aria-label="Previous certificates"
               >
                 <ChevronLeft size={16} />
@@ -82,7 +82,7 @@ export const AwardsSection: React.FC = () => {
                     ? 'text-[#d4af37] hover:bg-[#d4af37] hover:text-black active:scale-95'
                     : 'text-white/20 cursor-not-allowed'
                 }`}
-                title="Geser Kanan"
+                title="Next"
                 aria-label="Next certificates"
               >
                 <ChevronRight size={16} />
@@ -98,8 +98,8 @@ export const AwardsSection: React.FC = () => {
             <button
               onClick={() => handleScroll('left')}
               className="absolute -left-3 sm:-left-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 bg-f1-black/90 hover:bg-[#d4af37] text-white hover:text-black border border-[#d4af37]/40 hover:border-[#d4af37] rounded-full flex items-center justify-center backdrop-blur-md shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95"
-              aria-label="Geser ke kiri"
-              title="Geser ke kiri"
+              aria-label="Previous"
+              title="Previous"
             >
               <ChevronLeft size={22} />
             </button>
@@ -110,8 +110,8 @@ export const AwardsSection: React.FC = () => {
             <button
               onClick={() => handleScroll('right')}
               className="absolute -right-3 sm:-right-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 bg-f1-black/90 hover:bg-[#d4af37] text-white hover:text-black border border-[#d4af37]/40 hover:border-[#d4af37] rounded-full flex items-center justify-center backdrop-blur-md shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95"
-              aria-label="Geser ke kanan"
-              title="Geser ke kanan"
+              aria-label="Next"
+              title="Next"
             >
               <ChevronRight size={22} />
             </button>
@@ -157,7 +157,7 @@ export const AwardsSection: React.FC = () => {
                 {/* Click Call to Action */}
                 <div className="mt-5 pt-3 border-t border-white/10 flex items-center justify-between relative z-10">
                   <span className="text-xs font-f1 font-bold text-[#d4af37] group-hover:text-white transition flex items-center gap-1">
-                    <span>LIHAT SERTIFIKAT & DETAIL</span>
+                    <span>VIEW CERTIFICATE & DETAILS</span>
                     <ArrowUpRight size={13} />
                   </span>
                   <span className="text-[10px] text-f1-gray font-mono">

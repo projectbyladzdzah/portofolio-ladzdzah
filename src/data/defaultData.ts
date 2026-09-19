@@ -108,7 +108,7 @@ export const DEFAULT_PORTFOLIO_DATA: PortfolioData = {
       title: "School Employee Attendance Web Platform",
       category: "web",
       year: "2025",
-      description: "A comprehensive internal attendance management system designed for educators and staff at Lembaga Pendidikan SPS TPQ Al Ikhlas Lebakbarang. Features role-based access control, automated time logging, monthly reporting, and instant printable administrative summaries.",
+      description: "A comprehensive internal attendance management system designed for educators and staff at Al Ikhlas Lebakbarang Education Center. Features role-based access control, automated time logging, monthly reporting, and instant printable administrative summaries.",
       tags: ["WEB PLATFORM", "INTERNAL SYSTEM", "PHP / SQL", "AUTHENTICATION"],
       image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
       images: [
@@ -142,7 +142,7 @@ export const DEFAULT_PORTFOLIO_DATA: PortfolioData = {
       title: "Student Organization Digital Media & Video Production",
       category: "other",
       year: "2022–24",
-      description: "Creative media production and social media strategy for Unit Kegiatan Mahasiswa Merpati Putih. Directed promotional video reels, designed campaign visual posters, and established a digital member archive.",
+      description: "Creative media production and social media strategy for Merpati Putih Student Martial Arts Organization. Directed promotional video reels, designed campaign visual posters, and established a digital member archive.",
       tags: ["VIDEO PRODUCTION", "SOCIAL MEDIA", "ADOBE PREMIERE"],
       image: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=1200&q=80",
       images: [
@@ -215,7 +215,7 @@ export const DEFAULT_PORTFOLIO_DATA: PortfolioData = {
       id: "car_1",
       year: "2025",
       role: "Lead Developer — Employee Attendance Web",
-      team: "Lembaga Pendidikan SPS TPQ Al Ikhlas",
+      team: "SPS TPQ Al Ikhlas Education Center",
       description: "Engineered and deployed internal employee attendance system with real-time logging, user validation, and administrative audit trails.",
       points: "Lead Dev",
       status: "COMPLETED"
@@ -224,7 +224,7 @@ export const DEFAULT_PORTFOLIO_DATA: PortfolioData = {
       id: "car_2",
       year: "2023—2025",
       role: "IT Support & Systems Specialist",
-      team: "Lembaga Pendidikan SPS TPQ Al Ikhlas",
+      team: "SPS TPQ Al Ikhlas Education Center",
       description: "Spearheaded hardware/software troubleshooting, local network configuration, printer and workstation maintenance, and institutional web portal support.",
       points: "99.8% Uptime",
       status: "OPERATIONAL"
@@ -232,8 +232,8 @@ export const DEFAULT_PORTFOLIO_DATA: PortfolioData = {
     {
       id: "car_3",
       year: "2021—2023",
-      role: "Staff Administrasi & Operational Support",
-      team: "Lembaga Pendidikan SPS TPQ Al Ikhlas",
+      role: "Administrative Operations & Digital Archiving Specialist",
+      team: "SPS TPQ Al Ikhlas Education Center",
       description: "Handled formal correspondence, digital record archiving, procurement inventory tracking, and institutional registry formatting.",
       points: "Records Lead",
       status: "COMPLETED"
@@ -242,7 +242,7 @@ export const DEFAULT_PORTFOLIO_DATA: PortfolioData = {
       id: "car_4",
       year: "2022—2024",
       role: "Secretary & Media Communications Staff",
-      team: "Unit Kegiatan Mahasiswa Merpati Putih",
+      team: "Merpati Putih Student Martial Arts Organization",
       description: "Managed organization proposals, member databases, public relations, visual content creation, and promotional video production.",
       points: "Media Lead",
       status: "HONORARY"
@@ -252,35 +252,35 @@ export const DEFAULT_PORTFOLIO_DATA: PortfolioData = {
     {
       id: "awd_1",
       year: "2023",
-      title: "Juara 1 Indonesia Paku Bumi Open 11th International Championship",
-      subtitle: "Kejuaraan Pencak Silat Tingkat Internasional",
+      title: "1st Place Gold — Paku Bumi Open 11th International Championship",
+      subtitle: "International Martial Arts Championship",
       position: "1ST PLACE (GOLD)",
-      issuer: "Perguruan Pencak Silat & IPSI Jawa Barat / Indonesia",
+      issuer: "Indonesian Pencak Silat Association (IPSI) & West Java Committee",
       category: "International Martial Arts Championship",
       credentialId: "PBO-XI-INT-2023-GOLD-01",
-      description: "Meraih medali emas (Juara 1) pada kejuaraan pencak silat terbuka tingkat internasional yang diikuti oleh ratusan kontingen atlet dari dalam dan luar negeri. Menunjukkan dedikasi tinggi, ketahanan fisik, fokus mental, dan sportivitas kompetitif berstandar internasional."
+      description: "Awarded 1st Place Gold Medal in a prestigious international open martial arts championship contested by hundreds of domestic and international athletes. Demonstrating elite athletic discipline, tactical endurance, mental focus, and championship performance."
     },
     {
       id: "awd_2",
       year: "2022",
-      title: "Juara 1 Piala Rektor Unsoed Tingkat Jawa Tengah",
-      subtitle: "Kejuaraan Pencak Silat Tingkat Regional Jawa Tengah",
+      title: "1st Place Gold — Unsoed Rector Cup Championship",
+      subtitle: "Central Java Regional Inter-University Championship",
       position: "1ST PLACE (GOLD)",
-      issuer: "Universitas Jenderal Soedirman & IPSI Jawa Tengah",
+      issuer: "Jenderal Soedirman University & IPSI Central Java",
       category: "Regional University Championship",
       credentialId: "UNSOED-REKTOR-CUP-2022-P1",
-      description: "Meraih podium tertinggi (Juara 1 Medali Emas) pada kejuaraan bergengsi tingkat perguruan tinggi dan regional se-Jawa Tengah, membuktikan keunggulan teknik, konsistensi persiapan fisik, serta ketangguhan mental dalam kompetisi bertaraf provinsi."
+      description: "Secured top podium honors (1st Place Gold Medal) in the premier inter-university championship across Central Java, proving technical precision, consistent physical preparation, and mental resilience under competitive pressure."
     },
     {
       id: "awd_3",
       year: "2018",
-      title: "Juara 1 IPSI CUP Karesidenan Pekalongan",
-      subtitle: "Kejuaraan Pencak Silat Antar Daerah Karesidenan",
+      title: "1st Place Gold — IPSI Cup Pekalongan Residency",
+      subtitle: "Inter-District Regional Championship",
       position: "1ST PLACE (GOLD)",
-      issuer: "Ikatan Pencak Silat Indonesia (IPSI) Karesidenan Pekalongan",
+      issuer: "Indonesian Pencak Silat Association (IPSI) Pekalongan",
       category: "Inter-District Championship",
       credentialId: "IPSI-PKL-REG-2018-01",
-      description: "Juara 1 dan peraih medali emas pada kejuaraan resmi IPSI tingkat Karesidenan Pekalongan. Menjadi fondasi awal rekam jejak kedisiplinan atletik, kepemimpinan tim, dan konsistensi kerja keras yang terbawa hingga dunia profesional."
+      description: "1st place gold medalist in the official IPSI Pekalongan residency championship. Formed the foundation of athletic discipline, perseverance, and competitive drive that transitioned directly into software engineering and IT operations."
     }
   ],
   contact: {
@@ -290,7 +290,7 @@ export const DEFAULT_PORTFOLIO_DATA: PortfolioData = {
     phone: "085848253569",
     github: "github.com/Ladzdzah",
     linkedin: "https://linkedin.com/in/ladzdzah",
-    base: "Pekalongan, Jawa Tengah, Indonesia"
+    base: "Pekalongan, Central Java, Indonesia"
   },
   security: {
     pinEnabled: false,

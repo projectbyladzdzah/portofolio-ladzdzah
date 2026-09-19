@@ -169,11 +169,11 @@ export const ProjectBannerSlider: React.FC<ProjectBannerSliderProps> = ({
               type="button"
               onClick={toggleFitMode}
               className="bg-black/75 hover:bg-f1-red text-white border border-white/20 px-2 py-1 rounded text-[10px] font-f1 font-bold flex items-center gap-1 shadow-md backdrop-blur-md transition-all active:scale-95"
-              title={fitMode === 'contain' ? 'Ubah ke Tampilan Penuh (Cover)' : 'Ubah ke Tampilan Utuh Tanpa Crop (Fit)'}
+              title={fitMode === 'contain' ? 'Switch to Cover fill' : 'Switch to Fit complete view'}
             >
               <Scan size={11} className={fitMode === 'contain' ? 'text-f1-red group-hover:text-white' : 'text-white'} />
               <span className="hidden sm:inline">
-                {fitMode === 'contain' ? 'FIT UTUH' : 'COVER'}
+                {fitMode === 'contain' ? 'FIT' : 'COVER'}
               </span>
             </button>
           )}
@@ -184,8 +184,8 @@ export const ProjectBannerSlider: React.FC<ProjectBannerSliderProps> = ({
               type="button"
               onClick={openLightbox}
               className="bg-black/75 hover:bg-f1-red text-white border border-white/20 p-1 rounded text-[10px] shadow-md backdrop-blur-md transition-all active:scale-95"
-              title="Perbesar / Lihat Foto Asli"
-              aria-label="Lihat Layar Penuh"
+              title="Fullscreen view"
+              aria-label="View Fullscreen"
             >
               <Maximize2 size={12} />
             </button>
@@ -211,8 +211,8 @@ export const ProjectBannerSlider: React.FC<ProjectBannerSliderProps> = ({
               type="button"
               onClick={handlePrev}
               className="absolute left-2.5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/70 hover:bg-f1-red text-white flex items-center justify-center backdrop-blur-md border border-white/20 transition-all opacity-85 sm:opacity-0 sm:group-hover/slider:opacity-100 hover:scale-110 active:scale-95 shadow-xl"
-              aria-label="Foto Sebelumnya"
-              title="Foto Sebelumnya"
+              aria-label="Previous Photo"
+              title="Previous Photo"
             >
               <ChevronLeft size={18} />
             </button>
@@ -222,8 +222,8 @@ export const ProjectBannerSlider: React.FC<ProjectBannerSliderProps> = ({
               type="button"
               onClick={handleNext}
               className="absolute right-2.5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/70 hover:bg-f1-red text-white flex items-center justify-center backdrop-blur-md border border-white/20 transition-all opacity-85 sm:opacity-0 sm:group-hover/slider:opacity-100 hover:scale-110 active:scale-95 shadow-xl"
-              aria-label="Foto Selanjutnya"
-              title="Foto Selanjutnya"
+              aria-label="Next Photo"
+              title="Next Photo"
             >
               <ChevronRight size={18} />
             </button>
@@ -239,7 +239,7 @@ export const ProjectBannerSlider: React.FC<ProjectBannerSliderProps> = ({
                     key={idx}
                     type="button"
                     onClick={e => handleDotClick(e, idx)}
-                    aria-label={`Ke foto ${idx + 1}`}
+                    aria-label={`Go to photo ${idx + 1}`}
                     className={`transition-all duration-300 rounded-full ${
                       idx === currentIndex
                         ? 'w-4 h-1.5 bg-f1-red'
@@ -266,7 +266,7 @@ export const ProjectBannerSlider: React.FC<ProjectBannerSliderProps> = ({
                   ? 'border-f1-red scale-105 shadow-md shadow-f1-red/30 ring-1 ring-f1-red opacity-100'
                   : 'border-white/15 opacity-60 hover:opacity-100 hover:border-white/40'
               }`}
-              title={`Buka Foto ${idx + 1}`}
+              title={`View photo ${idx + 1}`}
             >
               <img
                 src={img}
@@ -292,7 +292,7 @@ export const ProjectBannerSlider: React.FC<ProjectBannerSliderProps> = ({
             type="button"
             onClick={closeLightbox}
             className="absolute top-4 right-4 z-50 text-white hover:text-f1-red p-2 rounded-full bg-white/10 hover:bg-white/20 transition"
-            aria-label="Tutup Layar Penuh"
+            aria-label="Close Fullscreen"
           >
             <X size={24} />
           </button>
