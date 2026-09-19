@@ -15,6 +15,10 @@ export const DEFAULT_PORTFOLIO_DATA: PortfolioData = {
     banners: [
       "assets/driver-f1-banner.webp"
     ],
+    mobileBanner: "assets/driver-f1-banner-mobile.png",
+    mobileBanners: [
+      "assets/driver-f1-banner-mobile.png"
+    ],
     eyebrow: "PROFESSIONAL ENGINEERING & IT PORTFOLIO",
     quote: "Driven by problem solving for a better tomorrow.",
     bioSummary: "Software Engineering graduate specialized in high-performance web systems, IT infrastructure maintenance, database design, and visual media production.",

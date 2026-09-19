@@ -73,6 +73,88 @@ export const AdminDrawer: React.FC = () => {
     }
   };
 
+  const [newMobileBannerUrl, setNewMobileBannerUrl] = useState('');
+
+  const handleDriverMobileBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      showToast('Mengunggah banner mobile ke Supabase Storage...', 'warning');
+      const url = await uploadImage(file, 'banners', 1440, 0.9);
+      const currentMobileBanners = heroForm.mobileBanners && heroForm.mobileBanners.length > 0
+        ? [...heroForm.mobileBanners]
+        : [heroForm.mobileBanner || 'assets/driver-f1-banner-mobile.png'];
+      const updatedMobileBanners = [...currentMobileBanners, url];
+      const updated = {
+        ...heroForm,
+        mobileBanner: updatedMobileBanners[0],
+        mobileBanners: updatedMobileBanners
+      };
+      setHeroForm(updated);
+      updateHero(updated);
+      showToast('Banner mobile tersimpan di Supabase Storage & ditambahkan ke slider!', 'success');
+      e.target.value = '';
+    } catch {
+      showToast('Gagal memproses banner mobile', 'error');
+    }
+  };
+
+  const handleRemoveMobileBanner = (indexToRemove: number) => {
+    const currentMobileBanners = heroForm.mobileBanners && heroForm.mobileBanners.length > 0
+      ? [...heroForm.mobileBanners]
+      : [heroForm.mobileBanner || 'assets/driver-f1-banner-mobile.png'];
+    if (currentMobileBanners.length <= 1) {
+      showToast('Minimal harus ada 1 banner mobile.', 'warning');
+      return;
+    }
+    const updatedMobileBanners = currentMobileBanners.filter((_, idx) => idx !== indexToRemove);
+    const updated = {
+      ...heroForm,
+      mobileBanner: updatedMobileBanners[0],
+      mobileBanners: updatedMobileBanners
+    };
+    setHeroForm(updated);
+    updateHero(updated);
+    showToast('Banner mobile berhasil dihapus.', 'success');
+  };
+
+  const handleMoveMobileBanner = (index: number, direction: 'up' | 'down') => {
+    const currentMobileBanners = heroForm.mobileBanners && heroForm.mobileBanners.length > 0
+      ? [...heroForm.mobileBanners]
+      : [heroForm.mobileBanner || 'assets/driver-f1-banner-mobile.png'];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= currentMobileBanners.length) return;
+    const reordered = [...currentMobileBanners];
+    const temp = reordered[index];
+    reordered[index] = reordered[targetIndex];
+    reordered[targetIndex] = temp;
+    const updated = {
+      ...heroForm,
+      mobileBanner: reordered[0],
+      mobileBanners: reordered
+    };
+    setHeroForm(updated);
+    updateHero(updated);
+    showToast('Urutan banner mobile diperbarui.', 'success');
+  };
+
+  const handleAddMobileBannerUrl = () => {
+    if (!newMobileBannerUrl.trim()) return;
+    const currentMobileBanners = heroForm.mobileBanners && heroForm.mobileBanners.length > 0
+      ? [...heroForm.mobileBanners]
+      : [heroForm.mobileBanner || 'assets/driver-f1-banner-mobile.png'];
+    const updatedMobileBanners = [...currentMobileBanners, newMobileBannerUrl.trim()];
+    const updated = {
+      ...heroForm,
+      mobileBanner: updatedMobileBanners[0],
+      mobileBanners: updatedMobileBanners
+    };
+    setHeroForm(updated);
+    updateHero(updated);
+    setNewMobileBannerUrl('');
+    showToast('Banner mobile baru ditambahkan ke slider!', 'success');
+  };
+
   const [newBannerUrl, setNewBannerUrl] = useState('');
 
   const handleDriverBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -414,6 +496,118 @@ export const AdminDrawer: React.FC = () => {
                     onChange={e => setHeroForm({ ...heroForm, quote: e.target.value })}
                     className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white"
                   />
+                </div>
+
+                {/* Dedicated Mobile Banner Slider (Multi-Banner) */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-2">
+                      <label className="font-f1 font-bold text-white tracking-wider block text-xs">
+                        BANNER KHUSUS MOBILE (HP SLIDER)
+                      </label>
+                      <span className="text-[9px] bg-f1-red text-white font-f1 font-black px-1.5 py-0.2 rounded uppercase">
+                        Mobile Slider
+                      </span>
+                    </div>
+                    <span className="text-[9px] bg-f1-red text-white px-1.5 py-0.2 rounded font-f1 font-bold">
+                      {((heroForm.mobileBanners && heroForm.mobileBanners.length > 0) ? heroForm.mobileBanners : [heroForm.mobileBanner || 'assets/driver-f1-banner-mobile.png']).length} Banner
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-f1-lightGray block font-sans mb-1.5">
+                    Banner rasio potret khusus smartphone (disarankan 4:5 atau 1080x1350 px). Dapat digeser di HP.
+                  </span>
+
+                  <div className="space-y-3 p-3 bg-f1-red/5 border border-f1-red/30 rounded">
+                    {/* Mobile banners list */}
+                    <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
+                      {((heroForm.mobileBanners && heroForm.mobileBanners.length > 0) ? heroForm.mobileBanners : [heroForm.mobileBanner || 'assets/driver-f1-banner-mobile.png']).map((mUrl, mIdx, arr) => (
+                        <div key={mIdx} className="bg-[#12121a] border border-white/10 p-2 rounded flex items-center gap-2.5">
+                          <div className="w-12 h-16 rounded overflow-hidden border border-white/15 shrink-0 bg-black relative">
+                            <img
+                              src={mUrl}
+                              alt={`Mobile Banner ${mIdx + 1}`}
+                              onError={(e) => {
+                                if (!e.currentTarget.src.includes('driver-f1-banner.webp')) {
+                                  e.currentTarget.src = 'assets/driver-f1-banner.webp';
+                                }
+                              }}
+                              className="w-full h-full object-cover"
+                            />
+                            <span className="absolute top-0.5 left-0.5 bg-black/80 text-[8px] font-f1 font-black text-f1-red px-1 rounded">
+                              #{mIdx + 1}
+                            </span>
+                          </div>
+
+                          <div className="flex-1 min-w-0">
+                            <span className="text-[10px] font-f1 font-bold text-white block uppercase truncate">
+                              {mIdx === 0 ? '★ Banner Awal (#1)' : `Slide #${mIdx + 1}`}
+                            </span>
+                            <span className="text-[9px] text-f1-gray block truncate font-mono">
+                              {mUrl}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-1 shrink-0">
+                            <button
+                              type="button"
+                              disabled={mIdx === 0}
+                              onClick={() => handleMoveMobileBanner(mIdx, 'up')}
+                              className="p-1 rounded bg-white/5 hover:bg-white/15 text-white disabled:opacity-30 disabled:cursor-not-allowed transition"
+                              title="Pindah ke Atas"
+                            >
+                              <ChevronUp size={13} />
+                            </button>
+                            <button
+                              type="button"
+                              disabled={mIdx === arr.length - 1}
+                              onClick={() => handleMoveMobileBanner(mIdx, 'down')}
+                              className="p-1 rounded bg-white/5 hover:bg-white/15 text-white disabled:opacity-30 disabled:cursor-not-allowed transition"
+                              title="Pindah ke Bawah"
+                            >
+                              <ChevronDown size={13} />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveMobileBanner(mIdx)}
+                              className="p-1 rounded bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white transition"
+                              title="Hapus Banner Mobile"
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Add new mobile banner */}
+                    <div className="pt-2 border-t border-white/10 space-y-1.5">
+                      <label className="text-[10px] font-f1 font-bold text-f1-gray tracking-wider uppercase block">
+                        + Tambah Banner Mobile
+                      </label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleDriverMobileBannerUpload}
+                        className="text-xs text-f1-gray file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-f1-red file:text-white file:text-xs w-full"
+                      />
+                      <div className="flex gap-1.5">
+                        <input
+                          type="text"
+                          value={newMobileBannerUrl}
+                          onChange={e => setNewMobileBannerUrl(e.target.value)}
+                          placeholder="Atau masukkan URL banner..."
+                          className="flex-1 bg-[#181822] border border-white/10 px-2.5 py-1 rounded text-white text-xs outline-none font-mono"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleAddMobileBannerUrl}
+                          className="bg-f1-red hover:bg-f1-darkRed text-white px-2.5 py-1 rounded text-xs font-f1 font-bold transition whitespace-nowrap"
+                        >
+                          Tambah
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Photo Upload */}

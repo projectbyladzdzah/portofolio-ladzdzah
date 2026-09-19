@@ -21,8 +21,12 @@ export default {
         }
       },
       fontFamily: {
-        f1: ['"Titillium Web"', '"Rajdhani"', 'sans-serif'],
-        display: ['"Rajdhani"', 'sans-serif'],
+        f1: ['"Formula1"', '"Titillium Web"', '"Rajdhani"', 'sans-serif'],
+        f1wide: ['"Formula1Wide"', '"Formula1"', 'sans-serif'],
+        f1bold: ['"Formula1"', '"Titillium Web"', 'sans-serif'],
+        cursive: ['"Brittany Signature Script"', '"Northwell"', 'cursive'],
+        signature: ['"Brittany Signature Script"', '"Northwell"', 'cursive'],
+        display: ['"Formula1Wide"', '"Formula1"', 'sans-serif'],
         sans: ['"Inter"', 'sans-serif']
       },
       keyframes: {

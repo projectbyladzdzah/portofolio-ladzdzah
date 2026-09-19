@@ -20,6 +20,8 @@ export interface DriverHeroData {
   photo: string;
   banner?: string;
   banners?: string[];
+  mobileBanner?: string;
+  mobileBanners?: string[];
   eyebrow: string;
   quote: string;
   bioSummary: string;

@@ -6,11 +6,26 @@ export const DriverHero: React.FC = () => {
   const { data, setActiveAwardModal } = usePortfolio();
   const { hero } = data;
 
-  // Resolve banners array (fallback safely to hero.banner or default asset)
+  // Resolve desktop banners array (fallback safely to hero.banner or default asset)
   const banners: string[] = (hero.banners && hero.banners.length > 0)
     ? hero.banners
     : [hero.banner || 'assets/driver-f1-banner.webp'];
 
+  // Resolve mobile banners array (fallback to dedicated mobile asset, or desktop banner)
+  const mobileBanners: string[] = (hero.mobileBanners && hero.mobileBanners.length > 0)
+    ? hero.mobileBanners
+    : [hero.mobileBanner || 'assets/driver-f1-banner-mobile.png'];
+
+  // Mobile Banner Slider State
+  const [mobileIndex, setMobileIndex] = useState(0);
+  const [isMobilePaused, setIsMobilePaused] = useState(false);
+  const [mobileTouchStartX, setMobileTouchStartX] = useState<number | null>(null);
+  const [mobileTouchDeltaX, setMobileTouchDeltaX] = useState(0);
+  const [isMobileDragging, setIsMobileDragging] = useState(false);
+  const [mobileDragStartX, setMobileDragStartX] = useState(0);
+  const [mobileDragDeltaX, setMobileDragDeltaX] = useState(0);
+
+  // Desktop Banner Slider State
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
@@ -20,9 +35,98 @@ export const DriverHero: React.FC = () => {
   const [dragDeltaX, setDragDeltaX] = useState(0);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const minSwipeDistance = 45;
+  const minSwipeDistance = 40;
 
-  // Keep index within bounds if banners list changes
+  // Keep mobileIndex within bounds if mobileBanners list changes
+  useEffect(() => {
+    if (mobileIndex >= mobileBanners.length) {
+      setMobileIndex(0);
+    }
+  }, [mobileBanners.length, mobileIndex]);
+
+  const prevMobileSlide = useCallback(() => {
+    setMobileIndex((prev) => (prev === 0 ? mobileBanners.length - 1 : prev - 1));
+  }, [mobileBanners.length]);
+
+  const nextMobileSlide = useCallback(() => {
+    setMobileIndex((prev) => (prev === mobileBanners.length - 1 ? 0 : prev + 1));
+  }, [mobileBanners.length]);
+
+  const goToMobileSlide = (idx: number) => {
+    setMobileIndex(idx);
+  };
+
+  // Mobile Autoplay (5.5 seconds per slide, pauses on touch/drag)
+  useEffect(() => {
+    if (mobileBanners.length <= 1 || isMobilePaused || isMobileDragging || mobileTouchStartX !== null) return;
+    const timer = setInterval(() => {
+      nextMobileSlide();
+    }, 5500);
+    return () => clearInterval(timer);
+  }, [mobileBanners.length, isMobilePaused, isMobileDragging, mobileTouchStartX, nextMobileSlide]);
+
+  // Mobile Touch Swipe Handlers
+  const handleMobileTouchStart = (e: React.TouchEvent) => {
+    if (mobileBanners.length <= 1) return;
+    setMobileTouchStartX(e.targetTouches[0].clientX);
+    setMobileTouchDeltaX(0);
+  };
+
+  const handleMobileTouchMove = (e: React.TouchEvent) => {
+    if (mobileTouchStartX === null || mobileBanners.length <= 1) return;
+    const currentX = e.targetTouches[0].clientX;
+    setMobileTouchDeltaX(currentX - mobileTouchStartX);
+  };
+
+  const handleMobileTouchEnd = () => {
+    if (mobileTouchStartX === null) return;
+    if (mobileTouchDeltaX < -minSwipeDistance) {
+      nextMobileSlide();
+    } else if (mobileTouchDeltaX > minSwipeDistance) {
+      prevMobileSlide();
+    }
+    setMobileTouchStartX(null);
+    setMobileTouchDeltaX(0);
+  };
+
+  // Mobile Mouse Handlers (for DevTools mobile device emulation)
+  const handleMobileMouseDown = (e: React.MouseEvent) => {
+    if (e.button !== 0 || mobileBanners.length <= 1) return;
+    setIsMobileDragging(true);
+    setMobileDragStartX(e.clientX);
+    setMobileDragDeltaX(0);
+  };
+
+  const handleMobileMouseMove = (e: React.MouseEvent) => {
+    if (!isMobileDragging) return;
+    setMobileDragDeltaX(e.clientX - mobileDragStartX);
+  };
+
+  const handleMobileMouseUp = () => {
+    if (!isMobileDragging) return;
+    if (mobileDragDeltaX < -minSwipeDistance) {
+      nextMobileSlide();
+    } else if (mobileDragDeltaX > minSwipeDistance) {
+      prevMobileSlide();
+    }
+    setIsMobileDragging(false);
+    setMobileDragDeltaX(0);
+  };
+
+  const handleMobileMouseLeave = () => {
+    if (isMobileDragging) {
+      if (mobileDragDeltaX < -minSwipeDistance) {
+        nextMobileSlide();
+      } else if (mobileDragDeltaX > minSwipeDistance) {
+        prevMobileSlide();
+      }
+      setIsMobileDragging(false);
+      setMobileDragDeltaX(0);
+    }
+    setIsMobilePaused(false);
+  };
+
+  // Keep desktop index within bounds if banners list changes
   useEffect(() => {
     if (currentIndex >= banners.length) {
       setCurrentIndex(0);
@@ -41,7 +145,7 @@ export const DriverHero: React.FC = () => {
     setCurrentIndex(idx);
   };
 
-  // Autoplay (5.5 seconds per slide, pauses on hover/drag)
+  // Desktop Autoplay (5.5 seconds per slide, pauses on hover/drag)
   useEffect(() => {
     if (banners.length <= 1 || isPaused || isDragging) return;
     const timer = setInterval(() => {
@@ -50,7 +154,7 @@ export const DriverHero: React.FC = () => {
     return () => clearInterval(timer);
   }, [banners.length, isPaused, isDragging, nextSlide]);
 
-  // Touch Swipe Handlers (Mobile / Tablet)
+  // Touch Swipe Handlers (Tablet)
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStartX(e.targetTouches[0].clientX);
     setTouchDeltaX(0);
@@ -75,7 +179,6 @@ export const DriverHero: React.FC = () => {
 
   // Mouse Drag Handlers (Desktop click & swipe)
   const handleMouseDown = (e: React.MouseEvent) => {
-    // Only drag with primary left button
     if (e.button !== 0 || banners.length <= 1) return;
     setIsDragging(true);
     setDragStartX(e.clientX);
@@ -114,12 +217,127 @@ export const DriverHero: React.FC = () => {
   return (
     <section id="hero" className="bg-[#0b0b0e] text-white">
       {/* ============================================================ */}
-      {/* THE OFFICIAL F1 FULL-WIDTH RED DRIVER BANNER (SWIPEABLE SLIDER) */}
-      {/* Full width edge-to-edge from left edge to right edge of screen */}
+      {/* 1. MOBILE ONLY: DEDICATED MOBILE HERO BANNER (SWIPEABLE)     */}
+      {/* Displays custom mobile banners with touch swipe & slide      */}
+      {/* ============================================================ */}
+      <div 
+        className="sm:hidden w-full relative overflow-hidden bg-[#50020f] select-none border-b border-white/10"
+        onTouchStart={handleMobileTouchStart}
+        onTouchMove={handleMobileTouchMove}
+        onTouchEnd={handleMobileTouchEnd}
+        onMouseDown={handleMobileMouseDown}
+        onMouseMove={handleMobileMouseMove}
+        onMouseUp={handleMobileMouseUp}
+        onMouseLeave={handleMobileMouseLeave}
+        style={{ touchAction: 'pan-y' }}
+      >
+        <div className="relative w-full overflow-hidden">
+          {/* Mobile Slides Track */}
+          <div
+            className={`flex w-full ${isMobileDragging || mobileTouchStartX !== null ? '' : 'transition-transform duration-500 ease-out'}`}
+            style={{
+              transform: `translateX(calc(-${mobileIndex * 100}% + ${isMobileDragging ? mobileDragDeltaX : mobileTouchDeltaX}px))`,
+              cursor: mobileBanners.length > 1 ? (isMobileDragging ? 'grabbing' : 'grab') : 'default'
+            }}
+          >
+            {mobileBanners.map((mUrl, mIdx) => (
+              <div key={mIdx} className="w-full shrink-0 relative">
+                <img
+                  src={mUrl}
+                  alt={`${hero.firstName} ${hero.lastName} - Mobile Banner ${mIdx + 1}`}
+                  fetchPriority={mIdx === 0 ? 'high' : 'auto'}
+                  loading={mIdx === 0 ? 'eager' : 'lazy'}
+                  onError={(e) => {
+                    if (!e.currentTarget.src.includes('driver-f1-banner.webp')) {
+                      e.currentTarget.src = 'assets/driver-f1-banner.webp';
+                    }
+                  }}
+                  className="w-full h-auto object-cover select-none pointer-events-none block"
+                  draggable={false}
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Navigation Controls (Visible when > 1 banner) */}
+          {mobileBanners.length > 1 && (
+            <>
+              {/* Prev Touch Arrow */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  prevMobileSlide();
+                }}
+                aria-label="Previous Mobile Banner"
+                className="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-black/60 text-white flex items-center justify-center transition backdrop-blur-md border border-white/20 active:scale-90 shadow-lg"
+              >
+                <ChevronLeft className="w-4 h-4 -ml-0.5" />
+              </button>
+
+              {/* Next Touch Arrow */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  nextMobileSlide();
+                }}
+                aria-label="Next Mobile Banner"
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-black/60 text-white flex items-center justify-center transition backdrop-blur-md border border-white/20 active:scale-90 shadow-lg"
+              >
+                <ChevronRight className="w-4 h-4 -mr-0.5" />
+              </button>
+
+              {/* Mobile Slide Dots & Counter Pill */}
+              <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5 bg-black/70 px-2.5 py-1 rounded-full border border-white/15 backdrop-blur-md shadow-lg pointer-events-auto">
+                <span className="text-[9px] font-f1 font-black text-white/90 tracking-wider uppercase">
+                  {mobileIndex + 1}/{mobileBanners.length}
+                </span>
+                <div className="flex items-center gap-1 ml-0.5">
+                  {mobileBanners.map((_, dotIdx) => (
+                    <button
+                      key={dotIdx}
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        goToMobileSlide(dotIdx);
+                      }}
+                      aria-label={`Go to slide ${dotIdx + 1}`}
+                      className={`h-1.5 rounded-full transition-all duration-300 ${
+                        dotIdx === mobileIndex ? 'w-3.5 bg-f1-red' : 'w-1.5 bg-white/40'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Mobile Overlay Action Buttons */}
+          <div className="absolute bottom-3 left-3 right-3 flex items-center justify-center gap-2 z-10 pointer-events-auto">
+            <a
+              href="#portfolio"
+              className="flex-1 bg-f1-red hover:bg-f1-darkRed text-white text-center py-2 px-3 rounded-full text-xs font-f1 font-bold tracking-wider shadow-lg flex items-center justify-center gap-1.5 transition active:scale-95"
+            >
+              <span>EXPLORE PORTFOLIO</span>
+              <ArrowUpRight size={13} />
+            </a>
+            <a
+              href="#contact"
+              className="bg-black/75 hover:bg-black text-white text-center py-2 px-4 rounded-full text-xs font-f1 font-bold tracking-wider border border-white/25 transition backdrop-blur-md active:scale-95"
+            >
+              CONTACT
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* ============================================================ */}
+      {/* 2. DESKTOP / TABLET ONLY: WIDESCREEN BANNER SLIDER          */}
       {/* ============================================================ */}
       <div 
         ref={containerRef}
-        className="w-full relative overflow-hidden bg-[#50020f] select-none group"
+        className="hidden sm:block w-full relative overflow-hidden bg-[#50020f] select-none group"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={handleMouseLeave}
         onMouseDown={handleMouseDown}
@@ -237,27 +455,11 @@ export const DriverHero: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Action Bar (Right below banner, clean & finger-friendly) */}
-      <div className="sm:hidden bg-[#12121a] border-b border-white/10 px-4 py-3 flex items-center justify-between gap-2.5">
-        <a
-          href="#portfolio"
-          className="flex-1 bg-f1-red hover:bg-f1-darkRed text-white text-center py-2 px-3 rounded-full text-xs font-f1 font-bold tracking-wider shadow-md flex items-center justify-center gap-1.5 transition active:scale-95"
-        >
-          <span>EXPLORE PORTFOLIO</span>
-          <ArrowUpRight size={13} />
-        </a>
-        <a
-          href="#contact"
-          className="bg-white/10 hover:bg-white/20 text-white text-center py-2 px-4 rounded-full text-xs font-f1 font-bold tracking-wider border border-white/15 transition active:scale-95"
-        >
-          CONTACT
-        </a>
-      </div>
-
       {/* ============================================================ */}
-      {/* OFFICIAL F1 DRIVER PROFILE BAR (NAME, NUMBER, ROLE, TEAM, AVATAR) */}
+      {/* 3. DESKTOP DRIVER PROFILE BAR (NAME, NUMBER, ROLE, AVATAR)   */}
+      {/* Hidden on mobile because Mobile Hero already displays this    */}
       {/* ============================================================ */}
-      <div className="bg-[#121219] border-b border-white/10">
+      <div className="hidden sm:block bg-[#121219] border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-5 sm:py-6">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-6">
             {/* Left: Driver Avatar + Big Bold Name & Team */}

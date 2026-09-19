@@ -139,6 +139,89 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
     }
   };
 
+  const [newMobileBannerUrl, setNewMobileBannerUrl] = useState('');
+
+  const handleDriverMobileBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      try {
+        showToast('Mengunggah banner mobile ke Supabase Storage...', 'warning');
+        const url = await uploadImage(file, 'banners', 1440, 0.9);
+        const currentMobileBanners = heroForm.mobileBanners && heroForm.mobileBanners.length > 0
+          ? [...heroForm.mobileBanners]
+          : [heroForm.mobileBanner || 'assets/driver-f1-banner-mobile.png'];
+        const updatedMobileBanners = [...currentMobileBanners, url];
+        const updated = { 
+          ...heroForm, 
+          mobileBanner: updatedMobileBanners[0],
+          mobileBanners: updatedMobileBanners
+        };
+        setHeroForm(updated);
+        updateHero(updated);
+        showToast('Banner mobile berhasil diunggah & ditambahkan ke slider!', 'success');
+        e.target.value = '';
+      } catch {
+        showToast('Gagal memproses banner mobile.', 'error');
+      }
+    }
+  };
+
+  const handleRemoveMobileBanner = (indexToRemove: number) => {
+    const currentMobileBanners = heroForm.mobileBanners && heroForm.mobileBanners.length > 0
+      ? [...heroForm.mobileBanners]
+      : [heroForm.mobileBanner || 'assets/driver-f1-banner-mobile.png'];
+    if (currentMobileBanners.length <= 1) {
+      showToast('Minimal harus ada 1 banner mobile dalam slider.', 'warning');
+      return;
+    }
+    const updatedMobileBanners = currentMobileBanners.filter((_, idx) => idx !== indexToRemove);
+    const updated = {
+      ...heroForm,
+      mobileBanner: updatedMobileBanners[0],
+      mobileBanners: updatedMobileBanners
+    };
+    setHeroForm(updated);
+    updateHero(updated);
+    showToast('Banner mobile berhasil dihapus dari slider.', 'success');
+  };
+
+  const handleMoveMobileBanner = (index: number, direction: 'up' | 'down') => {
+    const currentMobileBanners = heroForm.mobileBanners && heroForm.mobileBanners.length > 0
+      ? [...heroForm.mobileBanners]
+      : [heroForm.mobileBanner || 'assets/driver-f1-banner-mobile.png'];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= currentMobileBanners.length) return;
+    const reordered = [...currentMobileBanners];
+    const temp = reordered[index];
+    reordered[index] = reordered[targetIndex];
+    reordered[targetIndex] = temp;
+    const updated = {
+      ...heroForm,
+      mobileBanner: reordered[0],
+      mobileBanners: reordered
+    };
+    setHeroForm(updated);
+    updateHero(updated);
+    showToast('Urutan banner mobile diperbarui!', 'success');
+  };
+
+  const handleAddMobileBannerUrl = () => {
+    if (!newMobileBannerUrl.trim()) return;
+    const currentMobileBanners = heroForm.mobileBanners && heroForm.mobileBanners.length > 0
+      ? [...heroForm.mobileBanners]
+      : [heroForm.mobileBanner || 'assets/driver-f1-banner-mobile.png'];
+    const updatedMobileBanners = [...currentMobileBanners, newMobileBannerUrl.trim()];
+    const updated = {
+      ...heroForm,
+      mobileBanner: updatedMobileBanners[0],
+      mobileBanners: updatedMobileBanners
+    };
+    setHeroForm(updated);
+    updateHero(updated);
+    setNewMobileBannerUrl('');
+    showToast('Banner mobile baru berhasil ditambahkan ke slider!', 'success');
+  };
+
   const [newBannerUrl, setNewBannerUrl] = useState('');
 
   const handleDriverBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -590,73 +673,206 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
               />
             </div>
 
-            {/* Photo Uploads */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="font-f1 font-bold text-f1-gray tracking-wider block">AVATAR / PORTRAIT PHOTO</label>
-                  {heroForm.photo !== data.hero.photo && (
+            {/* AVATAR / PORTRAIT PHOTO */}
+            <div className="border border-white/10 bg-white/5 p-3.5 rounded">
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="font-f1 font-bold text-f1-gray tracking-wider block text-xs">AVATAR / PORTRAIT PHOTO</label>
+                {heroForm.photo !== data.hero.photo && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      updateHero(heroForm);
+                      showToast('Foto portrait berhasil disimpan!', 'success');
+                    }}
+                    className="text-[10px] bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold px-2 py-0.5 rounded transition uppercase"
+                  >
+                    SIMPAN FOTO
+                  </button>
+                )}
+              </div>
+              <span className="text-[10px] text-f1-gray block font-sans mb-2">
+                Foto profile avatar kotak untuk bar profil desktop dan identitas driver
+              </span>
+              <div className="flex items-center gap-4 p-3 bg-black/50 border border-white/10 rounded">
+                <img
+                  src={heroForm.photo || 'assets/driver-portrait.png'}
+                  alt="Preview"
+                  onError={(e) => {
+                    if (!e.currentTarget.src.includes('driver-portrait.png')) {
+                      e.currentTarget.src = 'assets/driver-portrait.png';
+                    }
+                  }}
+                  className="w-16 h-16 object-cover rounded border border-white/20 shrink-0"
+                />
+                <div className="space-y-1.5 flex-1 min-w-0">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleDriverPhotoUpload}
+                    className="text-xs text-f1-gray file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-f1-red file:text-white file:text-xs file:font-f1 file:font-bold file:cursor-pointer w-full"
+                  />
+                  <div className="flex gap-1.5">
+                    <input
+                      type="text"
+                      value={heroForm.photo || ''}
+                      onChange={e => setHeroForm({ ...heroForm, photo: e.target.value })}
+                      placeholder="Atau URL gambar portrait..."
+                      className="flex-1 bg-[#181822] border border-white/10 px-2.5 py-1 rounded text-white text-xs outline-none focus:border-f1-red font-mono"
+                    />
                     <button
                       type="button"
                       onClick={() => {
                         updateHero(heroForm);
-                        showToast('Foto portrait berhasil disimpan!', 'success');
+                        showToast('Foto portrait diperbarui!', 'success');
                       }}
-                      className="text-[10px] bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold px-2 py-0.5 rounded transition uppercase"
+                      className="bg-white/10 hover:bg-white/20 text-white px-2 py-1 rounded text-[11px] font-f1 font-bold transition whitespace-nowrap"
                     >
-                      SIMPAN FOTO
+                      Terapkan
                     </button>
-                  )}
+                  </div>
                 </div>
-                <div className="flex items-center gap-4 p-3 bg-white/5 border border-white/10 rounded">
-                  <img
-                    src={heroForm.photo || 'assets/driver-portrait.png'}
-                    alt="Preview"
-                    onError={(e) => {
-                      if (!e.currentTarget.src.includes('driver-portrait.png')) {
-                        e.currentTarget.src = 'assets/driver-portrait.png';
-                      }
-                    }}
-                    className="w-16 h-16 object-cover rounded border border-white/20 shrink-0"
-                  />
-                  <div className="space-y-1.5 flex-1 min-w-0">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleDriverPhotoUpload}
-                      className="text-xs text-f1-gray file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-f1-red file:text-white file:text-xs file:font-f1 file:font-bold file:cursor-pointer w-full"
-                    />
-                    <div className="flex gap-1.5">
+              </div>
+            </div>
+
+            {/* TWO-COLUMN SLIDERS: MOBILE SLIDER & DESKTOP SLIDER */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-2">
+              {/* 1. MOBILE HERO BANNERS (MULTI-BANNER SLIDER) */}
+              <div className="border border-f1-red/30 bg-f1-red/5 p-3.5 rounded">
+                <div className="flex items-center justify-between mb-2">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <label className="font-f1 font-bold text-white tracking-wider block text-xs">
+                        BANNER MOBILE (MULTI-BANNER SLIDER)
+                      </label>
+                      <span className="text-[9px] bg-f1-red text-white font-f1 font-black px-1.5 py-0.2 rounded uppercase">
+                        Mobile Only
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-f1-lightGray block font-sans">
+                      Dapat digeser / diswipe di HP. Rasio 4:5 atau 1080x1350 px.
+                    </span>
+                  </div>
+                  <span className="text-[10px] bg-f1-red text-white px-2 py-0.5 rounded font-f1 font-bold">
+                    {((heroForm.mobileBanners && heroForm.mobileBanners.length > 0) ? heroForm.mobileBanners : [heroForm.mobileBanner || 'assets/driver-f1-banner-mobile.png']).length} Banner
+                  </span>
+                </div>
+
+                <div className="space-y-3 p-3 bg-black/60 border border-white/10 rounded">
+                  {/* List of current mobile banners */}
+                  <div className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
+                    {((heroForm.mobileBanners && heroForm.mobileBanners.length > 0) ? heroForm.mobileBanners : [heroForm.mobileBanner || 'assets/driver-f1-banner-mobile.png']).map((mUrl, mIdx, arr) => (
+                      <div key={mIdx} className="bg-[#12121a] border border-white/10 p-2 rounded flex items-center gap-2.5">
+                        {/* Thumbnail (Portrait ratio) */}
+                        <div className="w-12 h-16 rounded overflow-hidden border border-white/15 shrink-0 relative bg-black/50">
+                          <img
+                            src={mUrl}
+                            alt={`Mobile Banner ${mIdx + 1}`}
+                            onError={(e) => {
+                              if (!e.currentTarget.src.includes('driver-f1-banner.webp')) {
+                                e.currentTarget.src = 'assets/driver-f1-banner.webp';
+                              }
+                            }}
+                            className="w-full h-full object-cover"
+                          />
+                          <span className="absolute top-0.5 left-0.5 bg-black/80 px-1 py-0.2 rounded text-[8px] font-f1 font-black text-f1-red">
+                            #{mIdx + 1}
+                          </span>
+                        </div>
+
+                        {/* Banner Info */}
+                        <div className="flex-1 min-w-0 space-y-0.5">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[11px] font-f1 font-bold text-white uppercase">
+                              {mIdx === 0 ? '★ Banner Awal (#1)' : `Slide #${mIdx + 1}`}
+                            </span>
+                            <span className="text-[8px] font-mono px-1 py-0.2 rounded bg-white/10 text-f1-gray">
+                              {mUrl.startsWith('http') ? 'CDN' : mUrl.startsWith('data:') ? 'Base64' : 'Lokal'}
+                            </span>
+                          </div>
+                          <p className="text-[9px] text-f1-gray truncate font-mono" title={mUrl}>
+                            {mUrl}
+                          </p>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex items-center gap-1 shrink-0">
+                          <button
+                            type="button"
+                            disabled={mIdx === 0}
+                            onClick={() => handleMoveMobileBanner(mIdx, 'up')}
+                            title="Pindah ke Atas"
+                            className="p-1 rounded bg-white/5 hover:bg-white/15 text-white disabled:opacity-30 disabled:cursor-not-allowed transition"
+                          >
+                            <ChevronUp size={13} />
+                          </button>
+                          <button
+                            type="button"
+                            disabled={mIdx === arr.length - 1}
+                            onClick={() => handleMoveMobileBanner(mIdx, 'down')}
+                            title="Pindah ke Bawah"
+                            className="p-1 rounded bg-white/5 hover:bg-white/15 text-white disabled:opacity-30 disabled:cursor-not-allowed transition"
+                          >
+                            <ChevronDown size={13} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveMobileBanner(mIdx)}
+                            title="Hapus Banner ini"
+                            className="p-1 rounded bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white transition"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Add New Mobile Banner Controls */}
+                  <div className="pt-2 border-t border-white/10 space-y-2">
+                    <span className="text-[10px] font-f1 font-bold text-f1-gray tracking-wider uppercase block">
+                      + TAMBAH BANNER MOBILE BARU
+                    </span>
+                    
+                    <div className="space-y-1">
+                      <label className="text-[10px] text-f1-lightGray block">Unggah Gambar (JPG/PNG/WebP):</label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleDriverMobileBannerUpload}
+                        className="text-xs text-f1-gray file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:bg-f1-red file:text-white file:text-xs file:font-f1 file:font-bold file:cursor-pointer w-full"
+                      />
+                    </div>
+
+                    <div className="flex gap-1.5 pt-0.5">
                       <input
                         type="text"
-                        value={heroForm.photo || ''}
-                        onChange={e => setHeroForm({ ...heroForm, photo: e.target.value })}
-                        placeholder="Atau URL gambar portrait..."
-                        className="flex-1 bg-[#181822] border border-white/10 px-2.5 py-1 rounded text-white text-xs outline-none focus:border-f1-red"
+                        value={newMobileBannerUrl}
+                        onChange={e => setNewMobileBannerUrl(e.target.value)}
+                        placeholder="Atau URL gambar mobile banner..."
+                        className="flex-1 bg-[#181822] border border-white/10 px-2.5 py-1 rounded text-white text-xs outline-none focus:border-f1-red font-mono"
                       />
                       <button
                         type="button"
-                        onClick={() => {
-                          updateHero(heroForm);
-                          showToast('Foto portrait diperbarui!', 'success');
-                        }}
-                        className="bg-white/10 hover:bg-white/20 text-white px-2 py-1 rounded text-[11px] font-f1 font-bold transition whitespace-nowrap"
+                        onClick={handleAddMobileBannerUrl}
+                        className="bg-f1-red hover:bg-f1-darkRed text-white px-2.5 py-1 rounded text-xs font-f1 font-bold transition whitespace-nowrap flex items-center gap-1"
                       >
-                        Terapkan
+                        <Plus size={12} />
+                        <span>Tambah</span>
                       </button>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div>
+              {/* 2. WIDESCREEN HERO BANNERS (MULTI-BANNER SLIDER) */}
+              <div className="border border-white/10 bg-white/5 p-3.5 rounded">
                 <div className="flex items-center justify-between mb-2">
                   <div>
-                    <label className="font-f1 font-bold text-f1-gray tracking-wider block">
-                      WIDESCREEN HERO BANNERS (MULTI-BANNER SLIDER)
+                    <label className="font-f1 font-bold text-f1-gray tracking-wider block text-xs">
+                      WIDESCREEN HERO BANNERS (DESKTOP SLIDER)
                     </label>
                     <span className="text-[10px] text-f1-lightGray block font-sans">
-                      Banner dapat digeser ke kiri/kanan oleh pengunjung. Banner #1 adalah banner awal yang tampil.
+                      Banner layar komputer/tablet. Rasio widescreen 21:8 (4058x1550).
                     </span>
                   </div>
                   <span className="text-[10px] bg-f1-red/20 text-f1-red border border-f1-red/40 px-2 py-0.5 rounded font-f1 font-bold">
@@ -664,13 +880,13 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                   </span>
                 </div>
 
-                <div className="space-y-3 p-3.5 bg-white/5 border border-white/10 rounded">
+                <div className="space-y-3 p-3 bg-black/60 border border-white/10 rounded">
                   {/* List of current banners */}
-                  <div className="space-y-2.5">
+                  <div className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
                     {((heroForm.banners && heroForm.banners.length > 0) ? heroForm.banners : [heroForm.banner || 'assets/driver-f1-banner.webp']).map((bannerUrl, bIdx, arr) => (
-                      <div key={bIdx} className="bg-[#12121a] border border-white/10 p-2.5 rounded flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                      <div key={bIdx} className="bg-[#12121a] border border-white/10 p-2 rounded flex items-center gap-2.5">
                         {/* Thumbnail */}
-                        <div className="w-full sm:w-32 aspect-[21/8] sm:aspect-[16/9] rounded overflow-hidden border border-white/15 shrink-0 relative bg-black/50">
+                        <div className="w-20 aspect-[16/9] rounded overflow-hidden border border-white/15 shrink-0 relative bg-black/50">
                           <img
                             src={bannerUrl}
                             alt={`Banner ${bIdx + 1}`}
@@ -681,53 +897,53 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                             }}
                             className="w-full h-full object-cover"
                           />
-                          <span className="absolute top-1 left-1 bg-black/80 px-1 py-0.2 rounded text-[9px] font-f1 font-black text-f1-red">
+                          <span className="absolute top-0.5 left-0.5 bg-black/80 px-1 py-0.2 rounded text-[8px] font-f1 font-black text-f1-red">
                             #{bIdx + 1}
                           </span>
                         </div>
 
                         {/* Banner Info */}
-                        <div className="flex-1 min-w-0 space-y-1">
-                          <div className="flex items-center gap-2">
+                        <div className="flex-1 min-w-0 space-y-0.5">
+                          <div className="flex items-center gap-1.5">
                             <span className="text-[11px] font-f1 font-bold text-white uppercase">
-                              {bIdx === 0 ? '★ Banner Utama (#1)' : `Banner Slide #${bIdx + 1}`}
+                              {bIdx === 0 ? '★ Banner Awal (#1)' : `Slide #${bIdx + 1}`}
                             </span>
-                            <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-white/10 text-f1-gray">
-                              {bannerUrl.startsWith('http') ? 'CDN Supabase' : bannerUrl.startsWith('data:') ? 'Base64' : 'Aset Lokal'}
+                            <span className="text-[8px] font-mono px-1 py-0.2 rounded bg-white/10 text-f1-gray">
+                              {bannerUrl.startsWith('http') ? 'CDN' : bannerUrl.startsWith('data:') ? 'Base64' : 'Lokal'}
                             </span>
                           </div>
-                          <p className="text-[10px] text-f1-gray truncate font-mono" title={bannerUrl}>
+                          <p className="text-[9px] text-f1-gray truncate font-mono" title={bannerUrl}>
                             {bannerUrl}
                           </p>
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
+                        <div className="flex items-center gap-1 shrink-0">
                           <button
                             type="button"
                             disabled={bIdx === 0}
                             onClick={() => handleMoveBanner(bIdx, 'up')}
                             title="Pindah ke Atas (Sebelumnya)"
-                            className="p-1.5 rounded bg-white/5 hover:bg-white/15 text-white disabled:opacity-30 disabled:cursor-not-allowed transition"
+                            className="p-1 rounded bg-white/5 hover:bg-white/15 text-white disabled:opacity-30 disabled:cursor-not-allowed transition"
                           >
-                            <ChevronUp size={14} />
+                            <ChevronUp size={13} />
                           </button>
                           <button
                             type="button"
                             disabled={bIdx === arr.length - 1}
                             onClick={() => handleMoveBanner(bIdx, 'down')}
                             title="Pindah ke Bawah (Berikutnya)"
-                            className="p-1.5 rounded bg-white/5 hover:bg-white/15 text-white disabled:opacity-30 disabled:cursor-not-allowed transition"
+                            className="p-1 rounded bg-white/5 hover:bg-white/15 text-white disabled:opacity-30 disabled:cursor-not-allowed transition"
                           >
-                            <ChevronDown size={14} />
+                            <ChevronDown size={13} />
                           </button>
                           <button
                             type="button"
                             onClick={() => handleRemoveBanner(bIdx)}
                             title="Hapus Banner ini"
-                            className="p-1.5 rounded bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white transition ml-1"
+                            className="p-1 rounded bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white transition"
                           >
-                            <Trash2 size={14} />
+                            <Trash2 size={13} />
                           </button>
                         </div>
                       </div>
@@ -737,33 +953,33 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                   {/* Add New Banner Controls */}
                   <div className="pt-2 border-t border-white/10 space-y-2">
                     <span className="text-[10px] font-f1 font-bold text-f1-gray tracking-wider uppercase block">
-                      + TAMBAH BANNER BARU KE SLIDER
+                      + TAMBAH BANNER DESKTOP BARU
                     </span>
                     
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] text-f1-lightGray block">Unggah Gambar (Format JPG/PNG/WebP):</label>
+                    <div className="space-y-1">
+                      <label className="text-[10px] text-f1-lightGray block">Unggah Gambar (JPG/PNG/WebP):</label>
                       <input
                         type="file"
                         accept="image/*"
                         onChange={handleDriverBannerUpload}
-                        className="text-xs text-f1-gray file:mr-2 file:py-1.5 file:px-3 file:rounded file:border-0 file:bg-f1-red file:text-white file:text-xs file:font-f1 file:font-bold file:cursor-pointer w-full"
+                        className="text-xs text-f1-gray file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:bg-f1-red file:text-white file:text-xs file:font-f1 file:font-bold file:cursor-pointer w-full"
                       />
                     </div>
 
-                    <div className="flex gap-1.5 pt-1">
+                    <div className="flex gap-1.5 pt-0.5">
                       <input
                         type="text"
                         value={newBannerUrl}
                         onChange={e => setNewBannerUrl(e.target.value)}
                         placeholder="Atau masukkan URL gambar banner (https://...)..."
-                        className="flex-1 bg-[#181822] border border-white/10 px-2.5 py-1.5 rounded text-white text-xs outline-none focus:border-f1-red"
+                        className="flex-1 bg-[#181822] border border-white/10 px-2.5 py-1 rounded text-white text-xs outline-none focus:border-f1-red font-mono"
                       />
                       <button
                         type="button"
                         onClick={handleAddBannerUrl}
-                        className="bg-f1-red hover:bg-f1-darkRed text-white px-3 py-1.5 rounded text-xs font-f1 font-bold transition whitespace-nowrap flex items-center gap-1"
+                        className="bg-f1-red hover:bg-f1-darkRed text-white px-2.5 py-1 rounded text-xs font-f1 font-bold transition whitespace-nowrap flex items-center gap-1"
                       >
-                        <Plus size={13} />
+                        <Plus size={12} />
                         <span>Tambah</span>
                       </button>
                     </div>
