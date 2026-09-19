@@ -40,7 +40,7 @@ export const F1Footer: React.FC = () => {
         {/* Bottom Bar: Copyright & System Specs */}
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-[11px] font-medium tracking-wider text-f1-gray">
           <span>
-            © {new Date().getFullYear()} {data.hero.firstName}. ALL RIGHTS RESERVED.
+            © {new Date().getFullYear()} PBYL Project by Ladzdzah. ALL RIGHTS RESERVED.
           </span>
           <div className="flex flex-wrap items-center gap-4">
             <span className="flex items-center gap-1">
