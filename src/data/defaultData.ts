@@ -26,7 +26,7 @@ export const DEFAULT_PORTFOLIO_DATA: PortfolioData = {
       { label: "CURRENT WORKPLACE", value: "TMC Surakarta" },
       { label: "EXPERIENCE", value: "3+ Years" },
       { label: "PROJECTS DELIVERED", value: "15+ Deployed" },
-      { label: "AWARDS & CERTIFICATE", value: "3 Gold Titles" },
+      { label: "CERTIFICATES", value: "3 Verified" },
       { label: "AGE", value: "24 Years Old" },
       { label: "INSTITUTION", value: "Telkom University" },
       { label: "LOCATION", value: "Indonesia" },

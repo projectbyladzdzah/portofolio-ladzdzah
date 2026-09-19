@@ -42,7 +42,7 @@ export const F1Header: React.FC = () => {
               <a href="#portfolio" className="hover:text-white transition">Projects</a>
               <a href="#career" className="hover:text-white transition">Experience</a>
               <a href="#statistics" className="hover:text-white transition">Competencies</a>
-              <a href="#podiums" className="hover:text-white transition">Awards</a>
+              <a href="#podiums" className="hover:text-white transition">Certificates</a>
               <a href="#contact" className="hover:text-white transition">Contact</a>
             </nav>
           </div>
@@ -116,7 +116,7 @@ export const F1Header: React.FC = () => {
               WORK EXPERIENCE
             </a>
             <a href="#podiums" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 text-f1-gray hover:text-white hover:bg-white/5 rounded transition">
-              AWARDS & CERTIFICATE
+              CERTIFICATES
             </a>
             <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 text-[#00ff66] hover:bg-white/5 rounded transition">
               GET IN TOUCH →
@@ -167,7 +167,7 @@ export const F1Header: React.FC = () => {
             <a href="#biography" className="hover:text-white transition">Biography</a>
             <a href="#portfolio" className="hover:text-white transition">Projects</a>
             <a href="#career" className="hover:text-white transition">Experience</a>
-            <a href="#podiums" className="hover:text-white transition">Awards</a>
+            <a href="#podiums" className="hover:text-white transition">Certificates</a>
             <a href="#contact" className="hover:text-white transition">Contact</a>
           </div>
         </div>

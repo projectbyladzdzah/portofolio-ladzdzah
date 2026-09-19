@@ -32,7 +32,7 @@ export const F1Footer: React.FC = () => {
             <a href="#biography" className="hover:text-white transition">BIOGRAPHY</a>
             <a href="#portfolio" className="hover:text-white transition">PORTFOLIO</a>
             <a href="#career" className="hover:text-white transition">CAREER</a>
-            <a href="#podiums" className="hover:text-white transition">AWARDS</a>
+            <a href="#podiums" className="hover:text-white transition">CERTIFICATES</a>
             <a href="#contact" className="hover:text-white transition">CONTACT</a>
           </div>
         </div>

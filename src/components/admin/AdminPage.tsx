@@ -618,7 +618,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
             { id: 'projects', label: `💻 PROJECTS (${data.projects.length})` },
             { id: 'career', label: `⏱️ EXPERIENCE (${data.career.length})` },
             { id: 'ticker', label: '📊 TICKER' },
-            { id: 'awards', label: `🏆 AWARDS (${data.awards.length})` },
+            { id: 'awards', label: `📜 CERTIFICATES (${data.awards.length})` },
             { id: 'contact', label: '📡 CONTACT' },
             { id: 'backup', label: '💾 BACKUP & SYSTEM' }
           ].map(tab => (
@@ -1614,14 +1614,14 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
         {activeTab === 'awards' && (
           <div className="space-y-4 bg-[#13131b] border border-white/10 p-6 rounded-sm shadow-xl text-xs">
             <div className="flex justify-between items-center border-b border-white/10 pb-3">
-              <span className="font-f1 font-black text-white text-base uppercase">PENGHARGAAN & PRESTASI ({data.awards.length})</span>
+              <span className="font-f1 font-black text-white text-base uppercase">DAFTAR SERTIFIKAT DIGITAL ({data.awards.length})</span>
               <button
                 type="button"
                 onClick={() => { setEditingItem(null); setModalType('award'); }}
                 className="bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold px-3 py-1.5 rounded flex items-center gap-1.5 transition text-xs"
               >
                 <Plus size={14} />
-                <span>TAMBAH PENGHARGAAN</span>
+                <span>TAMBAH SERTIFIKAT</span>
               </button>
             </div>
 
@@ -1641,7 +1641,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                       <Edit2 size={13} />
                     </button>
                     <button
-                      onClick={() => { if (confirm('Hapus penghargaan ini?')) deleteAward(awd.id); }}
+                      onClick={() => { if (confirm('Hapus sertifikat ini?')) deleteAward(awd.id); }}
                       className="p-1.5 bg-red-950/40 hover:bg-f1-red text-white rounded transition"
                       title="Hapus"
                     >

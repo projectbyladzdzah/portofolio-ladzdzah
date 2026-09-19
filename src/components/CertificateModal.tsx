@@ -144,7 +144,7 @@ export const CertificateModal: React.FC = () => {
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-[10px] font-f1 font-bold tracking-widest text-[#d4af37] uppercase">
-                  DOKUMEN SERTIFIKAT // AWARDS & CERTIFICATE
+                  DOKUMEN SERTIFIKAT // OFFICIAL CERTIFICATES
                 </span>
                 <span className="text-[10px] px-2 py-0.5 bg-f1-red/20 text-f1-red border border-f1-red/30 rounded font-f1 font-bold">
                   {currentAward.position || '1ST PLACE GOLD'}

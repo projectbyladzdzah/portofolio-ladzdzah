@@ -42,10 +42,10 @@ export const AwardsSection: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 text-[10px] sm:text-xs font-f1 font-bold tracking-[0.25em] text-f1-gray uppercase mb-2">
               <span className="w-2 h-2 bg-f1-red"></span>
-              <span>HONORS, ACHIEVEMENTS & CREDENTIALS // 04</span>
+              <span>VERIFIED CREDENTIALS & LICENSES // 04</span>
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-f1 font-black italic tracking-tight text-white uppercase">
-              AWARDS <span className="text-f1-red">& CERTIFICATES</span>
+              CERTIFICATES
             </h2>
           </div>
 
@@ -67,12 +67,12 @@ export const AwardsSection: React.FC = () => {
                     : 'text-white/20 cursor-not-allowed'
                 }`}
                 title="Geser Kiri"
-                aria-label="Previous awards"
+                aria-label="Previous certificates"
               >
                 <ChevronLeft size={16} />
               </button>
               <span className="text-[10px] font-f1 font-bold text-[#d4af37] px-1 tracking-wider uppercase hidden sm:inline">
-                AWARDS
+                CERTIFICATES
               </span>
               <button
                 onClick={() => handleScroll('right')}
@@ -83,7 +83,7 @@ export const AwardsSection: React.FC = () => {
                     : 'text-white/20 cursor-not-allowed'
                 }`}
                 title="Geser Kanan"
-                aria-label="Next awards"
+                aria-label="Next certificates"
               >
                 <ChevronRight size={16} />
               </button>

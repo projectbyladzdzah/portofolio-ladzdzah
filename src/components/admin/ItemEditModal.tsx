@@ -166,7 +166,7 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
         {/* Header */}
         <div className="flex justify-between items-center px-6 py-4 border-b border-white/10 bg-f1-surface">
           <h3 className="text-xl font-f1 font-black tracking-wider text-white uppercase">
-            {item ? `EDIT ${type.toUpperCase()}` : `+ TAMBAH ${type.toUpperCase()}`}
+            {item ? (type === 'award' ? 'EDIT SERTIFIKAT' : `EDIT ${type.toUpperCase()}`) : (type === 'award' ? '+ TAMBAH SERTIFIKAT' : `+ TAMBAH ${type.toUpperCase()}`)}
           </h3>
           <button onClick={onClose} className="text-f1-gray hover:text-white transition">
             <X size={20} />
@@ -385,20 +385,20 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="font-f1 font-bold text-f1-gray tracking-wider block">POSISI PODIUM</label>
+                  <label className="font-f1 font-bold text-f1-gray tracking-wider block">POSISI / LEVEL</label>
                   <input
                     type="text"
                     required
                     value={awardForm.position || ''}
                     onChange={e => setAwardForm({ ...awardForm, position: e.target.value })}
-                    placeholder="e.g. P1 GOLD"
+                    placeholder="e.g. P1 GOLD / CERTIFIED"
                     className="w-full bg-[#181822] border border-white/10 focus:border-f1-red px-3.5 py-2.5 rounded text-white outline-none"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="font-f1 font-bold text-f1-gray tracking-wider block">NAMA JUARA / PRESTASI</label>
+                <label className="font-f1 font-bold text-f1-gray tracking-wider block">NAMA SERTIFIKAT</label>
                 <input
                   type="text"
                   required
@@ -445,7 +445,7 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
               </div>
 
               <div className="space-y-1.5">
-                <label className="font-f1 font-bold text-f1-gray tracking-wider block">PENJELASAN LENGKAP PRESTASI</label>
+                <label className="font-f1 font-bold text-f1-gray tracking-wider block">PENJELASAN LENGKAP SERTIFIKAT</label>
                 <textarea
                   rows={3}
                   value={awardForm.description || ''}
