@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import {
   PortfolioData,
   DriverHeroData,
+  DriverStat,
   BiographyData,
   ProjectItem,
   CareerItem,
@@ -68,6 +69,28 @@ const AUTH_KEY = 'ladzdzah_f1_admin_auth_session';
 
 const PortfolioContext = createContext<PortfolioContextType | undefined>(undefined);
 
+const sanitizeHeroStats = (stats: any[], awardsCount?: number): DriverStat[] => {
+  if (!Array.isArray(stats)) return DEFAULT_PORTFOLIO_DATA.hero.stats;
+  return stats.map(stat => {
+    const rawLabel = String(stat.label || '');
+    if (rawLabel.toUpperCase().includes('AWARD') || rawLabel.toUpperCase().includes('CERTIFICATE')) {
+      let val = String(stat.value || '');
+      if (/award|title/i.test(val)) {
+        val = val.replace(/\d+\s*(?:gold\s*)?(?:titles?|awards?)\s*(?:&|\+|\/)?\s*/gi, '').trim();
+        if (!val) {
+          val = `${awardsCount || 3} Verified`;
+        }
+      }
+      return {
+        ...stat,
+        label: 'CERTIFICATES',
+        value: val
+      };
+    }
+    return stat;
+  });
+};
+
 export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [data, setData] = useState<PortfolioData>(() => {
     try {
@@ -80,8 +103,12 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       if (!saved) return DEFAULT_PORTFOLIO_DATA;
       const parsed = JSON.parse(saved);
 
-      const hero = { ...DEFAULT_PORTFOLIO_DATA.hero, ...(parsed.hero || {}) };
       const awards = Array.isArray(parsed.awards) ? parsed.awards : DEFAULT_PORTFOLIO_DATA.awards;
+      const hero = {
+        ...DEFAULT_PORTFOLIO_DATA.hero,
+        ...(parsed.hero || {}),
+        stats: sanitizeHeroStats(parsed.hero?.stats, awards.length)
+      };
       const career = Array.isArray(parsed.career) ? parsed.career : DEFAULT_PORTFOLIO_DATA.career;
 
       return {
@@ -209,9 +236,13 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
         if (row && row.data) {
           setData(prev => {
-            const cloudHero = { ...DEFAULT_PORTFOLIO_DATA.hero, ...(row.data.hero || {}) };
-            const cloudCareer = Array.isArray(row.data.career) ? row.data.career : prev.career;
             const cloudAwards = Array.isArray(row.data.awards) ? row.data.awards : prev.awards;
+            const cloudHero = {
+              ...DEFAULT_PORTFOLIO_DATA.hero,
+              ...(row.data.hero || {}),
+              stats: sanitizeHeroStats(row.data.hero?.stats, cloudAwards.length)
+            };
+            const cloudCareer = Array.isArray(row.data.career) ? row.data.career : prev.career;
             const cloudProjects = Array.isArray(row.data.projects) ? row.data.projects : prev.projects;
             const cloudTicker = Array.isArray(row.data.ticker) ? row.data.ticker : prev.ticker;
 
@@ -250,17 +281,25 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         (payload: any) => {
           if (!isMounted) return;
           if (payload?.new && payload.new.data) {
-            setData(prev => ({
-              ...prev,
-              ...payload.new.data,
-              hero: { ...prev.hero, ...(payload.new.data.hero || {}) },
-              biography: { ...prev.biography, ...(payload.new.data.biography || {}) },
-              contact: { ...prev.contact, ...(payload.new.data.contact || {}) },
-              career: Array.isArray(payload.new.data.career) ? payload.new.data.career : prev.career,
-              awards: Array.isArray(payload.new.data.awards) ? payload.new.data.awards : prev.awards,
-              projects: Array.isArray(payload.new.data.projects) ? payload.new.data.projects : prev.projects,
-              ticker: Array.isArray(payload.new.data.ticker) ? payload.new.data.ticker : prev.ticker
-            }));
+            setData(prev => {
+              const rtAwards = Array.isArray(payload.new.data.awards) ? payload.new.data.awards : prev.awards;
+              const rtHero = {
+                ...prev.hero,
+                ...(payload.new.data.hero || {}),
+                stats: sanitizeHeroStats(payload.new.data.hero?.stats, rtAwards.length)
+              };
+              return {
+                ...prev,
+                ...payload.new.data,
+                hero: rtHero,
+                biography: { ...prev.biography, ...(payload.new.data.biography || {}) },
+                contact: { ...prev.contact, ...(payload.new.data.contact || {}) },
+                career: Array.isArray(payload.new.data.career) ? payload.new.data.career : prev.career,
+                awards: rtAwards,
+                projects: Array.isArray(payload.new.data.projects) ? payload.new.data.projects : prev.projects,
+                ticker: Array.isArray(payload.new.data.ticker) ? payload.new.data.ticker : prev.ticker
+              };
+            });
           }
         }
       )
@@ -364,10 +403,35 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     showToast('Admin telah logout.', 'warning');
   };
 
+  // Auto-migrate any residual awards stats in localStorage/state
+  useEffect(() => {
+    setData(prev => {
+      const sanitized = sanitizeHeroStats(prev.hero.stats, prev.awards?.length);
+      const isDifferent = JSON.stringify(sanitized) !== JSON.stringify(prev.hero.stats);
+      if (!isDifferent) return prev;
+      const next = {
+        ...prev,
+        hero: {
+          ...prev.hero,
+          stats: sanitized
+        }
+      };
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      } catch {}
+      syncToSupabase(next);
+      return next;
+    });
+  }, [syncToSupabase]);
+
   // Content Updaters
   const updateHero = (hero: DriverHeroData) => {
+    const sanitizedHero = {
+      ...hero,
+      stats: sanitizeHeroStats(hero.stats, data.awards?.length)
+    };
     setData(prev => {
-      const next = { ...prev, hero };
+      const next = { ...prev, hero: sanitizedHero };
       syncToSupabase(next);
       return next;
     });

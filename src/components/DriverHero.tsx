@@ -538,7 +538,18 @@ export const DriverHero: React.FC = () => {
         {/* The Signature 2x4 Career Stats Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
           {hero.stats.map((stat, idx) => {
-            const isAwardStat = stat.label.includes('AWARD') || stat.label.includes('CERTIFICATE');
+            const isAwardStat = stat.label.toUpperCase().includes('AWARD') || stat.label.toUpperCase().includes('CERTIFICATE');
+            const displayLabel = isAwardStat ? 'CERTIFICATES' : stat.label;
+            let displayValue = String(stat.value || '');
+            if (isAwardStat && /award|title/i.test(displayValue)) {
+              displayValue = displayValue
+                .replace(/\d+\s*(?:gold\s*)?(?:titles?|awards?)\s*(?:&|\+|\/)?\s*/gi, '')
+                .trim();
+              if (!displayValue) {
+                displayValue = `${data.awards?.length || 3} Verified`;
+              }
+            }
+
             return (
               <div
                 key={idx}
@@ -555,7 +566,7 @@ export const DriverHero: React.FC = () => {
               >
                 <div className="flex items-center justify-between mb-1 sm:mb-1.5 gap-1">
                   <span className="text-[9px] sm:text-[11px] font-f1 font-bold tracking-wider sm:tracking-widest text-f1-gray block uppercase group-hover:text-white transition truncate">
-                    {stat.label}
+                    {displayLabel}
                   </span>
                   {isAwardStat && (
                     <span className="text-[8px] sm:text-[9px] font-f1 font-black text-[#d4af37] tracking-wider uppercase flex items-center gap-0.5 sm:gap-1 bg-[#d4af37]/15 px-1 sm:px-1.5 py-0.5 rounded border border-[#d4af37]/30 shrink-0">
@@ -565,14 +576,14 @@ export const DriverHero: React.FC = () => {
                   )}
                 </div>
                 <strong
-                  title={String(stat.value)}
+                  title={String(displayValue)}
                   className={`text-sm sm:text-xl lg:text-2xl font-f1 font-black tracking-wide block truncate transition ${
                     isAwardStat
                       ? 'text-[#d4af37] group-hover:text-white'
                       : 'text-white group-hover:text-f1-red'
                   }`}
                 >
-                  {stat.value}
+                  {displayValue}
                 </strong>
               </div>
             );
