@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { usePortfolio } from '../../context/PortfolioContext';
 import { ProjectItem, CareerItem, AwardItem } from '../../types/portfolio';
-import { X, Upload, Trash2, CheckCircle2 } from 'lucide-react';
+import { X, Upload, Trash2, CheckCircle2, ChevronLeft, ChevronRight, Star, Plus, Loader2, Image as ImageIcon } from 'lucide-react';
 
 export type EditModalType = 'project' | 'career' | 'award' | null;
 
@@ -26,24 +26,33 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
   // Project state
   const [projectForm, setProjectForm] = useState<Partial<ProjectItem>>(() => {
     if (type === 'project') {
-      return (item as ProjectItem) || {
-        id: 'proj_' + Date.now(),
-        title: '',
-        category: 'web',
-        year: new Date().getFullYear().toString(),
-        description: '',
-        tags: [],
-        image: '',
-        liveUrl: '',
-        githubUrl: '',
-        featured: false
-      };
+      const proj = item as ProjectItem | null;
+      const initialImages = proj?.images && proj.images.length > 0
+        ? proj.images
+        : (proj?.image ? [proj.image] : []);
+      return proj
+        ? { ...proj, images: initialImages }
+        : {
+            id: 'proj_' + Date.now(),
+            title: '',
+            category: 'web',
+            year: new Date().getFullYear().toString(),
+            description: '',
+            tags: [],
+            image: '',
+            images: [],
+            liveUrl: '',
+            githubUrl: '',
+            featured: false
+          };
     }
     return {};
   });
   const [tagInput, setTagInput] = useState<string>(
     type === 'project' && item ? ((item as ProjectItem).tags || []).join(', ') : ''
   );
+  const [newImageUrl, setNewImageUrl] = useState<string>('');
+  const [isUploadingImages, setIsUploadingImages] = useState<boolean>(false);
 
   // Career state
   const [careerForm, setCareerForm] = useState<Partial<CareerItem>>(() => {
@@ -77,21 +86,102 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
 
   if (!type) return null;
 
-  const handleProjectImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleMultipleProjectImagesUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    setIsUploadingImages(true);
     try {
-      const url = await uploadImage(file, 'projects', 1200, 0.85);
-      setProjectForm(prev => ({ ...prev, image: url }));
+      const uploadedUrls: string[] = [];
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const url = await uploadImage(file, 'projects', 1440, 0.85);
+        if (url) uploadedUrls.push(url);
+      }
+      setProjectForm(prev => {
+        const currentList = prev.images || (prev.image ? [prev.image] : []);
+        const nextList = [...currentList, ...uploadedUrls];
+        return {
+          ...prev,
+          images: nextList,
+          image: nextList[0] || ''
+        };
+      });
     } catch (err) {
       console.error(err);
+      alert('Gagal mengunggah foto proyek.');
+    } finally {
+      setIsUploadingImages(false);
+      e.target.value = '';
     }
+  };
+
+  const handleAddImageUrl = () => {
+    const trimmed = newImageUrl.trim();
+    if (!trimmed) return;
+    setProjectForm(prev => {
+      const currentList = prev.images || (prev.image ? [prev.image] : []);
+      const nextList = [...currentList, trimmed];
+      return {
+        ...prev,
+        images: nextList,
+        image: nextList[0] || ''
+      };
+    });
+    setNewImageUrl('');
+  };
+
+  const handleRemoveImage = (idxToRemove: number) => {
+    setProjectForm(prev => {
+      const currentList = prev.images || [];
+      const nextList = currentList.filter((_, idx) => idx !== idxToRemove);
+      return {
+        ...prev,
+        images: nextList,
+        image: nextList[0] || ''
+      };
+    });
+  };
+
+  const handleSetPrimaryImage = (idx: number) => {
+    setProjectForm(prev => {
+      const currentList = [...(prev.images || [])];
+      if (idx <= 0 || idx >= currentList.length) return prev;
+      const [chosen] = currentList.splice(idx, 1);
+      currentList.unshift(chosen);
+      return {
+        ...prev,
+        images: currentList,
+        image: currentList[0] || ''
+      };
+    });
+  };
+
+  const handleMoveImage = (idx: number, direction: 'left' | 'right') => {
+    setProjectForm(prev => {
+      const currentList = [...(prev.images || [])];
+      const targetIdx = direction === 'left' ? idx - 1 : idx + 1;
+      if (targetIdx < 0 || targetIdx >= currentList.length) return prev;
+      const temp = currentList[idx];
+      currentList[idx] = currentList[targetIdx];
+      currentList[targetIdx] = temp;
+      return {
+        ...prev,
+        images: currentList,
+        image: currentList[0] || ''
+      };
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (type === 'project') {
       const finalTags = tagInput.split(',').map(t => t.trim()).filter(Boolean);
+      const finalImages =
+        projectForm.images && projectForm.images.length > 0
+          ? projectForm.images
+          : projectForm.image
+          ? [projectForm.image]
+          : [];
       const updatedProject: ProjectItem = {
         id: projectForm.id || 'proj_' + Date.now(),
         title: projectForm.title || '',
@@ -99,7 +189,8 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
         year: projectForm.year || '',
         description: projectForm.description || '',
         tags: finalTags,
-        image: projectForm.image || '',
+        image: finalImages[0] || '',
+        images: finalImages,
         liveUrl: projectForm.liveUrl || '',
         githubUrl: projectForm.githubUrl || '',
         featured: !!projectForm.featured
@@ -261,33 +352,162 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({ type, item, onClos
                 </div>
               </div>
 
-              {/* Image Upload */}
-              <div className="space-y-2">
-                <label className="font-f1 font-bold text-f1-gray tracking-wider block">GAMBAR PROYEK</label>
-                <div className="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded">
-                  {projectForm.image ? (
-                    <img src={projectForm.image} alt="Preview" className="w-16 h-12 object-cover rounded" />
-                  ) : (
-                    <div className="w-16 h-12 bg-black/40 rounded flex items-center justify-center text-[10px] text-f1-gray">
-                      NO IMG
-                    </div>
-                  )}
-                  <div className="flex-1 space-y-1">
+              {/* Multi-Photo Project Banner Upload & Management */}
+              <div className="space-y-3 pt-2 border-t border-white/10">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <label className="font-f1 font-bold text-white tracking-wider block flex items-center gap-1.5">
+                      <ImageIcon size={14} className="text-f1-red" />
+                      <span>FOTO / BANNER PROYEK (BISA LEBIH DARI 1)</span>
+                    </label>
+                    <span className="text-[11px] text-f1-gray font-sans block mt-0.5">
+                      Upload beberapa foto atau masukkan link. Foto dapat digeser seperti banner di halaman proyek.
+                    </span>
+                  </div>
+                  <span className="text-[11px] font-f1 font-bold text-white/70 bg-white/10 px-2 py-0.5 rounded">
+                    {(projectForm.images?.length || (projectForm.image ? 1 : 0))} FOTO
+                  </span>
+                </div>
+
+                {/* Upload & Add URL controls */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {/* File Upload Button (Single or Multiple) */}
+                  <label className={`bg-white/10 hover:bg-white/15 border border-white/15 text-white font-f1 font-bold px-3 py-2.5 rounded flex items-center justify-center gap-2 cursor-pointer transition text-xs ${isUploadingImages ? 'opacity-50 pointer-events-none' : ''}`}>
+                    {isUploadingImages ? (
+                      <>
+                        <Loader2 size={15} className="animate-spin text-f1-red" />
+                        <span>MENGUNGGAH FOTO...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Upload size={15} className="text-f1-red" />
+                        <span>+ PILIH FOTO (BISA BANYAK)</span>
+                      </>
+                    )}
                     <input
                       type="file"
+                      multiple
                       accept="image/*"
-                      onChange={handleProjectImageUpload}
-                      className="text-xs text-f1-gray file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-f1-red file:text-white file:text-xs"
+                      onChange={handleMultipleProjectImagesUpload}
+                      disabled={isUploadingImages}
+                      className="hidden"
                     />
+                  </label>
+
+                  {/* Add Image by URL */}
+                  <div className="flex items-center gap-1.5">
                     <input
                       type="text"
-                      value={projectForm.image || ''}
-                      onChange={e => setProjectForm({ ...projectForm, image: e.target.value })}
-                      placeholder="Atau masukkan URL gambar..."
-                      className="w-full bg-[#181822] border border-white/10 px-2.5 py-1.5 rounded text-white text-xs outline-none"
+                      value={newImageUrl}
+                      onChange={e => setNewImageUrl(e.target.value)}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleAddImageUrl();
+                        }
+                      }}
+                      placeholder="Atau tempel URL gambar..."
+                      className="flex-1 bg-[#181822] border border-white/10 focus:border-f1-red px-3 py-2 rounded text-white text-xs outline-none"
                     />
+                    <button
+                      type="button"
+                      onClick={handleAddImageUrl}
+                      disabled={!newImageUrl.trim()}
+                      className="bg-white/10 hover:bg-f1-red disabled:opacity-30 disabled:hover:bg-white/10 text-white font-f1 font-bold px-3 py-2 rounded transition flex items-center gap-1 flex-shrink-0"
+                      title="Tambah Foto dari URL"
+                    >
+                      <Plus size={14} />
+                      <span>TAMBAH</span>
+                    </button>
                   </div>
                 </div>
+
+                {/* Photos List / Grid */}
+                {(projectForm.images && projectForm.images.length > 0) ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-56 overflow-y-auto p-2 bg-black/40 border border-white/10 rounded">
+                    {projectForm.images.map((imgUrl, idx) => (
+                      <div
+                        key={idx}
+                        className={`relative rounded border overflow-hidden group bg-[#161622] flex flex-col ${
+                          idx === 0 ? 'border-f1-red shadow-md shadow-f1-red/10 ring-1 ring-f1-red/50' : 'border-white/10'
+                        }`}
+                      >
+                        {/* Thumbnail Image */}
+                        <div className="aspect-[16/10] w-full overflow-hidden relative bg-black/60">
+                          <img
+                            src={imgUrl}
+                            alt={`Preview ${idx + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                          {/* Badge Slide / Utama */}
+                          <div className="absolute top-1 left-1 flex items-center gap-1">
+                            {idx === 0 ? (
+                              <span className="bg-f1-red text-white text-[9px] font-f1 font-black px-1.5 py-0.5 rounded-sm uppercase tracking-wider flex items-center gap-0.5">
+                                <Star size={9} fill="currentColor" />
+                                UTAMA
+                              </span>
+                            ) : (
+                              <span className="bg-black/70 text-white/80 text-[9px] font-f1 font-bold px-1.5 py-0.5 rounded-sm">
+                                #{idx + 1}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Card Controls Toolbar */}
+                        <div className="p-1.5 bg-[#12121a] flex items-center justify-between gap-1 border-t border-white/5">
+                          <div className="flex items-center gap-1">
+                            {/* Move Left / Prev */}
+                            <button
+                              type="button"
+                              onClick={() => handleMoveImage(idx, 'left')}
+                              disabled={idx === 0}
+                              className="p-1 rounded bg-white/5 hover:bg-white/20 disabled:opacity-20 text-white transition"
+                              title="Geser ke kiri"
+                            >
+                              <ChevronLeft size={13} />
+                            </button>
+                            {/* Move Right / Next */}
+                            <button
+                              type="button"
+                              onClick={() => handleMoveImage(idx, 'right')}
+                              disabled={idx === (projectForm.images?.length || 0) - 1}
+                              className="p-1 rounded bg-white/5 hover:bg-white/20 disabled:opacity-20 text-white transition"
+                              title="Geser ke kanan"
+                            >
+                              <ChevronRight size={13} />
+                            </button>
+                            {/* Make Primary button (if not already index 0) */}
+                            {idx > 0 && (
+                              <button
+                                type="button"
+                                onClick={() => handleSetPrimaryImage(idx)}
+                                className="px-1.5 py-0.5 text-[9px] font-f1 font-bold rounded bg-white/10 hover:bg-f1-red text-white transition"
+                                title="Jadikan foto utama (banner awal)"
+                              >
+                                UTAMA
+                              </button>
+                            )}
+                          </div>
+
+                          {/* Delete Photo Button */}
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveImage(idx)}
+                            className="p-1 rounded bg-red-950/40 hover:bg-f1-red text-white transition"
+                            title="Hapus foto ini"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-4 bg-white/5 border border-dashed border-white/15 rounded text-center text-f1-gray text-xs">
+                    Belum ada foto yang ditambahkan. Silakan upload atau masukkan URL gambar di atas.
+                  </div>
+                )}
               </div>
 
               <div className="pt-2">

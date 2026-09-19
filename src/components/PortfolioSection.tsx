@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { Plus, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ProjectBannerSlider } from './ProjectBannerSlider';
 
 export const PortfolioSection: React.FC = () => {
   const { data, setActiveProjectModal, isAdminUnlocked } = usePortfolio();
@@ -197,25 +198,26 @@ export const PortfolioSection: React.FC = () => {
                 className="w-[85vw] sm:w-[350px] md:w-[380px] shrink-0 snap-start bg-f1-panel border border-white/10 hover:border-f1-red rounded-sm overflow-hidden transition-all duration-300 hover:-translate-y-1.5 group cursor-pointer shadow-xl flex flex-col"
               >
                 {/* Card Image Banner */}
-                <div className="aspect-[16/10] w-full overflow-hidden bg-[#161622] relative">
-                  {project.image ? (
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center font-f1 font-black text-2xl text-white/10 tracking-widest uppercase">
-                      NO PREVIEW
-                    </div>
-                  )}
+                <div className="w-full relative">
+                  <ProjectBannerSlider
+                    images={
+                      project.images && project.images.length > 0
+                        ? project.images
+                        : project.image
+                        ? [project.image]
+                        : []
+                    }
+                    title={project.title}
+                    aspectRatio="aspect-[16/10]"
+                    showCounter={true}
+                    onImageClick={() => setActiveProjectModal(project)}
+                  />
                   {/* Year & Category Pill Overlay */}
-                  <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
-                    <span className="bg-black/70 backdrop-blur-sm text-f1-red text-[10px] font-f1 font-black tracking-widest px-2 py-0.5 rounded-sm uppercase border border-white/10">
+                  <div className="absolute top-2.5 left-2.5 z-10 pointer-events-none flex items-center gap-1.5">
+                    <span className="bg-black/75 backdrop-blur-sm text-f1-red text-[10px] font-f1 font-black tracking-widest px-2 py-0.5 rounded-sm uppercase border border-white/10">
                       {project.category}
                     </span>
-                    <span className="bg-black/70 backdrop-blur-sm text-white text-[10px] font-f1 font-bold px-2 py-0.5 rounded-sm border border-white/10">
+                    <span className="bg-black/75 backdrop-blur-sm text-white text-[10px] font-f1 font-bold px-2 py-0.5 rounded-sm border border-white/10">
                       {project.year}
                     </span>
                   </div>

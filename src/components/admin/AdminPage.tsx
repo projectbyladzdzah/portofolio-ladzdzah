@@ -1520,7 +1520,9 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
                 <div key={proj.id} className="p-4 bg-white/5 border border-white/10 rounded flex items-center justify-between gap-4">
                   <div>
                     <strong className="text-sm font-f1 font-bold text-white block">{proj.title}</strong>
-                    <span className="text-[10px] text-f1-gray font-f1">{proj.category.toUpperCase()} • {proj.year}</span>
+                    <span className="text-[10px] text-f1-gray font-f1">
+                      {proj.category.toUpperCase()} • {proj.year} • {(proj.images?.length || (proj.image ? 1 : 0))} FOTO {proj.featured ? '• ★ FEATURED' : ''}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <button

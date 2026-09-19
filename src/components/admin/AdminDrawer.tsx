@@ -1229,7 +1229,7 @@ export const AdminDrawer: React.FC = () => {
                           {proj.title}
                         </strong>
                         <span className="text-[11px] font-f1 text-f1-gray tracking-wider uppercase">
-                          {proj.category.toUpperCase()} • {proj.year} {proj.featured ? '• ★ FEATURED' : ''}
+                          {proj.category.toUpperCase()} • {proj.year} • {(proj.images?.length || (proj.image ? 1 : 0))} FOTO {proj.featured ? '• ★ FEATURED' : ''}
                         </span>
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0">

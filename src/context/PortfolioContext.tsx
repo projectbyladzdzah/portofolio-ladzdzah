@@ -91,6 +91,20 @@ const sanitizeHeroStats = (stats: any[], awardsCount?: number): DriverStat[] => 
   });
 };
 
+const sanitizeProjects = (projectsList: any[]): ProjectItem[] => {
+  if (!Array.isArray(projectsList)) return [];
+  return projectsList.map(p => {
+    const images = Array.isArray(p.images) && p.images.length > 0
+      ? p.images
+      : (p.image ? [p.image] : []);
+    return {
+      ...p,
+      image: p.image || images[0] || '',
+      images
+    };
+  });
+};
+
 export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [data, setData] = useState<PortfolioData>(() => {
     try {
@@ -110,6 +124,8 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         stats: sanitizeHeroStats(parsed.hero?.stats, awards.length)
       };
       const career = Array.isArray(parsed.career) ? parsed.career : DEFAULT_PORTFOLIO_DATA.career;
+      const rawProjects = Array.isArray(parsed.projects) ? parsed.projects : DEFAULT_PORTFOLIO_DATA.projects;
+      const projects = sanitizeProjects(rawProjects);
 
       return {
         ...DEFAULT_PORTFOLIO_DATA,
@@ -120,7 +136,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         biography: { ...DEFAULT_PORTFOLIO_DATA.biography, ...(parsed.biography || {}) },
         contact: { ...DEFAULT_PORTFOLIO_DATA.contact, ...(parsed.contact || {}) },
         security: { ...DEFAULT_PORTFOLIO_DATA.security, ...(parsed.security || {}) },
-        projects: Array.isArray(parsed.projects) ? parsed.projects : DEFAULT_PORTFOLIO_DATA.projects,
+        projects,
         ticker: Array.isArray(parsed.ticker) ? parsed.ticker : DEFAULT_PORTFOLIO_DATA.ticker
       };
     } catch {
@@ -243,7 +259,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
               stats: sanitizeHeroStats(row.data.hero?.stats, cloudAwards.length)
             };
             const cloudCareer = Array.isArray(row.data.career) ? row.data.career : prev.career;
-            const cloudProjects = Array.isArray(row.data.projects) ? row.data.projects : prev.projects;
+            const cloudProjects = sanitizeProjects(Array.isArray(row.data.projects) ? row.data.projects : prev.projects);
             const cloudTicker = Array.isArray(row.data.ticker) ? row.data.ticker : prev.ticker;
 
             return {

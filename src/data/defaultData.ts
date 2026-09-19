@@ -110,7 +110,12 @@ export const DEFAULT_PORTFOLIO_DATA: PortfolioData = {
       year: "2025",
       description: "A comprehensive internal attendance management system designed for educators and staff at Lembaga Pendidikan SPS TPQ Al Ikhlas Lebakbarang. Features role-based access control, automated time logging, monthly reporting, and instant printable administrative summaries.",
       tags: ["WEB PLATFORM", "INTERNAL SYSTEM", "PHP / SQL", "AUTHENTICATION"],
-      image: "",
+      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
+      images: [
+        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80"
+      ],
       liveUrl: "",
       githubUrl: "https://github.com/Ladzdzah",
       featured: true
@@ -122,7 +127,12 @@ export const DEFAULT_PORTFOLIO_DATA: PortfolioData = {
       year: "2024",
       description: "High-speed shutter sports and ceremonial photography documenting regional martial arts championships, student milestones, and creative campaigns with cinematic color grading in Adobe Lightroom.",
       tags: ["PHOTOGRAPHY", "SPORTS SHUTTER", "LIGHTROOM", "VISUALS"],
-      image: "",
+      image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1200&q=80",
+      images: [
+        "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1502982720700-bfff97f2ecac?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&w=1200&q=80"
+      ],
       liveUrl: "",
       githubUrl: "",
       featured: false
@@ -134,7 +144,11 @@ export const DEFAULT_PORTFOLIO_DATA: PortfolioData = {
       year: "2022–24",
       description: "Creative media production and social media strategy for Unit Kegiatan Mahasiswa Merpati Putih. Directed promotional video reels, designed campaign visual posters, and established a digital member archive.",
       tags: ["VIDEO PRODUCTION", "SOCIAL MEDIA", "ADOBE PREMIERE"],
-      image: "",
+      image: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=1200&q=80",
+      images: [
+        "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1536240478700-b869070f9279?auto=format&fit=crop&w=1200&q=80"
+      ],
       liveUrl: "",
       githubUrl: "",
       featured: false
@@ -146,7 +160,11 @@ export const DEFAULT_PORTFOLIO_DATA: PortfolioData = {
       year: "2023–25",
       description: "Managed daily technical troubleshooting across 30+ workstations, local routers, laser printers, OS deployments, routine hardware cleaning, and automated backup schedules for academic stability.",
       tags: ["HARDWARE", "NETWORKING", "TROUBLESHOOTING", "WINDOWS & LINUX"],
-      image: "",
+      image: "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&w=1200&q=80",
+      images: [
+        "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1200&q=80"
+      ],
       liveUrl: "",
       githubUrl: "",
       featured: false
@@ -158,7 +176,10 @@ export const DEFAULT_PORTFOLIO_DATA: PortfolioData = {
       year: "2021–23",
       description: "Digitized institutional correspondence, automated administrative spreadsheets, structured filing registers, and managed operational inventory using Microsoft 365 suites.",
       tags: ["DATA MANAGEMENT", "DOCUMENTS", "ADMINISTRATION"],
-      image: "",
+      image: "https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=1200&q=80",
+      images: [
+        "https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=1200&q=80"
+      ],
       liveUrl: "",
       githubUrl: "",
       featured: false
@@ -170,7 +191,11 @@ export const DEFAULT_PORTFOLIO_DATA: PortfolioData = {
       year: "2024",
       description: "Architected relational SQL schemas with data integrity constraints, automated query reporting, and institutional database maintenance protocols.",
       tags: ["SQL", "DATABASE SCHEMA", "WORKFLOW"],
-      image: "",
+      image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80",
+      images: [
+        "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80"
+      ],
       liveUrl: "",
       githubUrl: "https://github.com/Ladzdzah",
       featured: false

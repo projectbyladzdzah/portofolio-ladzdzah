@@ -59,6 +59,7 @@ export interface ProjectItem {
   description: string;
   tags: string[];
   image: string;
+  images?: string[];
   liveUrl?: string;
   githubUrl?: string;
   featured?: boolean;

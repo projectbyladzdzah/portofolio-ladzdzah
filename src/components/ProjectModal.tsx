@@ -1,11 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { X, ExternalLink, Github, Calendar, Tag } from 'lucide-react';
+import { ProjectBannerSlider } from './ProjectBannerSlider';
 
 export const ProjectModal: React.FC = () => {
   const { activeProjectModal, setActiveProjectModal } = usePortfolio();
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setActiveProjectModal(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [setActiveProjectModal]);
+
   if (!activeProjectModal) return null;
+
+  const projectImages =
+    activeProjectModal.images && activeProjectModal.images.length > 0
+      ? activeProjectModal.images
+      : activeProjectModal.image
+      ? [activeProjectModal.image]
+      : [];
 
   return (
     <div
@@ -38,22 +56,16 @@ export const ProjectModal: React.FC = () => {
 
         {/* Modal Body */}
         <div className="p-6 space-y-6">
-          {/* Image Banner */}
-          {activeProjectModal.image ? (
-            <div className="aspect-video w-full rounded-sm overflow-hidden border border-white/10">
-              <img
-                src={activeProjectModal.image}
-                alt={activeProjectModal.title}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          ) : (
-            <div className="aspect-[21/9] w-full rounded-sm bg-[#1a1a24] border border-white/10 flex items-center justify-center text-center p-4">
-              <span className="font-f1 font-black text-2xl tracking-widest text-white/20 uppercase">
-                PROJECT PREVIEW // {activeProjectModal.category.toUpperCase()}
-              </span>
-            </div>
-          )}
+          {/* Image Banner Slider with Thumbnails */}
+          <div className="w-full rounded-sm overflow-hidden border border-white/10 bg-[#0c0c12]">
+            <ProjectBannerSlider
+              images={projectImages}
+              title={activeProjectModal.title}
+              aspectRatio="aspect-video"
+              showThumbnails={true}
+              showCounter={true}
+            />
+          </div>
 
           {/* Title & Description */}
           <div>
