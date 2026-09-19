@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import {
   PortfolioData,
   DriverHeroData,
@@ -159,13 +159,21 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [activeProjectModal, setActiveProjectModal] = useState<ProjectItem | null>(null);
   const [activeAwardModal, setActiveAwardModal] = useState<AwardItem | null>(null);
   const [toasts, setToasts] = useState<ToastNotification[]>([]);
+  const lastToastRef = useRef<{ msg: string; time: number }>({ msg: '', time: 0 });
 
   const showToast = useCallback((message: string, type: 'success' | 'warning' | 'error' = 'success') => {
+    const now = Date.now();
+    // Avoid spamming duplicate toast message within 3.5s
+    if (lastToastRef.current.msg === message && now - lastToastRef.current.time < 3500) {
+      return;
+    }
+    lastToastRef.current = { msg: message, time: now };
+
     const id = `${Date.now()}_${Math.random()}`;
     setToasts(prev => [...prev, { id, message, type }]);
     setTimeout(() => {
       setToasts(prev => prev.filter(t => t.id !== id));
-    }, 4000);
+    }, 4500);
   }, []);
 
   // Sync to Cloud Supabase
@@ -743,7 +751,11 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           }
         } else if (error) {
           console.warn('[Supabase Storage Upload Error]:', error.message);
-          showToast(`Supabase Storage: ${error.message}. Fallback ke lokal.`, 'warning');
+          if (error.message.toLowerCase().includes('row-level security') || error.message.toLowerCase().includes('policy')) {
+            showToast('Supabase Storage: Izin RLS bucket belum dibuka di Supabase. File dialihkan & disimpan di memori lokal.', 'warning');
+          } else {
+            showToast(`Supabase Storage: ${error.message}. Fallback ke lokal.`, 'warning');
+          }
         }
       } catch (err: any) {
         console.warn('[Supabase Storage Upload Exception]:', err);
