@@ -14,6 +14,7 @@ import {
   ChevronUp,
   ChevronDown
 } from 'lucide-react';
+import { BiographyGalleryItem } from '../../types/portfolio';
 
 export const AdminDrawer: React.FC = () => {
   const {
@@ -246,6 +247,61 @@ export const AdminDrawer: React.FC = () => {
     e.preventDefault();
     const skills = bioSkillsInput.split(',').map(s => s.trim()).filter(Boolean);
     updateBiography({ ...bioForm, skills });
+  };
+
+  const handleStoryImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, sIdx: number) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      try {
+        showToast('Mengunggah foto story...', 'warning');
+        const url = await uploadImage(file, 'banners', 1200, 0.88);
+        const updated = [...(bioForm.gallery || [])];
+        updated[sIdx].image = url;
+        setBioForm({ ...bioForm, gallery: updated });
+        showToast('Foto story berhasil diunggah & diterapkan!', 'success');
+      } catch {
+        showToast('Gagal memproses unggahan gambar story.', 'error');
+      }
+    }
+  };
+
+  const handleAddStoryItem = () => {
+    const newStory: BiographyGalleryItem = {
+      id: `story_${Date.now()}`,
+      image: 'assets/driver-f1-banner.webp',
+      title: 'Momen Dokumentasi Baru',
+      caption: 'Deskripsi dokumentasi / implementasi proyek dan sistem.',
+      location: 'Surakarta, Indonesia',
+      timestamp: 'Field Milestone • ' + new Date().getFullYear()
+    };
+    const updated = [...(bioForm.gallery || []), newStory];
+    setBioForm({ ...bioForm, gallery: updated });
+    showToast('Story foto baru ditambahkan!', 'success');
+  };
+
+  const handleDeleteStoryItem = (sIdx: number) => {
+    const updated = (bioForm.gallery || []).filter((_, i) => i !== sIdx);
+    setBioForm({ ...bioForm, gallery: updated });
+    showToast('Foto story berhasil dihapus!', 'warning');
+  };
+
+  const handleMakeStoryCover = (sIdx: number) => {
+    if (sIdx === 0) return;
+    const current = [...(bioForm.gallery || [])];
+    const item = current.splice(sIdx, 1)[0];
+    current.unshift(item);
+    setBioForm({ ...bioForm, gallery: current });
+    showToast('Foto dijadikan cover utama kartu biografi!', 'success');
+  };
+
+  const handleMoveStory = (sIdx: number, direction: 'up' | 'down') => {
+    const current = [...(bioForm.gallery || [])];
+    const targetIdx = direction === 'up' ? sIdx - 1 : sIdx + 1;
+    if (targetIdx < 0 || targetIdx >= current.length) return;
+    const temp = current[sIdx];
+    current[sIdx] = current[targetIdx];
+    current[targetIdx] = temp;
+    setBioForm({ ...bioForm, gallery: current });
   };
 
   const handleTickerSubmit = (e: React.FormEvent) => {
@@ -873,14 +929,27 @@ export const AdminDrawer: React.FC = () => {
             {/* TAB 2: BIOGRAPHY */}
             {activeTab === 'bio' && (
               <form onSubmit={handleBioSubmit} className="space-y-4 text-xs">
-                <div>
-                  <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">SECTION HEADING</label>
-                  <input
-                    type="text"
-                    value={bioForm.heading}
-                    onChange={e => setBioForm({ ...bioForm, heading: e.target.value })}
-                    className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white uppercase font-f1 font-bold"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">DATE OF BIRTH (TGL LAHIR)</label>
+                    <input
+                      type="text"
+                      value={bioForm.dateOfBirth || ''}
+                      onChange={e => setBioForm({ ...bioForm, dateOfBirth: e.target.value })}
+                      placeholder="24/09/2001"
+                      className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white font-f1 font-bold"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">PLACE OF BIRTH / BASE</label>
+                    <input
+                      type="text"
+                      value={bioForm.placeOfBirth || ''}
+                      onChange={e => setBioForm({ ...bioForm, placeOfBirth: e.target.value })}
+                      placeholder="Surakarta, Indonesia"
+                      className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white font-f1 font-bold"
+                    />
+                  </div>
                 </div>
 
                 <div>
@@ -908,7 +977,7 @@ export const AdminDrawer: React.FC = () => {
                     PARAGRAF BIOGRAFI (Gunakan baris baru per paragraf)
                   </label>
                   <textarea
-                    rows={6}
+                    rows={5}
                     value={bioForm.paragraphs.join('\n\n')}
                     onChange={e =>
                       setBioForm({
@@ -925,18 +994,207 @@ export const AdminDrawer: React.FC = () => {
                     SKILL ARSENAL (Pisahkan dengan koma)
                   </label>
                   <textarea
-                    rows={3}
+                    rows={2}
                     value={bioSkillsInput}
                     onChange={e => setBioSkillsInput(e.target.value)}
                     className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white font-f1 font-bold text-xs"
                   />
                 </div>
 
+                {/* TOGGLE STORY CARD DISPLAY */}
+                <div className="pt-3 border-t border-white/10">
+                  <div className="flex items-center justify-between p-2.5 bg-black/40 border border-white/10 rounded">
+                    <div>
+                      <span className="font-f1 font-bold text-white text-[11px] block">
+                        TAMPILKAN KARTU STORY BIOGRAFI
+                      </span>
+                      <span className="text-[9px] text-f1-lightGray block font-sans">
+                        Tampilkan kartu foto portrait / story di biografi
+                      </span>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={bioForm.showStoryCard !== false}
+                        onChange={e => setBioForm({ ...bioForm, showStoryCard: e.target.checked })}
+                        className="sr-only peer"
+                      />
+                      <div className="w-8 h-4 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-f1-red"></div>
+                    </label>
+                  </div>
+                </div>
+
+                {/* STORY GALLERY MANAGER */}
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <label className="font-f1 font-bold text-white tracking-wider block text-xs">
+                        PORTFOLIO STORIES ({bioForm.gallery?.length || 0})
+                      </label>
+                      <span className="text-[9px] text-f1-lightGray block font-sans">
+                        #1 otomatis menjadi sampul kartu di biografi.
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleAddStoryItem}
+                      className="bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold px-2 py-1 rounded text-[10px] transition flex items-center gap-1"
+                    >
+                      <Plus size={11} />
+                      <span>+ STORY</span>
+                    </button>
+                  </div>
+
+                  {(!bioForm.gallery || bioForm.gallery.length === 0) ? (
+                    <div className="p-4 text-center border border-dashed border-white/20 rounded bg-black/30">
+                      <p className="text-[10px] text-f1-gray font-f1 uppercase tracking-wider mb-2">
+                        Belum ada foto story
+                      </p>
+                      <button
+                        type="button"
+                        onClick={handleAddStoryItem}
+                        className="bg-white/10 hover:bg-white/20 text-white font-f1 font-bold px-2.5 py-1 rounded text-[10px] transition inline-flex items-center gap-1"
+                      >
+                        <Plus size={11} />
+                        <span>TAMBAH FOTO PERTAMA</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-2.5 max-h-[340px] overflow-y-auto pr-1">
+                      {(bioForm.gallery || []).map((story, sIdx) => (
+                        <div key={story.id || sIdx} className="p-2.5 bg-black/50 border border-white/10 hover:border-white/20 rounded space-y-2 transition">
+                          
+                          {/* Story Header */}
+                          <div className="flex items-center justify-between border-b border-white/10 pb-1.5">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-[10px] font-f1 font-bold text-white">
+                                #{sIdx + 1}
+                              </span>
+                              {sIdx === 0 ? (
+                                <span className="bg-f1-red text-white text-[8px] font-f1 font-black px-1.5 py-0.5 rounded tracking-wider uppercase">
+                                  ★ COVER
+                                </span>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() => handleMakeStoryCover(sIdx)}
+                                  className="text-[9px] text-f1-lightGray hover:text-white bg-white/10 px-1.5 py-0.5 rounded font-f1 font-bold uppercase"
+                                >
+                                  Jadikan Cover
+                                </button>
+                              )}
+                            </div>
+
+                            <div className="flex items-center gap-1">
+                              <button
+                                type="button"
+                                onClick={() => handleMoveStory(sIdx, 'up')}
+                                disabled={sIdx === 0}
+                                className="p-0.5 rounded bg-white/5 hover:bg-white/10 text-white disabled:opacity-25"
+                                title="Geser ke atas"
+                              >
+                                <ChevronUp size={12} />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleMoveStory(sIdx, 'down')}
+                                disabled={sIdx === (bioForm.gallery?.length || 0) - 1}
+                                className="p-0.5 rounded bg-white/5 hover:bg-white/10 text-white disabled:opacity-25"
+                                title="Geser ke bawah"
+                              >
+                                <ChevronDown size={12} />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteStoryItem(sIdx)}
+                                className="text-red-400 hover:text-red-300 p-1 rounded bg-red-500/10 hover:bg-red-500/20"
+                                title="Hapus story"
+                              >
+                                <Trash2 size={11} />
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Thumbnail & Inputs */}
+                          <div className="flex gap-2 items-start">
+                            <div className="w-14 h-20 rounded bg-[#0f0f15] border border-white/15 overflow-hidden shrink-0">
+                              <img
+                                src={story.image}
+                                alt={story.title}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  e.currentTarget.src = 'assets/driver-f1-banner.webp';
+                                }}
+                              />
+                            </div>
+                            <div className="flex-1 min-w-0 space-y-1.5">
+                              <div>
+                                <label className="text-[9px] text-f1-gray uppercase font-bold block mb-0.5">Upload / Path Foto</label>
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={(e) => handleStoryImageUpload(e, sIdx)}
+                                  className="text-[10px] text-f1-gray file:mr-1 file:py-0.5 file:px-1.5 file:rounded file:border-0 file:bg-f1-red file:text-white file:text-[9px] file:font-bold file:cursor-pointer w-full mb-1"
+                                />
+                                <input
+                                  type="text"
+                                  value={story.image}
+                                  onChange={e => {
+                                    const updated = [...(bioForm.gallery || [])];
+                                    updated[sIdx].image = e.target.value;
+                                    setBioForm({ ...bioForm, gallery: updated });
+                                  }}
+                                  placeholder="Path/URL gambar..."
+                                  className="w-full bg-[#181822] border border-white/10 px-2 py-0.5 rounded text-white text-[10px] font-mono"
+                                />
+                              </div>
+                              <input
+                                type="text"
+                                value={story.title}
+                                onChange={e => {
+                                  const updated = [...(bioForm.gallery || [])];
+                                  updated[sIdx].title = e.target.value;
+                                  setBioForm({ ...bioForm, gallery: updated });
+                                }}
+                                placeholder="Judul Story..."
+                                className="w-full bg-[#181822] border border-white/10 px-2 py-0.5 rounded text-white text-[11px] font-f1 font-bold"
+                              />
+                              <input
+                                type="text"
+                                value={story.location || ''}
+                                onChange={e => {
+                                  const updated = [...(bioForm.gallery || [])];
+                                  updated[sIdx].location = e.target.value;
+                                  setBioForm({ ...bioForm, gallery: updated });
+                                }}
+                                placeholder="Lokasi (mis: Surakarta, Central Java)"
+                                className="w-full bg-[#181822] border border-white/10 px-2 py-0.5 rounded text-white text-[10px]"
+                              />
+                              <input
+                                type="text"
+                                value={story.caption}
+                                onChange={e => {
+                                  const updated = [...(bioForm.gallery || [])];
+                                  updated[sIdx].caption = e.target.value;
+                                  setBioForm({ ...bioForm, gallery: updated });
+                                }}
+                                placeholder="Deskripsi/caption..."
+                                className="w-full bg-[#181822] border border-white/10 px-2 py-0.5 rounded text-white text-[10px] font-sans"
+                              />
+                            </div>
+                          </div>
+
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
                 <button
                   type="submit"
-                  className="w-full bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold py-3 rounded tracking-widest transition"
+                  className="w-full bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold py-3 rounded tracking-widest transition shadow-lg shadow-f1-red/20"
                 >
-                  SIMPAN BIOGRAFI & SKILLS ✓
+                  SIMPAN BIOGRAFI & STORY GALLERY ✓
                 </button>
               </form>
             )}
@@ -946,7 +1204,7 @@ export const AdminDrawer: React.FC = () => {
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-xs font-f1 font-bold text-f1-gray tracking-wider uppercase">
-                    DAFTAR PROYEK TRACKSIDE ({data.projects.length})
+                    DAFTAR PROYEK & PORTFOLIO ({data.projects.length})
                   </span>
                   <button
                     onClick={() => {
@@ -1006,7 +1264,7 @@ export const AdminDrawer: React.FC = () => {
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-xs font-f1 font-bold text-f1-gray tracking-wider uppercase">
-                    RIWAYAT MUSIM & KARIR ({data.career.length})
+                    RIWAYAT PENGALAMAN & KARIR ({data.career.length})
                   </span>
                   <button
                     onClick={() => {

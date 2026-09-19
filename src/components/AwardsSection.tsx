@@ -72,7 +72,7 @@ export const AwardsSection: React.FC = () => {
                 <ChevronLeft size={16} />
               </button>
               <span className="text-[10px] font-f1 font-bold text-[#d4af37] px-1 tracking-wider uppercase hidden sm:inline">
-                PODIUM
+                AWARDS
               </span>
               <button
                 onClick={() => handleScroll('right')}

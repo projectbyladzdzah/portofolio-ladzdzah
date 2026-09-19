@@ -51,12 +51,41 @@ export const DEFAULT_PORTFOLIO_DATA: PortfolioData = {
   biography: {
     heading: "BIOGRAPHY",
     kicker: "PROFESSIONAL BACKGROUND // 01",
-    quote: "Every line of code and every deployed infrastructure must solve real-world problems: analyze deeply, troubleshoot relentlessly, and deliver maximum reliability.",
-    quoteAuthor: "Ladzdzah — Software Engineer & On-Site Specialist",
+    dateOfBirth: "24/09/2001",
+    placeOfBirth: "Surakarta, Indonesia",
+    quote: "WHATEVER THE CHALLENGE IS AT STAKE, YOU'VE GOT TO DO YOUR ABSOLUTE BEST AS AN ENGINEER WHETHER YOU'RE BUILDING ARCHITECTURE OR FIXING MISSION-CRITICAL SYSTEMS.",
+    quoteAuthor: "Ladzdzah Hanan Naafi Mufidz // Software Engineer",
     paragraphs: [
       "A disciplined Software Engineering graduate possessing sharp analytical thinking and troubleshooting expertise across hardware, software, and networking topologies. Experienced in designing institutional web platforms, managing relational SQL databases, configuring Microsoft 365 and Google Workspace environments, and translating technical solutions into intuitive experiences for users.",
       "Beyond code, brings a track record of leadership in student organizations, handling institutional correspondence, video production, visual branding, and athletic championship honors in international martial arts tournaments.",
-      "Currently based in Pekalongan, Central Java, and ready for high-velocity software engineering, full-stack web applications, and mission-critical IT roles."
+      "Currently based in Surakarta / Pekalongan, Central Java, and ready for high-velocity software engineering, full-stack web applications, and mission-critical IT roles."
+    ],
+    showStoryCard: true,
+    gallery: [
+      {
+        id: "story_1",
+        image: "assets/driver-f1-banner.webp",
+        title: "IT Operations & Traffic Management Control",
+        caption: "On-site infrastructure maintenance, real-time ATCS & CCTV networking, and mission-critical systems reliability at TMC Surakarta.",
+        location: "Surakarta, Central Java",
+        timestamp: "TMC Operations • 2026"
+      },
+      {
+        id: "story_2",
+        image: "assets/driver-portrait.png",
+        title: "Software Engineer & System Specialist",
+        caption: "Professional portrait representing academic excellence in Software Engineering, database architecture, and on-site field readiness.",
+        location: "Telkom University",
+        timestamp: "Professional Profile"
+      },
+      {
+        id: "story_3",
+        image: "assets/profile.jpg",
+        title: "Discipline, Endurance & Championship Focus",
+        caption: "Disciplined athletic training and competitive grit from regional & international martial arts tournaments translated into persistent engineering focus.",
+        location: "Central Java Championship",
+        timestamp: "Honors • 1st Place Gold"
+      }
     ],
     skills: [
       "TypeScript & JavaScript",

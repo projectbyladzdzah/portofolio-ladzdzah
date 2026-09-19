@@ -29,13 +29,26 @@ export interface DriverHeroData {
   telemetryBars: TelemetryBar[];
 }
 
+export interface BiographyGalleryItem {
+  id: string;
+  image: string;
+  title: string;
+  caption: string;
+  location?: string;
+  timestamp?: string;
+}
+
 export interface BiographyData {
   heading: string;
   kicker: string;
+  dateOfBirth?: string;
+  placeOfBirth?: string;
   quote: string;
   quoteAuthor: string;
   paragraphs: string[];
   skills: string[];
+  showStoryCard?: boolean;
+  gallery?: BiographyGalleryItem[];
 }
 
 export interface ProjectItem {

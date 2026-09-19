@@ -65,7 +65,7 @@ export const PortfolioSection: React.FC = () => {
               <span>SELECTED WORK // 02</span>
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-f1 font-black italic tracking-tight text-white uppercase">
-              TRACKSIDE <span>PORTFOLIO</span>
+              FEATURED <span>PROJECTS</span>
             </h2>
           </div>
 

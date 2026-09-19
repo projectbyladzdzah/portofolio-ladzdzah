@@ -513,7 +513,7 @@ export const DriverHero: React.FC = () => {
                   "{hero.quote || hero.bioSummary}"
                 </p>
                 <span className="text-[10px] font-f1 font-bold text-f1-gray tracking-widest uppercase block mt-1 text-right">
-                  — DRIVER RADIO // TRANSMISSION READY
+                  — ENGINEER STATEMENT // MISSION BRIEFING
                 </span>
               </div>
             )}

@@ -21,6 +21,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 import { isSupabaseConfigured } from '../../lib/supabase';
+import { BiographyGalleryItem } from '../../types/portfolio';
 import pbylLogo from '../../assets/pbyl-logo.webp';
 
 interface AdminPageProps {
@@ -303,6 +304,61 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
     updateHero(updated);
     setNewBannerUrl('');
     showToast('Banner baru berhasil ditambahkan ke slider!', 'success');
+  };
+
+  const handleStoryImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, sIdx: number) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      try {
+        showToast('Mengunggah foto story ke storage...', 'warning');
+        const url = await uploadImage(file, 'banners', 1200, 0.88);
+        const updated = [...(bioForm.gallery || [])];
+        updated[sIdx].image = url;
+        setBioForm({ ...bioForm, gallery: updated });
+        showToast('Foto story berhasil diunggah & diterapkan!', 'success');
+      } catch {
+        showToast('Gagal memproses unggahan gambar story.', 'error');
+      }
+    }
+  };
+
+  const handleAddStoryItem = () => {
+    const newStory: BiographyGalleryItem = {
+      id: `story_${Date.now()}`,
+      image: 'assets/driver-f1-banner.webp',
+      title: 'Momen Dokumentasi Baru',
+      caption: 'Deskripsi dokumentasi / implementasi proyek dan sistem.',
+      location: 'Surakarta, Indonesia',
+      timestamp: 'Field Milestone • ' + new Date().getFullYear()
+    };
+    const updated = [...(bioForm.gallery || []), newStory];
+    setBioForm({ ...bioForm, gallery: updated });
+    showToast('Story foto baru ditambahkan! Silakan upload gambar atau ubah judul.', 'success');
+  };
+
+  const handleDeleteStoryItem = (sIdx: number) => {
+    const updated = (bioForm.gallery || []).filter((_, i) => i !== sIdx);
+    setBioForm({ ...bioForm, gallery: updated });
+    showToast('Foto story berhasil dihapus!', 'warning');
+  };
+
+  const handleMakeStoryCover = (sIdx: number) => {
+    if (sIdx === 0) return;
+    const current = [...(bioForm.gallery || [])];
+    const item = current.splice(sIdx, 1)[0];
+    current.unshift(item);
+    setBioForm({ ...bioForm, gallery: current });
+    showToast('Foto dijadikan cover utama kartu biografi!', 'success');
+  };
+
+  const handleMoveStory = (sIdx: number, direction: 'up' | 'down') => {
+    const current = [...(bioForm.gallery || [])];
+    const targetIdx = direction === 'up' ? sIdx - 1 : sIdx + 1;
+    if (targetIdx < 0 || targetIdx >= current.length) return;
+    const temp = current[sIdx];
+    current[sIdx] = current[targetIdx];
+    current[targetIdx] = temp;
+    setBioForm({ ...bioForm, gallery: current });
   };
 
   const handleSyncAssets = async () => {
@@ -1123,15 +1179,55 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
         {/* TAB 2: BIOGRAPHY */}
         {activeTab === 'bio' && (
           <form onSubmit={handleBioSubmit} className="space-y-6 bg-[#13131b] border border-white/10 p-6 rounded-sm shadow-xl text-xs">
-            <h2 className="text-lg font-f1 font-black text-white uppercase border-b border-white/10 pb-3">BIOGRAFI & KEAHLIAN</h2>
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <h2 className="text-lg font-f1 font-black text-white uppercase">BIOGRAFI, DRIVER DATA & STORY GALLERY</h2>
+              <span className="text-[10px] bg-f1-red text-white font-f1 font-bold px-2 py-0.5 rounded uppercase">
+                F1 Leclerc Layout
+              </span>
+            </div>
+
+            {/* Date & Place of Birth Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">DATE OF BIRTH (TANGGAL LAHIR)</label>
+                <input
+                  type="text"
+                  value={bioForm.dateOfBirth || ''}
+                  onChange={e => setBioForm({ ...bioForm, dateOfBirth: e.target.value })}
+                  placeholder="24/09/2001"
+                  className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white font-f1 font-bold"
+                />
+              </div>
+              <div>
+                <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">PLACE OF BIRTH / BASE (TEMPAT LAHIR / DOMISILI)</label>
+                <input
+                  type="text"
+                  value={bioForm.placeOfBirth || ''}
+                  onChange={e => setBioForm({ ...bioForm, placeOfBirth: e.target.value })}
+                  placeholder="Surakarta, Indonesia"
+                  className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white font-f1 font-bold"
+                />
+              </div>
+            </div>
 
             <div>
-              <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">PULL QUOTE</label>
+              <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">PULL QUOTE (KUTIPAN KARIR)</label>
               <textarea
                 rows={2}
                 value={bioForm.quote}
                 onChange={e => setBioForm({ ...bioForm, quote: e.target.value })}
                 className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white font-sans"
+              />
+            </div>
+
+            <div>
+              <label className="font-f1 font-bold text-f1-gray tracking-wider block mb-1">QUOTE AUTHOR / SIGNATURE</label>
+              <input
+                type="text"
+                value={bioForm.quoteAuthor}
+                onChange={e => setBioForm({ ...bioForm, quoteAuthor: e.target.value })}
+                placeholder="Ladzdzah Hanan Naafi Mufidz // Software Engineer"
+                className="w-full bg-[#181822] border border-white/10 px-3 py-2 rounded text-white font-f1 font-bold"
               />
             </div>
 
@@ -1155,11 +1251,251 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigateHome }) => {
               />
             </div>
 
+            {/* TOGGLE STORY CARD DISPLAY */}
+            <div className="pt-4 border-t border-white/10">
+              <div className="flex items-center justify-between p-3.5 bg-black/40 border border-white/10 rounded">
+                <div>
+                  <span className="font-f1 font-bold text-white text-xs block">
+                    TAMPILKAN KARTU STORY / FOTO BIOGRAFI
+                  </span>
+                  <span className="text-[10px] text-f1-lightGray block font-sans">
+                    Aktifkan untuk menampilkan kartu foto portrait / story dokumentasi di sebelah kiri paragraf biografi.
+                  </span>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={bioForm.showStoryCard !== false}
+                    onChange={e => setBioForm({ ...bioForm, showStoryCard: e.target.checked })}
+                    className="sr-only peer"
+                  />
+                  <div className="w-9 h-5 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-f1-red"></div>
+                </label>
+              </div>
+            </div>
+
+            {/* STORY GALLERY MANAGER */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="font-f1 font-bold text-white tracking-wider block text-sm">
+                    PORTFOLIO STORIES & FOTO DOKUMENTASI BIOGRAFI ({bioForm.gallery?.length || 0})
+                  </label>
+                  <span className="text-[10px] text-f1-lightGray block font-sans">
+                    Foto-foto dokumentasi yang dapat diklik pengunjung untuk membuka tampilan ala Instagram Story. Foto pertama (#1) otomatis menjadi sampul kartu.
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleAddStoryItem}
+                  className="bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold px-3 py-1.5 rounded text-xs transition flex items-center gap-1.5 shadow-md"
+                >
+                  <Plus size={13} />
+                  <span>TAMBAH FOTO / STORY</span>
+                </button>
+              </div>
+
+              {(!bioForm.gallery || bioForm.gallery.length === 0) ? (
+                <div className="p-6 text-center border border-dashed border-white/20 rounded bg-black/30">
+                  <p className="text-xs text-f1-gray font-f1 uppercase tracking-wider mb-2">
+                    Belum ada foto story yang ditambahkan.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleAddStoryItem}
+                    className="bg-white/10 hover:bg-white/20 text-white font-f1 font-bold px-3 py-1.5 rounded text-xs transition inline-flex items-center gap-1.5"
+                  >
+                    <Plus size={13} />
+                    <span>TAMBAH FOTO PERTAMA</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {(bioForm.gallery || []).map((story, sIdx) => (
+                    <div key={story.id || sIdx} className="p-3.5 bg-black/60 border border-white/10 hover:border-white/20 rounded space-y-3 transition">
+                      
+                      {/* Story Card Header */}
+                      <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-f1 font-bold text-white uppercase">
+                            #{sIdx + 1}
+                          </span>
+                          {sIdx === 0 ? (
+                            <span className="bg-f1-red text-white text-[9px] font-f1 font-black px-2 py-0.5 rounded tracking-wider uppercase">
+                              ★ COVER UTAMA KARTU
+                            </span>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => handleMakeStoryCover(sIdx)}
+                              className="text-[10px] text-f1-lightGray hover:text-white bg-white/10 hover:bg-white/20 px-2 py-0.5 rounded font-f1 font-bold tracking-wider uppercase transition"
+                            >
+                              Jadikan Cover Utama
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Controls: Move Up, Move Down, Delete */}
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => handleMoveStory(sIdx, 'up')}
+                            disabled={sIdx === 0}
+                            className="p-1 rounded bg-white/5 hover:bg-white/10 text-white disabled:opacity-25 transition"
+                            title="Geser ke atas"
+                          >
+                            <ChevronUp size={14} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleMoveStory(sIdx, 'down')}
+                            disabled={sIdx === (bioForm.gallery?.length || 0) - 1}
+                            className="p-1 rounded bg-white/5 hover:bg-white/10 text-white disabled:opacity-25 transition"
+                            title="Geser ke bawah"
+                          >
+                            <ChevronDown size={14} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteStoryItem(sIdx)}
+                            className="text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 px-2 py-1 rounded text-xs font-f1 font-bold flex items-center gap-1 transition"
+                            title="Hapus foto story ini"
+                          >
+                            <Trash2 size={12} />
+                            <span>HAPUS</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Story Card Content */}
+                      <div className="flex flex-col sm:flex-row gap-3 items-start">
+                        {/* Thumbnail Preview */}
+                        <div className="w-20 h-28 sm:w-24 sm:h-32 rounded bg-[#0f0f15] border border-white/15 overflow-hidden shrink-0 relative group">
+                          <img
+                            src={story.image}
+                            alt={story.title}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.currentTarget.src = 'assets/driver-f1-banner.webp';
+                            }}
+                          />
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                            <span className="text-[9px] font-f1 text-white font-bold uppercase">PREVIEW</span>
+                          </div>
+                        </div>
+
+                        {/* Inputs */}
+                        <div className="flex-1 min-w-0 w-full space-y-2.5">
+                          {/* Upload File or Path */}
+                          <div>
+                            <label className="text-[10px] font-f1 font-bold text-f1-gray uppercase tracking-wider block mb-1">
+                              FOTO STORY (UPLOAD DARI PERANGKAT ATAU URL)
+                            </label>
+                            <div className="flex flex-col sm:flex-row gap-2">
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => handleStoryImageUpload(e, sIdx)}
+                                className="text-xs text-f1-gray file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:bg-f1-red file:text-white file:text-xs file:font-f1 file:font-bold file:cursor-pointer flex-1"
+                              />
+                              <input
+                                type="text"
+                                value={story.image}
+                                onChange={e => {
+                                  const updated = [...(bioForm.gallery || [])];
+                                  updated[sIdx].image = e.target.value;
+                                  setBioForm({ ...bioForm, gallery: updated });
+                                }}
+                                placeholder="Atau URL / assets path..."
+                                className="flex-1 bg-[#181822] border border-white/10 px-2.5 py-1 rounded text-white text-xs font-mono"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <div>
+                              <label className="text-[10px] font-f1 font-bold text-f1-gray uppercase tracking-wider block mb-1">
+                                JUDUL STORY
+                              </label>
+                              <input
+                                type="text"
+                                value={story.title}
+                                onChange={e => {
+                                  const updated = [...(bioForm.gallery || [])];
+                                  updated[sIdx].title = e.target.value;
+                                  setBioForm({ ...bioForm, gallery: updated });
+                                }}
+                                placeholder="Contoh: IT Operations & Systems"
+                                className="w-full bg-[#181822] border border-white/10 px-2.5 py-1.5 rounded text-white text-xs font-f1 font-bold"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-[10px] font-f1 font-bold text-f1-gray uppercase tracking-wider block mb-1">
+                                LOKASI
+                              </label>
+                              <input
+                                type="text"
+                                value={story.location || ''}
+                                onChange={e => {
+                                  const updated = [...(bioForm.gallery || [])];
+                                  updated[sIdx].location = e.target.value;
+                                  setBioForm({ ...bioForm, gallery: updated });
+                                }}
+                                placeholder="Contoh: Surakarta, Central Java"
+                                className="w-full bg-[#181822] border border-white/10 px-2.5 py-1.5 rounded text-white text-xs"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <div>
+                              <label className="text-[10px] font-f1 font-bold text-f1-gray uppercase tracking-wider block mb-1">
+                                TIMESTAMP / BADGE
+                              </label>
+                              <input
+                                type="text"
+                                value={story.timestamp || ''}
+                                onChange={e => {
+                                  const updated = [...(bioForm.gallery || [])];
+                                  updated[sIdx].timestamp = e.target.value;
+                                  setBioForm({ ...bioForm, gallery: updated });
+                                }}
+                                placeholder="Contoh: TMC Operations • 2026"
+                                className="w-full bg-[#181822] border border-white/10 px-2.5 py-1.5 rounded text-white text-xs font-mono"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-[10px] font-f1 font-bold text-f1-gray uppercase tracking-wider block mb-1">
+                                CAPTION / DESKRIPSI
+                              </label>
+                              <input
+                                type="text"
+                                value={story.caption}
+                                onChange={e => {
+                                  const updated = [...(bioForm.gallery || [])];
+                                  updated[sIdx].caption = e.target.value;
+                                  setBioForm({ ...bioForm, gallery: updated });
+                                }}
+                                placeholder="Deskripsi momen atau pencapaian..."
+                                className="w-full bg-[#181822] border border-white/10 px-2.5 py-1.5 rounded text-white text-xs font-sans"
+                              />
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
             <button
               type="submit"
               className="w-full bg-f1-red hover:bg-f1-darkRed text-white font-f1 font-bold py-3 rounded tracking-widest uppercase transition text-xs shadow-lg shadow-f1-red/20"
             >
-              SIMPAN BIOGRAFI ✓
+              SIMPAN BIOGRAFI & STORY GALLERY ✓
             </button>
           </form>
         )}
