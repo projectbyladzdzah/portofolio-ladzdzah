@@ -39,9 +39,13 @@ export const F1Footer: React.FC = () => {
 
         {/* Bottom Bar: Copyright & System Specs */}
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-[11px] font-medium tracking-wider text-f1-gray">
-          <span>
-            © {new Date().getFullYear()} PBYL Project by Ladzdzah. ALL RIGHTS RESERVED.
-          </span>
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+            <span>© {new Date().getFullYear()}</span>
+            <span className="text-white/20">•</span>
+            <span>Designed & Developed by <span className="text-white font-bold">PBYL (Project by Ladzdzah)</span></span>
+            <span className="text-white/20">•</span>
+            <span>ALL RIGHTS RESERVED.</span>
+          </div>
           <div className="flex flex-wrap items-center gap-4">
             <span className="flex items-center gap-1">
               <Shield size={12} className="text-f1-red" />
