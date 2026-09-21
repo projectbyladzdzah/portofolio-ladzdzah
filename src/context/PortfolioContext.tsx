@@ -64,7 +64,7 @@ interface PortfolioContextType {
   syncLocalAssetsToSupabase: () => Promise<{ success: boolean; count: number; message: string }>;
 }
 
-const STORAGE_KEY = 'ladzdzah_f1_react_portfolio_v4_2';
+const STORAGE_KEY = 'ladzdzah_f1_react_portfolio_v4_3';
 const AUTH_KEY = 'ladzdzah_f1_admin_auth_session';
 
 const PortfolioContext = createContext<PortfolioContextType | undefined>(undefined);
@@ -78,7 +78,7 @@ const sanitizeHeroStats = (stats: any[], awardsCount?: number): DriverStat[] => 
       if (/award|title/i.test(val)) {
         val = val.replace(/\d+\s*(?:gold\s*)?(?:titles?|awards?)\s*(?:&|\+|\/)?\s*/gi, '').trim();
         if (!val) {
-          val = `${awardsCount || 3} Verified`;
+          val = `${awardsCount || 1} Verified`;
         }
       }
       return {
@@ -109,7 +109,14 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [data, setData] = useState<PortfolioData>(() => {
     try {
       // Clean up previous storage versions so obsolete cached data is purged
-      ['ladzdzah_f1_react_portfolio_v3_6', 'ladzdzah_f1_react_portfolio_v3_7', 'ladzdzah_f1_react_portfolio_v3_8', 'ladzdzah_f1_react_portfolio_v4_0', 'ladzdzah_f1_react_portfolio_v4_1'].forEach(k => {
+      [
+        'ladzdzah_f1_react_portfolio_v3_6',
+        'ladzdzah_f1_react_portfolio_v3_7',
+        'ladzdzah_f1_react_portfolio_v3_8',
+        'ladzdzah_f1_react_portfolio_v4_0',
+        'ladzdzah_f1_react_portfolio_v4_1',
+        'ladzdzah_f1_react_portfolio_v4_2'
+      ].forEach(k => {
         try { localStorage.removeItem(k); } catch {}
       });
 
@@ -264,13 +271,52 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             const cloudHero = {
               ...DEFAULT_PORTFOLIO_DATA.hero,
               ...(row.data.hero || {}),
+              photo: (row.data.hero?.photo?.startsWith('data:') && DEFAULT_PORTFOLIO_DATA.hero.photo?.startsWith('http'))
+                ? DEFAULT_PORTFOLIO_DATA.hero.photo
+                : (row.data.hero?.photo || DEFAULT_PORTFOLIO_DATA.hero.photo),
+              banner: (row.data.hero?.banner?.startsWith('data:') && DEFAULT_PORTFOLIO_DATA.hero.banner?.startsWith('http'))
+                ? DEFAULT_PORTFOLIO_DATA.hero.banner
+                : (row.data.hero?.banner || DEFAULT_PORTFOLIO_DATA.hero.banner),
+              banners: Array.isArray(row.data.hero?.banners)
+                ? row.data.hero.banners.map((b: string, i: number) =>
+                    b?.startsWith('data:') && DEFAULT_PORTFOLIO_DATA.hero.banners?.[i]?.startsWith('http')
+                      ? DEFAULT_PORTFOLIO_DATA.hero.banners[i]
+                      : b
+                  )
+                : DEFAULT_PORTFOLIO_DATA.hero.banners,
+              mobileBanner: (row.data.hero?.mobileBanner?.startsWith('data:') && DEFAULT_PORTFOLIO_DATA.hero.mobileBanner?.startsWith('http'))
+                ? DEFAULT_PORTFOLIO_DATA.hero.mobileBanner
+                : (row.data.hero?.mobileBanner || DEFAULT_PORTFOLIO_DATA.hero.mobileBanner),
+              mobileBanners: Array.isArray(row.data.hero?.mobileBanners)
+                ? row.data.hero.mobileBanners.map((b: string, i: number) =>
+                    b?.startsWith('data:') && DEFAULT_PORTFOLIO_DATA.hero.mobileBanners?.[i]?.startsWith('http')
+                      ? DEFAULT_PORTFOLIO_DATA.hero.mobileBanners[i]
+                      : b
+                  )
+                : DEFAULT_PORTFOLIO_DATA.hero.mobileBanners,
               stats: sanitizeHeroStats(row.data.hero?.stats, cloudAwards.length)
             };
+
+            const rawProjects = Array.isArray(row.data.projects) ? row.data.projects : prev.projects;
+            const cloudProjects = sanitizeProjects(rawProjects.map((p: ProjectItem) => {
+              const defP = DEFAULT_PORTFOLIO_DATA.projects?.find(dp => dp.id === p.id);
+              if (defP) {
+                const cleanedImages = (p.images || []).map((img, idx) =>
+                  img.startsWith('data:') && defP.images?.[idx]?.startsWith('http') ? defP.images[idx] : img
+                );
+                return {
+                  ...p,
+                  image: p.image?.startsWith('data:') && defP.image?.startsWith('http') ? defP.image : p.image,
+                  images: cleanedImages
+                };
+              }
+              return p;
+            }));
+
             const cloudCareer = Array.isArray(row.data.career) ? row.data.career : prev.career;
-            const cloudProjects = sanitizeProjects(Array.isArray(row.data.projects) ? row.data.projects : prev.projects);
             const cloudTicker = Array.isArray(row.data.ticker) ? row.data.ticker : prev.ticker;
 
-            return {
+            const nextPortfolioData: PortfolioData = {
               ...prev,
               ...row.data,
               hero: cloudHero,
@@ -282,6 +328,21 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
               projects: cloudProjects,
               ticker: cloudTicker
             };
+
+            // Auto-heal database row if it previously contained bulky base64 data and admin session is active
+            if (
+              row.data.hero?.photo?.startsWith('data:') ||
+              row.data.hero?.banner?.startsWith('data:') ||
+              rawProjects.some((p: ProjectItem) => p.image?.startsWith('data:') || p.images?.some(img => img.startsWith('data:')))
+            ) {
+              supabase!.auth.getSession().then(({ data: { session } }) => {
+                if (session) {
+                  syncToSupabase(nextPortfolioData);
+                }
+              });
+            }
+
+            return nextPortfolioData;
           });
           setCloudStatus('connected');
         } else {
@@ -870,7 +931,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         }
       }
 
-      // 2. Sync Hero Banner
+      // 2. Sync Hero Banner (single & multiple banners)
       if (nextData.hero.banner && !nextData.hero.banner.startsWith('http')) {
         try {
           const bannerPath = nextData.hero.banner.startsWith('/') ? nextData.hero.banner : `/${nextData.hero.banner}`;
@@ -893,7 +954,57 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         }
       }
 
-      // 3. Sync Project Images
+      if (Array.isArray(nextData.hero.banners)) {
+        for (let i = 0; i < nextData.hero.banners.length; i++) {
+          const b = nextData.hero.banners[i];
+          if (b && b.startsWith('data:')) {
+            try {
+              const blob = dataUrlToBlob(b);
+              const publicUrl = await uploadMediaToSupabase(blob, 'banners', `hero-banner-${i + 1}.webp`);
+              if (publicUrl.startsWith('http')) {
+                nextData.hero.banners[i] = publicUrl;
+                count++;
+              }
+            } catch (err) {
+              console.warn('Sync hero banner item failed:', err);
+            }
+          }
+        }
+      }
+
+      // 3. Sync Hero Mobile Banners
+      if (nextData.hero.mobileBanner && nextData.hero.mobileBanner.startsWith('data:')) {
+        try {
+          const blob = dataUrlToBlob(nextData.hero.mobileBanner);
+          const publicUrl = await uploadMediaToSupabase(blob, 'banners', 'hero-mobile-banner.webp');
+          if (publicUrl.startsWith('http')) {
+            nextData.hero.mobileBanner = publicUrl;
+            count++;
+          }
+        } catch (err) {
+          console.warn('Sync mobile banner failed:', err);
+        }
+      }
+
+      if (Array.isArray(nextData.hero.mobileBanners)) {
+        for (let i = 0; i < nextData.hero.mobileBanners.length; i++) {
+          const mb = nextData.hero.mobileBanners[i];
+          if (mb && mb.startsWith('data:')) {
+            try {
+              const blob = dataUrlToBlob(mb);
+              const publicUrl = await uploadMediaToSupabase(blob, 'banners', `hero-mobile-banner-${i + 1}.webp`);
+              if (publicUrl.startsWith('http')) {
+                nextData.hero.mobileBanners[i] = publicUrl;
+                count++;
+              }
+            } catch (err) {
+              console.warn('Sync hero mobile banner item failed:', err);
+            }
+          }
+        }
+      }
+
+      // 4. Sync Project Images (cover and gallery images)
       for (const project of nextData.projects) {
         if (project.image && project.image.startsWith('data:image')) {
           try {
@@ -907,9 +1018,26 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             console.warn(`Sync project ${project.id} failed:`, err);
           }
         }
+        if (Array.isArray(project.images)) {
+          for (let j = 0; j < project.images.length; j++) {
+            const img = project.images[j];
+            if (img && img.startsWith('data:image')) {
+              try {
+                const blob = dataUrlToBlob(img);
+                const publicUrl = await uploadMediaToSupabase(blob, 'projects', `${project.id}-img-${j + 1}.webp`);
+                if (publicUrl.startsWith('http')) {
+                  project.images[j] = publicUrl;
+                  count++;
+                }
+              } catch (err) {
+                console.warn(`Sync project ${project.id} gallery image failed:`, err);
+              }
+            }
+          }
+        }
       }
 
-      // 4. Sync Certificate Documents
+      // 5. Sync Certificate Documents
       for (const award of nextData.awards) {
         if (award.certificateUrl && award.certificateUrl.startsWith('data:')) {
           try {

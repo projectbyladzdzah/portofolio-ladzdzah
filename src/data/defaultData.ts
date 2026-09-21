@@ -1,45 +1,143 @@
 import { PortfolioData } from '../types/portfolio';
 
 export const DEFAULT_PORTFOLIO_DATA: PortfolioData = {
-  hero: {
-    number: "24",
-    country: "Indonesia",
-    countryCode: "ID",
-    flagEmoji: "🇮🇩",
-    firstName: "LADZDZAH HANAN",
-    lastName: "NAAFI MUFIDZ",
-    team: "TELKOM UNIVERSITY // SOFTWARE ENGINEERING",
-    role: "ENGINEER ON SITE",
-    photo: "assets/driver-portrait.png",
-    banner: "assets/driver-f1-banner.webp",
-    banners: [
-      "assets/driver-f1-banner.webp"
+  "hero": {
+    "role": "ENGINEER ON SITE",
+    "team": "TELKOM UNIVERSITY // SOFTWARE ENGINEERING",
+    "photo": "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/portraits/1789961364843_driver-portrait.webp",
+    "quote": "Driven by problem solving for a better tomorrow.",
+    "stats": [
+      {
+        "label": "CURRENT WORKPLACE",
+        "value": "TMC Surakarta"
+      },
+      {
+        "label": "EXPERIENCE",
+        "value": "1+ Years"
+      },
+      {
+        "label": "PROJECTS DELIVERED",
+        "value": "2 Deployed"
+      },
+      {
+        "label": "CERTIFICATES",
+        "value": "1 Certificate"
+      },
+      {
+        "label": "AGE",
+        "value": "24 Years Old"
+      },
+      {
+        "label": "INSTITUTION",
+        "value": "Telkom University"
+      },
+      {
+        "label": "LOCATION",
+        "value": "Indonesia"
+      },
+      {
+        "label": "BASE / DOMICILE",
+        "value": "Surakarta, Central Java"
+      }
     ],
-    mobileBanner: "assets/driver-f1-banner-mobile.png",
-    mobileBanners: [
-      "assets/driver-f1-banner-mobile.png"
+    "banner": "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/banners/1789961365489_hero-f1-banner.webp",
+    "number": "24",
+    "banners": [
+      "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/banners/1789961367016_hero-banner-1.webp"
     ],
-    eyebrow: "PROFESSIONAL ENGINEERING & IT PORTFOLIO",
-    quote: "Driven by problem solving for a better tomorrow.",
-    bioSummary: "Software Engineering graduate specialized in high-performance web systems, IT infrastructure maintenance, database design, and visual media production.",
-    stats: [
-      { label: "CURRENT WORKPLACE", value: "TMC Surakarta" },
-      { label: "EXPERIENCE", value: "3+ Years" },
-      { label: "PROJECTS DELIVERED", value: "15+ Deployed" },
-      { label: "CERTIFICATES", value: "3 Verified" },
-      { label: "AGE", value: "24 Years Old" },
-      { label: "INSTITUTION", value: "Telkom University" },
-      { label: "LOCATION", value: "Indonesia" },
-      { label: "BASE / DOMICILE", value: "Pekalongan, Central Java" }
+    "country": "Indonesia",
+    "eyebrow": "PROFESSIONAL ENGINEERING & IT PORTFOLIO",
+    "lastName": "NAAFI MUFIDZ",
+    "firstName": "LADZDZAH HANAN",
+    "flagEmoji": "🇮🇩",
+    "bioSummary": "Software Engineering graduate specialized in high-performance web systems, IT infrastructure maintenance, database design, and visual media production.",
+    "countryCode": "ID",
+    "mobileBanner": "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/banners/1789961367611_hero-mobile-banner.webp",
+    "mobileBanners": [
+      "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/banners/1789961368556_hero-mobile-banner-1.webp"
     ],
-    telemetryBars: [
-      { label: "FULL-STACK WEB", percent: 92 },
-      { label: "IT INFRASTRUCTURE", percent: 95 },
-      { label: "DATABASE & SQL", percent: 86 },
-      { label: "TROUBLESHOOTING", percent: 96 }
+    "telemetryBars": [
+      {
+        "label": "FULL-STACK WEB",
+        "percent": 80
+      },
+      {
+        "label": "IT INFRASTRUCTURE",
+        "percent": 85
+      },
+      {
+        "label": "DATABASE & SQL",
+        "percent": 80
+      },
+      {
+        "label": "TROUBLESHOOTING",
+        "percent": 84
+      }
     ]
   },
-  ticker: [
+  "awards": [
+    {
+      "id": "awd_1789810898767",
+      "year": "2024",
+      "title": "Certified Independent Study (MSIB) Batch 5 - Android Mobile Application Development",
+      "issuer": "Infinite Learning",
+      "category": "Nasional",
+      "position": "Participant",
+      "subtitle": "Certificate of Completion for Android Mobile Application Development Program",
+      "description": "Completed the Certified Independent Study (MSIB) Batch 5 program in Android Mobile Application Development at Infinite Learning (August - December 2023). Demonstrated proficiency in Android Programming, Advance Android Features, Kotlin Programming, UX/UI Design, Cloud Computing, Cybersecurity, Digital Marketing, as well as Soft Skills including Agile/Scrum Project Management and Professional Skills.   ",
+      "certificateUrl": "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/certificates/1789811068992_pelatihan-mobile-dev---ladzdzah-.pdf",
+      "certificateType": "pdf",
+      "certificateFileName": "Pelatihan Mobile Dev - Ladzdzah Hanan Na'Afi Mufidz.pdf"
+    }
+  ],
+  "career": [
+    {
+      "id": "car_tmc",
+      "role": "Engineer On Site",
+      "team": "TMC Surakarta",
+      "year": "2026—PRESENT",
+      "points": "24/7 Monitoring",
+      "status": "ACTIVE",
+      "description": "IT & Infrastructure Maintenance: Conduct routine maintenance on core IT servers, integrated ATCS networks, and CCTV systems to ensure 24/7 traffic monitoring operations."
+    },
+    {
+      "id": "car_1",
+      "role": "Lead Developer — Employee Attendance Web",
+      "team": "Lembaga Pendidikan SPS TPQ Al Ikhlas",
+      "year": "2025",
+      "points": "Lead Dev",
+      "status": "COMPLETED",
+      "description": "Engineered and deployed internal employee attendance system with real-time logging, user validation, and administrative audit trails."
+    },
+    {
+      "id": "car_2",
+      "role": "IT Support & Systems Specialist",
+      "team": "Lembaga Pendidikan SPS TPQ Al Ikhlas",
+      "year": "2023—2025",
+      "points": "Staff",
+      "status": "OPERATIONAL",
+      "description": "Spearheaded hardware/software troubleshooting, local network configuration, printer and workstation maintenance, and institutional web portal support."
+    },
+    {
+      "id": "car_3",
+      "role": "Staff Administrasi & Operational Support",
+      "team": "Lembaga Pendidikan SPS TPQ Al Ikhlas",
+      "year": "2021—2023",
+      "points": "Records Lead",
+      "status": "COMPLETED",
+      "description": "Handled formal correspondence, digital record archiving, procurement inventory tracking, and institutional registry formatting."
+    },
+    {
+      "id": "car_4",
+      "role": "Secretary & Media Communications Staff",
+      "team": "Unit Kegiatan Mahasiswa Merpati Putih",
+      "year": "2022—2024",
+      "points": "Media Lead",
+      "status": "HONORARY",
+      "description": "Managed organization proposals, member databases, public relations, visual content creation, and promotional video production."
+    }
+  ],
+  "ticker": [
     "SOFTWARE ENGINEERING",
     "ON-SITE IT SUPPORT & MAINTENANCE",
     "FULL-STACK WEB DEVELOPMENT",
@@ -48,46 +146,135 @@ export const DEFAULT_PORTFOLIO_DATA: PortfolioData = {
     "SYSTEM TROUBLESHOOTING & RELIABILITY",
     "HIGH-PERFORMANCE DIGITAL WORKFLOWS"
   ],
-  biography: {
-    heading: "BIOGRAPHY",
-    kicker: "PROFESSIONAL BACKGROUND // 01",
-    dateOfBirth: "24/09/2001",
-    placeOfBirth: "Surakarta, Indonesia",
-    quote: "WHATEVER THE CHALLENGE IS AT STAKE, YOU'VE GOT TO DO YOUR ABSOLUTE BEST AS AN ENGINEER WHETHER YOU'RE BUILDING ARCHITECTURE OR FIXING MISSION-CRITICAL SYSTEMS.",
-    quoteAuthor: "Ladzdzah Hanan Naafi Mufidz // Software Engineer",
-    paragraphs: [
-      "A disciplined Software Engineering graduate possessing sharp analytical thinking and troubleshooting expertise across hardware, software, and networking topologies. Experienced in designing institutional web platforms, managing relational SQL databases, configuring Microsoft 365 and Google Workspace environments, and translating technical solutions into intuitive experiences for users.",
-      "Beyond code, brings a track record of leadership in student organizations, handling institutional correspondence, video production, visual branding, and athletic championship honors in international martial arts tournaments.",
-      "Currently based in Surakarta / Pekalongan, Central Java, and ready for high-velocity software engineering, full-stack web applications, and mission-critical IT roles."
-    ],
-    showStoryCard: true,
-    gallery: [
-      {
-        id: "story_1",
-        image: "assets/driver-f1-banner.webp",
-        title: "IT Operations & Traffic Management Control",
-        caption: "On-site infrastructure maintenance, real-time ATCS & CCTV networking, and mission-critical systems reliability at TMC Surakarta.",
-        location: "Surakarta, Central Java",
-        timestamp: "TMC Operations • 2026"
-      },
-      {
-        id: "story_2",
-        image: "assets/driver-portrait.png",
-        title: "Software Engineer & System Specialist",
-        caption: "Professional portrait representing academic excellence in Software Engineering, database architecture, and on-site field readiness.",
-        location: "Telkom University",
-        timestamp: "Professional Profile"
-      },
-      {
-        id: "story_3",
-        image: "assets/profile.jpg",
-        title: "Discipline, Endurance & Championship Focus",
-        caption: "Disciplined athletic training and competitive grit from regional & international martial arts tournaments translated into persistent engineering focus.",
-        location: "Central Java Championship",
-        timestamp: "Honors • 1st Place Gold"
-      }
-    ],
-    skills: [
+  "contact": {
+    "base": "Surakarta, Jawa Tengah, Indonesia",
+    "email": "ladzdzahhanannaafimufidz@gmail.com",
+    "phone": "085848253569",
+    "github": "github.com/projectbyladzdzah",
+    "heading": "LET'S BUILD SOMETHING EXCEPTIONAL.",
+    "linkedin": "https://linkedin.com/in/ladzdzah",
+    "description": "Available for full-time roles, web engineering contracts, IT system projects, and creative technical collaborations."
+  },
+  "projects": [
+    {
+      "id": "proj_1789957995976",
+      "tags": [
+        "REACT",
+        "NODE.JS",
+        "EXPRESS",
+        "MYSQL",
+        "TAILWIND CSS",
+        "RTSP",
+        "STREAMING",
+        "REST API",
+        "NETWORK MONITORING"
+      ],
+      "year": "2026",
+      "image": "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/projects/1789958056149_cctvtmcsurakarta-web-id-nest-hub.webp",
+      "title": "Smart City CCTV Surveillance & Network Monitoring System",
+      "images": [
+        "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/projects/1789958056149_cctvtmcsurakarta-web-id-nest-hub.webp",
+        "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/projects/1789958087366_projectbyladzdzah-github-io-smar.webp",
+        "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/projects/1789958097669_projectbyladzdzah-github-io-smar.webp",
+        "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/projects/1789958112140_screenshot-2026-09-21-091557.webp",
+        "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/projects/1789958175738_screenshot-2026-09-21-091812.webp",
+        "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/projects/1789958129234_23141354.webp",
+        "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/projects/1789958140212_76767.webp",
+        "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/projects/1789958152050_6666.webp",
+        "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/projects/1789958164797_12666634.webp",
+        "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/projects/1789958211856_screenshot-2026-09-21-091941.webp",
+        "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/projects/1789958221398_screenshot-2026-09-21-092059.webp",
+        "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/projects/1789958240032_cctvtmcsurakarta-web-id-nest-hub.webp",
+        "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/projects/1789958250229_312312312.webp"
+      ],
+      "liveUrl": "https://projectbyladzdzah.github.io/SmartCctvTraffic-monitor/",
+      "category": "web",
+      "featured": false,
+      "githubUrl": "https://projectbyladzdzah.github.io/SmartCctvTraffic-monitor/",
+      "description": "An enterprise-grade smart city surveillance and CCTV infrastructure monitoring platform engineered for municipal Traffic Management Centers (TMC). The system provides unified real-time multi-camera streaming, automated network health diagnostics, intelligent downtime tracking, and scheduled snapshot recaps.\n\nKey Architecture & Technical Highlights:\n• High-Concurrency Video Streaming: Engineered a domain sharding architecture to bypass standard browser HTTP concurrent connection limits, doubling simultaneous live RTSP-to-MJPEG video feeds from 6 to 12+ channels.\n• Resilient Network Health Telemetry: Implemented custom non-ICMP TCP socket ping probes (Port 554 RTSP & Port 80 HTTP) delivering millisecond-precision latency telemetry and automated network status updates.\n• Intelligent Downtime Incident Logging: Automatically records camera disconnect incidents exceeding SLA thresholds (≥ 10 mins), logging incident start time, resolution time, and total downtime duration.\n• Automated Snapshot Management: Scheduled periodic camera capture intervals (Morning, Afternoon, Evening) with image quality status classification and multi-camera Excel (.xlsx) recap exports.\n• Enterprise Security & Performance: End-to-end Role-Based Access Control (RBAC) powered by JWT authentication, Bcrypt password hashing, idle auto-logout, and Cloudflare Tunnel integration.\n"
+    },
+    {
+      "id": "proj_1789906491003",
+      "tags": [
+        "JAVASCRIPT",
+        "CSS3",
+        "GSAP",
+        "SUPABASE",
+        "PHOTOGRAPHY",
+        "RESPONSIVE DESIGN",
+        "REALTIME"
+      ],
+      "year": "2026",
+      "image": "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/projects/1789906675353_projectbyladzdzah-github-io-pbyl.webp",
+      "title": "PBYL Cinema — Cinematic Photography Portfolio & Exhibition",
+      "images": [
+        "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/projects/1789906675353_projectbyladzdzah-github-io-pbyl.webp"
+      ],
+      "liveUrl": "https://projectbyladzdzah.github.io/pbyl-cinema/",
+      "category": "photo",
+      "featured": false,
+      "githubUrl": "",
+      "description": "An immersive, edge-to-edge cinematic photography exhibition and digital darkroom portfolio (100vw × 100dvh). Engineered with modern Vanilla JavaScript, CSS3, and GSAP physics-driven inertial spring-snap scroll mechanics. Features cloud-connected real-time photo & album synchronization via Supabase, distraction-free Zen View Mode, dual-layer responsive framing for uncropped landscape & portrait plates, multi-series album filtering, and an encrypted curator administration suite.\n"
+    },
+    {
+      "id": "proj_1789825021714",
+      "tags": [
+        "PYTHON",
+        "AUTOMATION",
+        "REST API",
+        "BOT",
+        "CLI",
+        "NODEJS"
+      ],
+      "year": "2026",
+      "image": "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/projects/1789825379292_screenshot-2026-09-19-204240.webp",
+      "title": "Social Media Promo Automation Bot",
+      "images": [
+        "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/projects/1789825379292_screenshot-2026-09-19-204240.webp"
+      ],
+      "liveUrl": "",
+      "category": "other",
+      "featured": true,
+      "githubUrl": "https://github.com/ladzdzah666/social-promo-bot",
+      "description": "An automated multi-platform social media promotion bot designed to schedule, broadcast, and manage promotional content effortlessly. Built with a modular architecture handling API rate limits, message queueing, dynamic payload formatting, and automated status logging to streamline digital marketing workflows."
+    },
+    {
+      "id": "proj_1789807132309",
+      "tags": [
+        "React",
+        "TypeScript",
+        "Node.js",
+        "MySQL",
+        "Geolocation",
+        "Leaflet",
+        "GPS"
+      ],
+      "year": "2025",
+      "image": "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/projects/1789961369197_proj_1789807132309-cover.webp",
+      "title": "Web App Presensi — SPS TPQ AL Ikhlas Lebakbarang",
+      "images": [
+        "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/projects/1789961369788_proj_1789807132309-img-1.webp",
+        "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/projects/1789961370614_proj_1789807132309-img-2.webp",
+        "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/projects/1789961371421_proj_1789807132309-img-3.webp",
+        "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/projects/1789961372679_proj_1789807132309-img-4.webp",
+        "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/projects/1789961373245_proj_1789807132309-img-5.webp",
+        "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/projects/1789961373744_proj_1789807132309-img-6.webp"
+      ],
+      "liveUrl": "",
+      "category": "web",
+      "featured": true,
+      "githubUrl": "https://github.com/ladzdzah666/Webapp-Absensi",
+      "description": "A GPS-based attendance web application developed for SPS TPQ AL Ikhlas Lebakbarang. The system features a customizable geofence radius, allowing administrators to adjust the required proximity (e.g., 100 meters) from the office location to prevent remote attendance.\n\nKey Features:\n• Real-time GPS detection using Geolocation API\n• Fully customizable geofence radius configured by the administrator\n• Interactive map (Leaflet + OpenStreetMap) with visual geofence boundary\n• Dynamic Check-in & Check-out buttons enabled only within the set office radius\n• Comprehensive Admin Dashboard: daily attendance recap, status filtering, and Excel report export\n• Employee account and work schedule management\n• Mobile-first, Islamic-themed UI design (emerald + gold)\n\nTech Stack:\nReact + TypeScript (Frontend), Node.js + Express (Backend), MySQL (Database), JWT Authentication"
+    }
+  ],
+  "security": {
+    "pin": "1234",
+    "pinEnabled": false
+  },
+  "biography": {
+    "quote": "Every line of code and every deployed infrastructure must solve real-world problems: analyze deeply, troubleshoot relentlessly, and deliver maximum reliability.",
+    "kicker": "PROFESSIONAL BACKGROUND // 01",
+    "skills": [
       "TypeScript & JavaScript",
       "React & Next.js",
       "Node.js & Express",
@@ -100,200 +287,34 @@ export const DEFAULT_PORTFOLIO_DATA: PortfolioData = {
       "Adobe Premiere & Photoshop",
       "Figma UI/UX",
       "Git & GitHub"
-    ]
-  },
-  projects: [
-    {
-      id: "proj_1",
-      title: "School Employee Attendance Web Platform",
-      category: "web",
-      year: "2025",
-      description: "A comprehensive internal attendance management system designed for educators and staff at Al Ikhlas Lebakbarang Education Center. Features role-based access control, automated time logging, monthly reporting, and instant printable administrative summaries.",
-      tags: ["WEB PLATFORM", "INTERNAL SYSTEM", "PHP / SQL", "AUTHENTICATION"],
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
-      images: [
-        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80"
-      ],
-      liveUrl: "",
-      githubUrl: "https://github.com/Ladzdzah",
-      featured: true
-    },
-    {
-      id: "proj_2",
-      title: "Event Photography & Visual Documentation",
-      category: "photo",
-      year: "2024",
-      description: "High-speed shutter sports and ceremonial photography documenting regional martial arts championships, student milestones, and creative campaigns with cinematic color grading in Adobe Lightroom.",
-      tags: ["PHOTOGRAPHY", "SPORTS SHUTTER", "LIGHTROOM", "VISUALS"],
-      image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1200&q=80",
-      images: [
-        "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1502982720700-bfff97f2ecac?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&w=1200&q=80"
-      ],
-      liveUrl: "",
-      githubUrl: "",
-      featured: false
-    },
-    {
-      id: "proj_3",
-      title: "Student Organization Digital Media & Video Production",
-      category: "other",
-      year: "2022–24",
-      description: "Creative media production and social media strategy for Merpati Putih Student Martial Arts Organization. Directed promotional video reels, designed campaign visual posters, and established a digital member archive.",
-      tags: ["VIDEO PRODUCTION", "SOCIAL MEDIA", "ADOBE PREMIERE"],
-      image: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=1200&q=80",
-      images: [
-        "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1536240478700-b869070f9279?auto=format&fit=crop&w=1200&q=80"
-      ],
-      liveUrl: "",
-      githubUrl: "",
-      featured: false
-    },
-    {
-      id: "proj_4",
-      title: "IT Support & Campus Infrastructure Maintenance",
-      category: "other",
-      year: "2023–25",
-      description: "Managed daily technical troubleshooting across 30+ workstations, local routers, laser printers, OS deployments, routine hardware cleaning, and automated backup schedules for academic stability.",
-      tags: ["HARDWARE", "NETWORKING", "TROUBLESHOOTING", "WINDOWS & LINUX"],
-      image: "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&w=1200&q=80",
-      images: [
-        "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1200&q=80"
-      ],
-      liveUrl: "",
-      githubUrl: "",
-      featured: false
-    },
-    {
-      id: "proj_5",
-      title: "Administrative Operations & Document Archiving",
-      category: "other",
-      year: "2021–23",
-      description: "Digitized institutional correspondence, automated administrative spreadsheets, structured filing registers, and managed operational inventory using Microsoft 365 suites.",
-      tags: ["DATA MANAGEMENT", "DOCUMENTS", "ADMINISTRATION"],
-      image: "https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=1200&q=80",
-      images: [
-        "https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=1200&q=80"
-      ],
-      liveUrl: "",
-      githubUrl: "",
-      featured: false
-    },
-    {
-      id: "proj_6",
-      title: "Database System & Relational Data Architecture",
-      category: "web",
-      year: "2024",
-      description: "Architected relational SQL schemas with data integrity constraints, automated query reporting, and institutional database maintenance protocols.",
-      tags: ["SQL", "DATABASE SCHEMA", "WORKFLOW"],
-      image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80",
-      images: [
-        "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80"
-      ],
-      liveUrl: "",
-      githubUrl: "https://github.com/Ladzdzah",
-      featured: false
-    }
-  ],
-  career: [
-    {
-      id: "car_tmc",
-      year: "2025—PRESENT",
-      role: "Engineer On Site",
-      team: "TMC Surakarta",
-      description: "As the On-Site Engineer at the Traffic Management Center (TMC) Surakarta, I am responsible for maintaining the core IT infrastructure that keeps the city's traffic monitoring running flawlessly 24/7. My role focuses on server maintenance, network management of integrated ATCS and CCTV systems, and real-time troubleshooting in the main control room. I bridge the gap between complex IT reliability and smooth public traffic operations.",
-      points: "24/7 Monitoring",
-      status: "ACTIVE"
-    },
-    {
-      id: "car_1",
-      year: "2025",
-      role: "Lead Developer — Employee Attendance Web",
-      team: "SPS TPQ Al Ikhlas Education Center",
-      description: "Engineered and deployed internal employee attendance system with real-time logging, user validation, and administrative audit trails.",
-      points: "Lead Dev",
-      status: "COMPLETED"
-    },
-    {
-      id: "car_2",
-      year: "2023—2025",
-      role: "IT Support & Systems Specialist",
-      team: "SPS TPQ Al Ikhlas Education Center",
-      description: "Spearheaded hardware/software troubleshooting, local network configuration, printer and workstation maintenance, and institutional web portal support.",
-      points: "99.8% Uptime",
-      status: "OPERATIONAL"
-    },
-    {
-      id: "car_3",
-      year: "2021—2023",
-      role: "Administrative Operations & Digital Archiving Specialist",
-      team: "SPS TPQ Al Ikhlas Education Center",
-      description: "Handled formal correspondence, digital record archiving, procurement inventory tracking, and institutional registry formatting.",
-      points: "Records Lead",
-      status: "COMPLETED"
-    },
-    {
-      id: "car_4",
-      year: "2022—2024",
-      role: "Secretary & Media Communications Staff",
-      team: "Merpati Putih Student Martial Arts Organization",
-      description: "Managed organization proposals, member databases, public relations, visual content creation, and promotional video production.",
-      points: "Media Lead",
-      status: "HONORARY"
-    }
-  ],
-  awards: [
-    {
-      id: "awd_1",
-      year: "2023",
-      title: "1st Place Gold — Paku Bumi Open 11th International Championship",
-      subtitle: "International Martial Arts Championship",
-      position: "1ST PLACE (GOLD)",
-      issuer: "Indonesian Pencak Silat Association (IPSI) & West Java Committee",
-      category: "International Martial Arts Championship",
-      credentialId: "PBO-XI-INT-2023-GOLD-01",
-      description: "Awarded 1st Place Gold Medal in a prestigious international open martial arts championship contested by hundreds of domestic and international athletes. Demonstrating elite athletic discipline, tactical endurance, mental focus, and championship performance."
-    },
-    {
-      id: "awd_2",
-      year: "2022",
-      title: "1st Place Gold — Unsoed Rector Cup Championship",
-      subtitle: "Central Java Regional Inter-University Championship",
-      position: "1ST PLACE (GOLD)",
-      issuer: "Jenderal Soedirman University & IPSI Central Java",
-      category: "Regional University Championship",
-      credentialId: "UNSOED-REKTOR-CUP-2022-P1",
-      description: "Secured top podium honors (1st Place Gold Medal) in the premier inter-university championship across Central Java, proving technical precision, consistent physical preparation, and mental resilience under competitive pressure."
-    },
-    {
-      id: "awd_3",
-      year: "2018",
-      title: "1st Place Gold — IPSI Cup Pekalongan Residency",
-      subtitle: "Inter-District Regional Championship",
-      position: "1ST PLACE (GOLD)",
-      issuer: "Indonesian Pencak Silat Association (IPSI) Pekalongan",
-      category: "Inter-District Championship",
-      credentialId: "IPSI-PKL-REG-2018-01",
-      description: "1st place gold medalist in the official IPSI Pekalongan residency championship. Formed the foundation of athletic discipline, perseverance, and competitive drive that transitioned directly into software engineering and IT operations."
-    }
-  ],
-  contact: {
-    heading: "LET'S BUILD SOMETHING EXCEPTIONAL.",
-    description: "Available for full-time roles, web engineering contracts, IT system projects, and creative technical collaborations.",
-    email: "ladzdzahhanannaafimufidz@gmail.com",
-    phone: "085848253569",
-    github: "github.com/Ladzdzah",
-    linkedin: "https://linkedin.com/in/ladzdzah",
-    base: "Pekalongan, Central Java, Indonesia"
-  },
-  security: {
-    pinEnabled: false,
-    pin: "1234"
+    ],
+    "gallery": [
+      {
+        "id": "story_2",
+        "image": "assets/driver-portrait.png",
+        "title": "Software Engineer & System Specialist",
+        "caption": "Professional portrait representing academic excellence in Software Engineering, database architecture, and on-site field readiness.",
+        "location": "Telkom University",
+        "timestamp": "Professional Profile"
+      },
+      {
+        "id": "story_1789814905032",
+        "image": "https://likkqgzihhptkwmhnyng.supabase.co/storage/v1/object/public/portfolio-assets/banners/1789814935851_101940.webp",
+        "title": "Computer Science Graduate",
+        "caption": "Celebrating the completion of a Bachelor of Computer Science (S.Kom) degree from Telkom University. Ready to pursue professional opportunities in the tech industry.  ",
+        "location": "Purwokerto, Indonesia",
+        "timestamp": "Academic Milestone"
+      }
+    ],
+    "heading": "BIOGRAPHY",
+    "paragraphs": [
+      "A results-driven Software Engineering graduate possessing sharp analytical capabilities and technical expertise spanning full-stack web development, database architecture, and mission-critical IT infrastructure management. Proven track record in designing, engineering, and deploying custom enterprise web solutions—such as real-time employee attendance platforms with audit logging—alongside managing relational SQL databases and maintaining institutional web portals. ",
+      "In addition to software development, brings hands-on experience in high-availability IT operations and network maintenance. Skilled in supporting server environments, managing integrated ATCS and CCTV networks for continuous 24/7 city monitoring, performing hardware/software troubleshooting, and administering cloud productivity suites including Microsoft 365 and Google Workspace. Adept at bridging the gap between complex technical systems and operational reliability to deliver seamless, intuitive user experiences.",
+      "Seeking to leverage strong problem-solving skills and technical versatility in high-velocity Software Engineering, Full-Stack Web Development, or Systems & IT Infrastructure roles.   "
+    ],
+    "dateOfBirth": "20/03/2002",
+    "quoteAuthor": "Ladzdzah — Software Engineer & On-Site Specialist",
+    "placeOfBirth": "Brebes, Indonesia",
+    "showStoryCard": true
   }
 };
