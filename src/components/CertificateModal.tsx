@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { AwardItem } from '../types/portfolio';
 import {
@@ -34,6 +34,16 @@ export const CertificateModal: React.FC = () => {
 
   const [zoomLevel, setZoomLevel] = useState(1);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setActiveAwardModal(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [setActiveAwardModal]);
 
   if (!activeAwardModal) return null;
 
@@ -136,52 +146,57 @@ export const CertificateModal: React.FC = () => {
         <div className="h-1.5 w-full bg-gradient-to-r from-f1-red via-[#d4af37] to-f1-red"></div>
 
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 bg-[#14141f] border-b border-white/10">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded bg-[#d4af37]/15 border border-[#d4af37]/40 text-[#d4af37] flex items-center justify-center">
-              <Trophy size={18} />
+        <div className="flex items-center justify-between px-3 sm:px-6 py-2.5 sm:py-3.5 bg-[#14141f] border-b border-white/10 gap-2 sm:gap-4">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 rounded bg-[#d4af37]/15 border border-[#d4af37]/40 text-[#d4af37] flex items-center justify-center">
+              <Trophy size={16} className="sm:w-[18px] sm:h-[18px]" />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-f1 font-bold tracking-widest text-[#d4af37] uppercase">
-                  OFFICIAL CERTIFICATE // VERIFIED CREDENTIALS
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="text-[9px] sm:text-[10px] font-f1 font-bold tracking-wider sm:tracking-widest text-[#d4af37] uppercase truncate">
+                  <span className="inline sm:hidden">CERTIFICATE</span>
+                  <span className="hidden sm:inline">OFFICIAL CERTIFICATE // VERIFIED CREDENTIALS</span>
                 </span>
-                <span className="text-[10px] px-2 py-0.5 bg-f1-red/20 text-f1-red border border-f1-red/30 rounded font-f1 font-bold">
+                <span className="text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 bg-f1-red/20 text-f1-red border border-f1-red/30 rounded font-f1 font-bold shrink-0 truncate max-w-[120px] sm:max-w-none">
                   {currentAward.position || '1ST PLACE GOLD'}
                 </span>
               </div>
-              <h2 className="text-sm sm:text-base font-f1 font-black text-white tracking-wide truncate max-w-sm sm:max-w-xl">
+              <h2 className="text-xs sm:text-base font-f1 font-black text-white tracking-wide truncate w-full" title={currentAward.title}>
                 {currentAward.title}
               </h2>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             {/* Pagination Navigator */}
-            <div className="flex items-center gap-1 bg-black/50 border border-white/10 rounded px-2 py-1 text-xs font-f1 font-bold text-f1-gray mr-1">
+            <div className="flex items-center gap-0.5 sm:gap-1 bg-black/50 border border-white/10 rounded px-1.5 sm:px-2 py-1 text-xs font-f1 font-bold text-f1-gray">
               <button
                 onClick={handlePrev}
                 className="hover:text-white transition p-0.5"
                 title="Previous Certificate"
+                aria-label="Previous Certificate"
               >
-                <ChevronLeft size={16} />
+                <ChevronLeft size={15} />
               </button>
-              <span className="px-1 text-white text-[11px]">
-                {currentIndex + 1} / {awardsList.length}
+              <span className="px-1 text-white text-[10px] sm:text-[11px] font-mono">
+                {currentIndex + 1}/{awardsList.length}
               </span>
               <button
                 onClick={handleNext}
                 className="hover:text-white transition p-0.5"
                 title="Next Certificate"
+                aria-label="Next Certificate"
               >
-                <ChevronRight size={16} />
+                <ChevronRight size={15} />
               </button>
             </div>
 
             {/* Close Button */}
             <button
               onClick={() => setActiveAwardModal(null)}
-              className="w-8 h-8 rounded bg-white/5 hover:bg-f1-red hover:text-white text-f1-gray flex items-center justify-center transition"
+              className="w-8 h-8 rounded bg-white/10 hover:bg-f1-red hover:text-white text-white sm:text-f1-gray flex items-center justify-center transition shrink-0 active:scale-95"
+              title="Close Certificate Modal"
+              aria-label="Close modal"
             >
               <X size={18} />
             </button>
@@ -198,7 +213,7 @@ export const CertificateModal: React.FC = () => {
             <div className="lg:col-span-8 flex flex-col space-y-3">
               {/* Document Toolbar */}
               <div className="flex flex-wrap items-center justify-between gap-2 bg-[#14141f] border border-white/10 px-3 py-2 rounded text-xs font-f1 font-bold">
-                <div className="flex items-center gap-2 max-w-full truncate">
+                <div className="flex items-center gap-2 min-w-0 flex-1 truncate">
                   <span className="text-f1-gray uppercase flex items-center gap-1.5 truncate">
                     {isPdf ? <FileText size={15} className="text-f1-red shrink-0" /> : <ImageIcon size={15} className="text-[#d4af37] shrink-0" />}
                     <span className="text-white truncate">

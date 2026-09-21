@@ -35,19 +35,19 @@ export const ProjectModal: React.FC = () => {
         onClick={e => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="flex justify-between items-center px-6 py-4 border-b border-white/10 bg-f1-surface">
-          <div className="flex items-center gap-3">
-            <span className="bg-f1-red text-white text-[10px] font-f1 font-black tracking-widest px-2 py-0.5 rounded-sm uppercase">
+        <div className="flex justify-between items-center px-4 sm:px-6 py-3.5 sm:py-4 border-b border-white/10 bg-f1-surface gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+            <span className="bg-f1-red text-white text-[10px] font-f1 font-black tracking-widest px-2 py-0.5 rounded-sm uppercase shrink-0">
               {activeProjectModal.category.toUpperCase()}
             </span>
-            <span className="text-xs font-f1 font-bold text-f1-gray tracking-wider flex items-center gap-1">
+            <span className="text-xs font-f1 font-bold text-f1-gray tracking-wider flex items-center gap-1 shrink-0">
               <Calendar size={13} />
               {activeProjectModal.year}
             </span>
           </div>
           <button
             onClick={() => setActiveProjectModal(null)}
-            className="text-f1-gray hover:text-white transition p-1 hover:bg-white/10 rounded"
+            className="text-f1-gray hover:text-white transition p-1.5 hover:bg-white/10 rounded shrink-0"
             aria-label="Close modal"
           >
             <X size={20} />
